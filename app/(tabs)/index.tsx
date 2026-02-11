@@ -1,98 +1,271 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Colors } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { user, biometricEnabled, setBiometricEnabled } = useAuth();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? "light"];
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+  async function toggleBiometric() {
+    try {
+      await setBiometricEnabled(!biometricEnabled);
+      Alert.alert(
+        "Success",
+        biometricEnabled
+          ? "Biometric authentication has been disabled"
+          : "Biometric authentication has been enabled",
+      );
+    } catch (error: any) {
+      Alert.alert(
+        "Error",
+        error.message || "Failed to update biometric settings",
+      );
+    }
+  }
+
+  return (
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <ThemedView style={styles.content}>
+        <View style={styles.header}>
+          <View
+            style={[
+              styles.avatarContainer,
+              { backgroundColor: colors.tint + "20" },
+            ]}
+          >
+            <Ionicons name="person" size={40} color={colors.tint} />
+          </View>
+          <ThemedText type="title" style={styles.welcomeText}>
+            Welcome Back!
+          </ThemedText>
+          <ThemedText style={styles.emailText}>{user?.email}</ThemedText>
+        </View>
+
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Account Status
+          </ThemedText>
+          <View style={[styles.card, { backgroundColor: colors.background }]}>
+            <View style={styles.statusRow}>
+              <View style={styles.statusItem}>
+                <Ionicons
+                  name={
+                    user?.email_confirmed_at
+                      ? "checkmark-circle"
+                      : "time-outline"
+                  }
+                  size={24}
+                  color={user?.email_confirmed_at ? "#00C851" : "#ffbb33"}
+                />
+                <ThemedText style={styles.statusLabel}>
+                  {user?.email_confirmed_at
+                    ? "Email Verified"
+                    : "Email Pending"}
+                </ThemedText>
+              </View>
+              <View style={styles.statusItem}>
+                <Ionicons
+                  name={
+                    biometricEnabled ? "finger-print" : "finger-print-outline"
+                  }
+                  size={24}
+                  color={biometricEnabled ? colors.tint : colors.text + "60"}
+                />
+                <ThemedText style={styles.statusLabel}>
+                  {biometricEnabled ? "Biometric On" : "Biometric Off"}
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+        </ThemedView>
+
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Quick Actions
+          </ThemedText>
+
+          <TouchableOpacity
+            style={[styles.actionCard, { backgroundColor: colors.background }]}
+            onPress={toggleBiometric}
+          >
+            <View style={styles.actionLeft}>
+              <Ionicons name="finger-print" size={24} color={colors.tint} />
+              <ThemedText style={styles.actionTitle}>
+                {biometricEnabled ? "Disable" : "Enable"} Biometric Login
+              </ThemedText>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.text + "60"}
+            />
+          </TouchableOpacity>
+
+          {!user?.email_confirmed_at && (
+            <TouchableOpacity
+              style={[
+                styles.actionCard,
+                { backgroundColor: colors.background },
+              ]}
+              onPress={() =>
+                Alert.alert(
+                  "Email Verification",
+                  "Check your email for the verification link.",
+                )
+              }
+            >
+              <View style={styles.actionLeft}>
+                <Ionicons name="mail" size={24} color={colors.tint} />
+                <ThemedText style={styles.actionTitle}>
+                  Verify Email Address
+                </ThemedText>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={colors.text + "60"}
+              />
+            </TouchableOpacity>
+          )}
+        </ThemedView>
+
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Getting Started
+          </ThemedText>
+          <View
+            style={[styles.infoCard, { backgroundColor: colors.tint + "10" }]}
+          >
+            <Ionicons
+              name="information-circle-outline"
+              size={24}
+              color={colors.tint}
+            />
+            <ThemedText style={styles.infoText}>
+              Your authentication is now set up! You can start building your
+              expense tracking features.
+            </ThemedText>
+          </View>
+          <View
+            style={[
+              styles.infoCard,
+              { backgroundColor: colors.tint + "10", marginTop: 12 },
+            ]}
+          >
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={24}
+              color={colors.tint}
+            />
+            <ThemedText style={styles.infoText}>
+              Your data is securely stored and only accessible to you.
+            </ThemedText>
+          </View>
+        </ThemedView>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
+  content: {
+    padding: 20,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 32,
+    marginTop: 20,
+  },
+  avatarContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  welcomeText: {
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  emailText: {
+    opacity: 0.7,
+    fontSize: 14,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    marginBottom: 12,
+  },
+  card: {
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  statusRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  statusItem: {
+    alignItems: "center",
+    gap: 8,
+  },
+  statusLabel: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
+  actionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  actionLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  actionTitle: {
+    fontSize: 16,
+  },
+  infoCard: {
+    flexDirection: "row",
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+    opacity: 0.9,
   },
 });
