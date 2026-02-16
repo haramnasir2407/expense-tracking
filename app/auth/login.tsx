@@ -1,4 +1,3 @@
-import { BiometricSetup } from "@/components/BiometricSetup";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { AuthInput } from "@/components/auth/AuthInput";
 import { Colors } from "@/constants/theme";
@@ -31,7 +30,6 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showBiometricSetup, setShowBiometricSetup] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -91,7 +89,7 @@ export default function LoginScreen() {
         // Show biometric setup on first successful login
         if (!biometricEnabled) {
           console.log("Showing biometric setup: ", biometricEnabled);
-          setShowBiometricSetup(true);
+          // setShowBiometricSetup(true);
         } else {
           router.replace("/(tabs)");
         }
@@ -212,13 +210,13 @@ export default function LoginScreen() {
       </ScrollView>
 
       {/* Add biometric setup */}
-      <BiometricSetup
+      {/* <BiometricSetup
         visible={showBiometricSetup}
         onClose={() => {
           setShowBiometricSetup(false);
           router.replace("/(tabs)");
         }}
-      />
+      /> */}
     </KeyboardAvoidingView>
   );
 }

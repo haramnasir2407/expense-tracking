@@ -11,8 +11,10 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Enable Face ID to quickly and securely access your expense tracker."
-      }
+        "NSFaceIDUsageDescription": "Enable Face ID to quickly and securely access your expense tracker.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.haramnasir.expense-tracking"
     },
     "android": {
       "adaptiveIcon": {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,19 +21,64 @@ import {
   getPasswordStrength,
   passwordsMatch,
 } from '@/lib/auth-utils';
+import { supabase } from '@/lib/supabase';
 
 export default function ResetPasswordScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { updatePassword } = useAuth();
+  const params = useLocalSearchParams();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
   const passwordStrength = getPasswordStrength(password);
+
+  // Extract tokens from URL and establish session
+  useEffect(() => {
+    async function setupSession() {
+      try {
+        // Get access_token and refresh_token from URL params
+        const accessToken = params.access_token as string | undefined;
+        const refreshToken = params.refresh_token as string | undefined;
+
+        if (accessToken && refreshToken) {
+          // Set the session with the tokens from the magic link
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+
+          if (error) {
+            Alert.alert(
+              'Error',
+              'Failed to validate reset link. Please request a new one.'
+            );
+            router.replace('/auth/forgot-password');
+          } else {
+            setSessionReady(true);
+          }
+        } else {
+          // No tokens in URL - user navigated here directly
+          Alert.alert(
+            'Invalid Link',
+            'Please use the link from your email to reset your password.'
+          );
+          router.replace('/auth/forgot-password');
+        }
+      } catch (error) {
+        console.error('Error setting up session:', error);
+        Alert.alert('Error', 'Something went wrong. Please try again.');
+        router.replace('/auth/forgot-password');
+      }
+    }
+
+    setupSession();
+  }, [params]);
 
   function validateForm(): boolean {
     let isValid = true;
@@ -61,6 +106,11 @@ export default function ResetPasswordScreen() {
   }
 
   async function handleResetPassword() {
+    if (!sessionReady) {
+      Alert.alert('Please wait', 'Setting up your session...');
+      return;
+    }
+
     if (!validateForm()) return;
 
     setLoading(true);
@@ -86,6 +136,18 @@ export default function ResetPasswordScreen() {
     } finally {
       setLoading(false);
     }
+  }
+
+  // Show loading while session is being established
+  if (!sessionReady) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        <Text style={[styles.subtitle, { color: colors.text }]}>
+          Setting up your session...
+        </Text>
+      </View>
+    );
   }
 
   return (

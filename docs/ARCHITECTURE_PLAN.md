@@ -110,3 +110,29 @@ Authentication is implemented using Supabase Auth with email/password credential
 ## EXPO GO VS DEVELOPMENT BUILD
 
 - To use a custom scheme, need to shift to development build since expo go only uses exp://<your-local-ip>:8081/*
+
+using development build, and to open magic link on ios simulator use this command:
+
+xcrun simctl openurl booted "https://qeigzvwthgoqdmpqgpvn.supabase.co/auth/v1/verify?token=4e94d6879485c86fb9d9eef29d55dafca2d6fca05c7aeeb08e59bf90&type=recovery&redirect_to=expensetracking://auth/reset-password"
+
+
+Turns on Row Level Security for the expenses table
+Without RLS policies defined, nobody can access this table (not even authenticated users)
+You must explicitly define policies to grant access
+Why it's important:
+Prevents users from seeing each other's expenses
+Even if someone hacks your API keys, they can't access other users' data
+Security is enforced at the database level, not just in your app code\\
+
+Creates a database index for faster queries
+expenses_user_id_date_idx = name of the index
+on expenses(user_id, date desc) = index the user_id and date columns together, with dates sorted descending (newest first)
+Why it's important:
+When you query SELECT * FROM expenses WHERE user_id = '...' ORDER BY date DESC, the database can use this index instead of scanning every row
+Makes your app much faster when loading expenses
+Especially important as users accumulate hundreds or thousands of expenses
+
+
+## why using flatlist vs flashlist
+
+## why using development build (for using custom scheme)
