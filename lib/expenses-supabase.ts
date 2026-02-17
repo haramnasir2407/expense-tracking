@@ -11,17 +11,24 @@ export async function getExpenses(userId: string) {
   return { data, error };
 }
 
-export async function addExpense(expense: ExpenseFormData, userId: string) {
+export async function addExpense(expense: ExpenseFormData, userId: string, id?: string) {
+  const insertData: any = {
+    amount: parseFloat(expense.amount),
+    category: expense.category,
+    date: expense.date.toISOString(),
+    notes: expense.notes || null,
+    receipt_url: expense.receipt_url || null,
+    user_id: userId,
+  };
+
+  // If ID is provided (from SQLite), use it
+  if (id) {
+    insertData.id = id;
+  }
+
   const { data, error } = await supabase
     .from("expenses")
-    .insert({
-      amount: parseFloat(expense.amount),
-      category: expense.category,
-      date: expense.date.toISOString(),
-      notes: expense.notes || null,
-      receipt_url: expense.receipt_url || null,
-      user_id: userId,
-    })
+    .insert(insertData)
     .select()
     .single();
 

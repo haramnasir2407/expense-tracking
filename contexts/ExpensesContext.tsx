@@ -1,12 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
-import * as expenseService from "@/lib/expenses";
+import { initDatabase } from "@/lib/db";
+import * as expenseService from "@/lib/expenses-sqlite";
 import { Expense, ExpenseFormData, GroupedExpenses } from "@/types/expense";
 import React, {
+  ReactNode,
   createContext,
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
 
 interface ExpensesContextType {
@@ -33,6 +34,16 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize database on mount
+  useEffect(() => {
+    try {
+      initDatabase();
+      console.log('Database initialized');
+    } catch (error) {
+      console.error('Failed to initialize database:', error);
+    }
+  }, []);
 
   // Fetch expenses
   useEffect(() => {

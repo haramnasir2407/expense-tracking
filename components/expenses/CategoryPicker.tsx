@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { getCategories } from "@/lib/expenses";
+import { getCategories } from "@/lib/expenses-supabase";
 import { Category } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";

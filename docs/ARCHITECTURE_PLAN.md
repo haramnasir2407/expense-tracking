@@ -105,34 +105,67 @@ Background sync waits for connectivity
 
 Authentication is implemented using Supabase Auth with email/password credentials. Authenticated sessions are persisted securely using Expo SecureStore. Biometric authentication (Face ID / Fingerprint) is used as an app-level unlock mechanism on cold start, not as a replacement for authentication. This approach ensures strong security, offline usability, and a clean separation of concerns.
 
+## Expo Go vs Development Build
 
+**Why Development Build?**
 
-## EXPO GO VS DEVELOPMENT BUILD
+Expo Go uses a fixed URL scheme: `exp://<your-local-ip>:8081/*`
 
-- To use a custom scheme, need to shift to development build since expo go only uses exp://<your-local-ip>:8081/*
+To use a **custom URL scheme** (e.g., `expensetracking://`) for deep linking and magic links, you must use a **Development Build**.
 
-using development build, and to open magic link on ios simulator use this command:
+**Testing Magic Links on iOS Simulator:**
 
+```bash
 xcrun simctl openurl booted "https://qeigzvwthgoqdmpqgpvn.supabase.co/auth/v1/verify?token=4e94d6879485c86fb9d9eef29d55dafca2d6fca05c7aeeb08e59bf90&type=recovery&redirect_to=expensetracking://auth/reset-password"
+```
 
+## Database Security & Performance
 
-Turns on Row Level Security for the expenses table
-Without RLS policies defined, nobody can access this table (not even authenticated users)
-You must explicitly define policies to grant access
-Why it's important:
-Prevents users from seeing each other's expenses
-Even if someone hacks your API keys, they can't access other users' data
-Security is enforced at the database level, not just in your app code\\
+### Row Level Security (RLS)
 
-Creates a database index for faster queries
-expenses_user_id_date_idx = name of the index
-on expenses(user_id, date desc) = index the user_id and date columns together, with dates sorted descending (newest first)
-Why it's important:
-When you query SELECT * FROM expenses WHERE user_id = '...' ORDER BY date DESC, the database can use this index instead of scanning every row
-Makes your app much faster when loading expenses
-Especially important as users accumulate hundreds or thousands of expenses
+**What it does:**
 
+- Turns on Row Level Security for the `expenses` table
+- Without RLS policies defined, **nobody can access this table** (not even authenticated users)
+- You must explicitly define policies to grant access
 
-## why using flatlist vs flashlist
+**Why it's important:**
 
-## why using development build (for using custom scheme)
+- ✅ Prevents users from seeing each other's expenses
+- ✅ Even if someone hacks your API keys, they can't access other users' data
+- ✅ Security is enforced at the **database level**, not just in your app code
+
+### Database Indexing
+
+**Index: `expenses_user_id_date_idx`**
+
+```sql
+CREATE INDEX expenses_user_id_date_idx
+ON expenses(user_id, date DESC);
+```
+
+**What it does:**
+
+- Indexes the `user_id` and `date` columns together
+- Dates are sorted descending (newest first)
+
+**Why it's important:**
+
+- When you query `SELECT * FROM expenses WHERE user_id = '...' ORDER BY date DESC`, the database uses this index instead of scanning every row
+- Makes your app much **faster** when loading expenses
+- Especially important as users accumulate hundreds or thousands of expenses
+
+## UI Performance
+
+### FlatList vs FlashList
+
+_TODO: Document decision and performance considerations_
+
+## Hybrid approach
+
+An offline-first architecture with local SQLite and remote Supabase sync 
+
+- Local-first approach: SQLite as the primary data source
+- ync layer: Push changes to Supabase when online
+- Conflict resolution: Handle cases where data changes on both sides
+- Sync status tracking: Know which records need syncing

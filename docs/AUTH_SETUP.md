@@ -225,5 +225,3 @@ If you encounter any issues:
 2. Review Supabase dashboard logs
 3. Refer to the Supabase docs: https://supabase.com/docs
 4. Check Expo docs: https://docs.expo.dev
-
-Happy coding!

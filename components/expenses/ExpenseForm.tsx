@@ -96,6 +96,7 @@ export function ExpenseForm({
     >
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -215,27 +216,27 @@ export function ExpenseForm({
             />
           </View>
         </View>
-      </ScrollView>
 
-      {/* Action Buttons */}
-      <View style={[styles.footer, { borderTopColor: colors.text + "20" }]}>
-        <TouchableOpacity
-          style={[styles.cancelButton, { borderColor: colors.text + "30" }]}
-          onPress={onCancel}
-        >
-          <Text style={[styles.cancelButtonText, { color: colors.text }]}>
-            Cancel
-          </Text>
-        </TouchableOpacity>
+        {/* Action Buttons */}
+        <View style={[styles.footer, { borderTopColor: colors.text + "20" }]}>
+          <TouchableOpacity
+            style={[styles.cancelButton, { borderColor: colors.text + "30" }]}
+            onPress={onCancel}
+          >
+            <Text style={[styles.cancelButtonText, { color: colors.text }]}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
 
-        <View style={styles.submitButtonContainer}>
-          <AuthButton
-            title={submitLabel}
-            loading={loading}
-            onPress={handleSubmit}
-          />
+          <View style={styles.submitButtonContainer}>
+            <AuthButton
+              title={submitLabel}
+              loading={loading}
+              onPress={handleSubmit}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       {/* Category Picker Modal */}
       <CategoryPicker
@@ -258,8 +259,12 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   content: {
     padding: 16,
+    paddingBottom: 0,
   },
   field: {
     marginBottom: 24,
@@ -331,11 +336,12 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    height: 56,
+    height: 52,
     borderWidth: 1,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
+    marginVertical: 8,
   },
   cancelButtonText: {
     fontSize: 16,

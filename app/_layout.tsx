@@ -1,3 +1,4 @@
+import "react-native-get-random-values"; // Must be first for UUID support
 import {
   DarkTheme,
   DefaultTheme,
@@ -11,6 +12,7 @@ import "react-native-reanimated";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ExpensesProvider } from "@/contexts/ExpensesContext";
+import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export const unstable_settings = {
@@ -62,7 +64,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ExpensesProvider>
-        <RootLayoutNav />
+        <SyncProvider>
+          <RootLayoutNav />
+        </SyncProvider>
       </ExpensesProvider>
     </AuthProvider>
   );
