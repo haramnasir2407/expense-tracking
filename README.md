@@ -1,6 +1,15 @@
-# Welcome to your Expo app 👋
+# Expense Tracking App 💰
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A personal finance mobile application built with Expo and React Native, featuring secure authentication and expense tracking.
+
+## Features
+
+- ✅ **Secure Authentication**: Email/password login with Supabase
+- ✅ **Biometric Login**: Face ID, Touch ID, and Fingerprint support
+- ✅ **Email Verification**: Confirm user accounts via email
+- ✅ **Password Reset**: Easy password recovery flow
+- ✅ **Session Persistence**: Stay logged in across app restarts
+- 🚧 **Expense Tracking**: Coming soon!
 
 ## Get started
 
@@ -10,7 +19,14 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Set up authentication (required before first run)
+
+   See [AUTH_SETUP.md](./AUTH_SETUP.md) for detailed instructions on:
+   - Creating a Supabase project
+   - Configuring environment variables
+   - Testing the authentication flow
+
+3. Start the app
 
    ```bash
    npx expo start
@@ -25,15 +41,47 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## Project Structure
 
-When you're ready, run:
+```
+app/
+├── (tabs)/           # Protected tab navigation
+│   ├── index.tsx     # Home/Expenses screen
+│   └── explore.tsx   # Explore screen
+├── auth/             # Authentication screens
+│   ├── login.tsx
+│   ├── register.tsx
+│   ├── forgot-password.tsx
+│   ├── reset-password.tsx
+│   └── verify-email.tsx
+└── _layout.tsx       # Root layout with auth protection
 
-```bash
-npm run reset-project
+contexts/
+└── AuthContext.tsx   # Global authentication state
+
+lib/
+├── supabase.ts       # Supabase client configuration
+└── auth-utils.ts     # Authentication helper functions
+
+components/
+├── auth/             # Reusable auth components
+│   ├── AuthInput.tsx
+│   ├── AuthButton.tsx
+│   └── SocialAuthButtons.tsx
+└── BiometricSetup.tsx
+
+types/
+└── auth.ts           # TypeScript type definitions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Technology Stack
+
+- **Framework**: Expo 54 + React Native
+- **Navigation**: Expo Router (file-based routing)
+- **Authentication**: Supabase Auth
+- **Database**: PostgreSQL (via Supabase)
+- **Secure Storage**: Expo SecureStore
+- **Biometric Auth**: Expo Local Authentication
 
 ## Learn more
 
