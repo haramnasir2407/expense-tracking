@@ -3,6 +3,7 @@ import {
   Alert,
   ScrollView,
   StyleSheet,
+  Switch,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -11,11 +12,19 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { router } from "expo-router";
 
 export default function ProfileScreen() {
   const { user, biometricEnabled, setBiometricEnabled } = useAuth();
+  const {
+    settings,
+    hasPermission,
+    requestPermission,
+    updateSettings,
+    loading: notifLoading,
+  } = useNotifications();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
 
@@ -34,6 +43,66 @@ export default function ProfileScreen() {
         error.message || "Failed to update biometric settings",
       );
     }
+  }
+
+  async function toggleBudgetAlerts(value: boolean) {
+    if (value && !hasPermission) {
+      const granted = await requestPermission();
+      if (!granted) {
+        Alert.alert(
+          "Permission Required",
+          "Please enable notifications in your device settings to receive budget alerts.",
+        );
+        return;
+      }
+    }
+
+    const { error } = await updateSettings({ budget_alerts_enabled: value });
+    if (error) {
+      Alert.alert("Error", error);
+    }
+  }
+
+  async function toggleDailyReminder(value: boolean) {
+    if (value && !hasPermission) {
+      const granted = await requestPermission();
+      if (!granted) {
+        Alert.alert(
+          "Permission Required",
+          "Please enable notifications in your device settings.",
+        );
+        return;
+      }
+    }
+
+    const { error } = await updateSettings({ daily_reminder_enabled: value });
+    if (error) {
+      Alert.alert("Error", error);
+    }
+  }
+
+  async function changeBudgetThreshold() {
+    Alert.prompt(
+      "Budget Alert Threshold",
+      "Get notified when you reach this % of your budget",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Save",
+          onPress: async (value?: string) => {
+            const threshold = parseInt(value || "80");
+            if (threshold < 0 || threshold > 100) {
+              Alert.alert("Invalid", "Please enter a value between 0-100");
+              return;
+            }
+            await updateSettings({ budget_threshold_percent: threshold });
+          },
+        },
+      ],
+      "plain-text",
+      settings?.budget_threshold_percent.toString() || "80",
+      "number-pad",
+    );
   }
 
   return (
@@ -137,6 +206,98 @@ export default function ProfileScreen() {
               />
             </TouchableOpacity>
           )}
+        </ThemedView>
+
+        <ThemedView style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>
+            Notifications & Alerts
+          </ThemedText>
+
+          <View style={[styles.card, { backgroundColor: colors.background }]}>
+            {!hasPermission && (
+              <TouchableOpacity
+                style={styles.permissionBanner}
+                onPress={requestPermission}
+              >
+                <Ionicons name="notifications-off" size={20} color="#FF6B6B" />
+                <ThemedText style={styles.permissionText}>
+                  Enable notifications
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <View style={styles.settingTextContainer}>
+                  <View style={styles.settingTitleRow}>
+                    <Ionicons name="warning" size={20} color={colors.tint} />
+                    <ThemedText style={styles.settingTitle}>
+                      Budget Alerts
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.settingSubtitle}>
+                    Get notified when approaching budget limit
+                  </ThemedText>
+                </View>
+              </View>
+              <Switch
+                value={settings?.budget_alerts_enabled ?? true}
+                onValueChange={toggleBudgetAlerts}
+                disabled={notifLoading}
+                trackColor={{ false: "#767577", true: colors.tint + "60" }}
+                thumbColor={
+                  settings?.budget_alerts_enabled ? colors.tint : "#f4f3f4"
+                }
+              />
+            </View>
+
+            {settings?.budget_alerts_enabled && (
+              <TouchableOpacity
+                style={[
+                  styles.thresholdRow,
+                  {
+                    backgroundColor:
+                      colorScheme === "dark" ? "#2C2C2E" : "#f0f0f0",
+                  },
+                ]}
+                onPress={changeBudgetThreshold}
+              >
+                <ThemedText style={styles.thresholdText}>
+                  Alert threshold: {settings?.budget_threshold_percent || 80}%
+                </ThemedText>
+                <Ionicons
+                  name="create-outline"
+                  size={16}
+                  color={colors.text + "60"}
+                />
+              </TouchableOpacity>
+            )}
+
+            <View style={[styles.settingRow, { marginTop: 16 }]}>
+              <View style={styles.settingLeft}>
+                <View style={styles.settingTextContainer}>
+                  <View style={styles.settingTitleRow}>
+                    <Ionicons name="time" size={20} color={colors.tint} />
+                    <ThemedText style={styles.settingTitle}>
+                      Daily Reminder
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.settingSubtitle}>
+                    Remind me to log expenses (8:00 PM)
+                  </ThemedText>
+                </View>
+              </View>
+              <Switch
+                value={settings?.daily_reminder_enabled ?? false}
+                onValueChange={toggleDailyReminder}
+                disabled={notifLoading}
+                trackColor={{ false: "#767577", true: colors.tint + "60" }}
+                thumbColor={
+                  settings?.daily_reminder_enabled ? colors.tint : "#f4f3f4"
+                }
+              />
+            </View>
+          </View>
         </ThemedView>
 
         <ThemedView style={styles.section}>
@@ -264,5 +425,61 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     opacity: 0.9,
+  },
+  permissionBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#FF6B6B20",
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  permissionText: {
+    fontSize: 13,
+    color: "#FF6B6B",
+    fontWeight: "600",
+  },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  settingLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    flex: 1,
+  },
+  settingTextContainer: {
+    flex: 1,
+  },
+  settingTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 2,
+  },
+  settingTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  settingSubtitle: {
+    fontSize: 12,
+    opacity: 0.6,
+  },
+  thresholdRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+  },
+  thresholdText: {
+    fontSize: 13,
+    opacity: 0.8,
   },
 });

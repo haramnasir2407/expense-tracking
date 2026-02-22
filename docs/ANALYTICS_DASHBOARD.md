@@ -37,23 +37,27 @@
 ### Quick Summary
 
 **Charting Library**: Victory Native XL
+
 - React Native native with Skia rendering
 - Hardware-accelerated, performant
 - Built-in gesture support
 - Small bundle size (~200KB)
 
 **Architecture**:
+
 - Client-side aggregation with `useMemo` for performance
 - New `BudgetContext` for budget management
 - Extended `ExpensesContext` with analytics methods
 - Notification service for alerts and reminders
 
 **Database Changes**:
+
 - `budgets` table: Store monthly category budgets
 - `notification_settings` table: User notification preferences
 - RLS policies for security
 
 **Key Components**:
+
 - `SpendingLineChart`: Daily spending trends
 - `CategoryPieChart`: Category breakdown with donut chart
 - `MonthlyBarChart`: Month-over-month comparison

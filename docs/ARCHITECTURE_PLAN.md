@@ -169,3 +169,34 @@ An offline-first architecture with local SQLite and remote Supabase sync
 - ync layer: Push changes to Supabase when online
 - Conflict resolution: Handle cases where data changes on both sides
 - Sync status tracking: Know which records need syncing
+
+
+## Why PolarChart + Pie.Chart?
+
+Victory Native uses a Container + Renderer pattern:
+
+┌─────────────────────────────────┐
+│  PolarChart (Container)          │  ← Handles data & coordinates
+│  ┌──────────────────────────┐   │
+│  │  Pie.Chart (Renderer)    │   │  ← Draws the actual chart
+│  └──────────────────────────┘   │
+└─────────────────────────────────┘
+
+<CartesianChart> for Line/Bar charts (X/Y coordinates)
+
+
+Polar Coordinates (for Pie charts)
+
+- Measures angles (degrees)
+- Perfect for circular charts
+
+
+Cartesian Coordinates (for Line/Bar charts)
+
+- Measures X and Y positions
+- Perfect for grid-based charts
+
+
+<CoordinateSystem>
+  <Renderer />
+</CoordinateSystem>
