@@ -13,6 +13,8 @@ import "react-native-reanimated";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ExpensesProvider } from "@/contexts/ExpensesContext";
 import { SyncProvider } from "@/contexts/SyncContext";
+import { BudgetProvider } from "@/contexts/BudgetContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export const unstable_settings = {
@@ -64,9 +66,13 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ExpensesProvider>
-        <SyncProvider>
-          <RootLayoutNav />
-        </SyncProvider>
+        <NotificationProvider>
+          <BudgetProvider>
+            <SyncProvider>
+              <RootLayoutNav />
+            </SyncProvider>
+          </BudgetProvider>
+        </NotificationProvider>
       </ExpensesProvider>
     </AuthProvider>
   );

@@ -155,6 +155,15 @@ ON expenses(user_id, date DESC);
 - Makes your app much **faster** when loading expenses
 - Especially important as users accumulate hundreds or thousands of expenses
 
+## Screen architecture (Container / Presentational)
+
+Screens use a **container/presentational** split:
+
+- **Containers** (in `app/`): Thin screen files that use hooks (`useAuth`, `useExpenses`, `useBudgets`, `useColorScheme`, etc.), local state, and event handlers. They pass all data and callbacks as props to a single View component. No layout/JSX beyond that.
+- **Views** (in `components/<domain>/`): Presentational components that receive everything via props and only render UI (and existing subcomponents like `ExpenseForm`, `AuthInput`, `BudgetCard`). Examples: `HomeView`, `AnalyticsView`, `BudgetsView`, `ProfileView`, `LoginView`, `RegisterView`, `AddExpenseView`, `ExpenseDetailView`, and auth views for forgot-password, reset-password, verify-email.
+
+This keeps logic and navigation in one place and makes views easy to test and reuse.
+
 ## UI Performance
 
 ### FlatList vs FlashList
@@ -169,3 +178,34 @@ An offline-first architecture with local SQLite and remote Supabase sync
 - ync layer: Push changes to Supabase when online
 - Conflict resolution: Handle cases where data changes on both sides
 - Sync status tracking: Know which records need syncing
+
+
+## Why PolarChart + Pie.Chart?
+
+Victory Native uses a Container + Renderer pattern:
+
+┌─────────────────────────────────┐
+│  PolarChart (Container)          │  ← Handles data & coordinates
+│  ┌──────────────────────────┐   │
+│  │  Pie.Chart (Renderer)    │   │  ← Draws the actual chart
+│  └──────────────────────────┘   │
+└─────────────────────────────────┘
+
+<CartesianChart> for Line/Bar charts (X/Y coordinates)
+
+
+Polar Coordinates (for Pie charts)
+
+- Measures angles (degrees)
+- Perfect for circular charts
+
+
+Cartesian Coordinates (for Line/Bar charts)
+
+- Measures X and Y positions
+- Perfect for grid-based charts
+
+
+<CoordinateSystem>
+  <Renderer />
+</CoordinateSystem>
