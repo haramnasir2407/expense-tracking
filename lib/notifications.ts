@@ -64,11 +64,10 @@ export async function scheduleDailyReminder(time: string) {
       body: "Don't forget to log today's expenses!",
     },
     trigger: {
-      // trigger this notification at a specific time of day (hour and minute), not after a delay
-      type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+      // DAILY is supported on both iOS and Android; CALENDAR is iOS-only
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour,
       minute,
-      repeats: true,
     },
   });
 }
