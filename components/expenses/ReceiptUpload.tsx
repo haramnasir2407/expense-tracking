@@ -1,10 +1,13 @@
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { deleteReceipt, uploadReceipt } from "@/lib/storage-supbase";
+import { deleteReceipt, uploadReceipt } from "@/lib/storage-supabase";
 import { Ionicons } from "@expo/vector-icons";
+import { decode } from "base64-arraybuffer";
+import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
+
 import {
   ActivityIndicator,
   Alert,
@@ -52,10 +55,26 @@ export function ReceiptUpload({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.8,
+      base64: true,
     });
 
-    if (!result.canceled && result.assets[0]) {
-      await handleUpload(result.assets[0].uri);
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      if (!user?.id) {
+        Alert.alert("Error", "You must be logged in to upload receipts");
+        return;
+      }
+
+      const selectedAsset = result.assets[0];
+      const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const arrayBuffer = decode(base64); // Decode base64 to ArrayBuffer
+
+      const fileExt = selectedAsset.uri.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`; // user-specific path for RLS
+
+      await handleUpload(filePath, arrayBuffer, selectedAsset);
     }
   };
 
@@ -75,12 +94,25 @@ export function ReceiptUpload({
       quality: 0.8,
     });
 
-    if (!result.canceled && result.assets[0]) {
-      await handleUpload(result.assets[0].uri);
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      if (!user?.id) {
+        Alert.alert("Error", "You must be logged in to upload receipts");
+        return;
+      }
+
+      const selectedAsset = result.assets[0];
+      const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const arrayBuffer = decode(base64); // Decode base64 to ArrayBuffer
+      const fileExt = selectedAsset.uri.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`; // user-specific path for RLS
+      await handleUpload(filePath, arrayBuffer, selectedAsset);
     }
   };
 
-  const handleUpload = async (fileUri: string) => {
+  const handleUpload = async (filePath: string, arrayBuffer: ArrayBuffer, selectedAsset: ImagePicker.ImagePickerAsset) => {
     if (!user?.id) {
       Alert.alert("Error", "You must be logged in to upload receipts");
       return;
@@ -88,7 +120,7 @@ export function ReceiptUpload({
 
     setUploading(true);
     try {
-      const { url, error } = await uploadReceipt(fileUri, user.id);
+      const { url, error } = await uploadReceipt(filePath, arrayBuffer, user.id, selectedAsset);
 
       if (error) {
         Alert.alert("Upload Failed", error.message);

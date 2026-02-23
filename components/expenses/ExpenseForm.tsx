@@ -37,7 +37,8 @@ export function ExpenseForm({
   const [category, setCategory] = useState(initialData?.category || "");
   const [date, setDate] = useState(initialData?.date || new Date());
   const [notes, setNotes] = useState(initialData?.notes || "");
-  const [receiptUrl, setReceiptUrl] = useState(initialData?.receipt_url);
+  // Use empty string when no receipt so updates can clear the field
+  const [receiptUrl, setReceiptUrl] = useState(initialData?.receipt_url || "");
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -203,16 +204,14 @@ export function ExpenseForm({
             />
           </View>
 
-          {/* Receipt Upload - Temporarily disabled for Expo Go */}
-          {/* Uncomment when using development build or remove for production */}
           <View style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>
               Receipt (Optional)
             </Text>
             <ReceiptUpload
-              receiptUrl={receiptUrl}
+              receiptUrl={receiptUrl || undefined}
               onUpload={setReceiptUrl}
-              onRemove={() => setReceiptUrl(undefined)}
+              onRemove={() => setReceiptUrl("")}
             />
           </View>
         </View>

@@ -1,38 +1,38 @@
+import * as ImagePicker from "expo-image-picker";
+import { Alert } from "react-native";
 import { supabase } from "./supabase";
 
-
-// TODO: create bucket in supabase and add to .env
-const BUCKET_NAME = "receipts";
+// Must use EXPO_PUBLIC_ prefix for client-side env in Expo
+const BUCKET_NAME = process.env.EXPO_PUBLIC_SUPABASE_BUCKET_NAME || "receipts";
 
 export async function uploadReceipt(
-  fileUri: string,
+  filePath: string,
+  arrayBuffer: ArrayBuffer,
   userId: string,
+  selectedAsset: ImagePicker.ImagePickerAsset,
 ): Promise<{ url: string | null; error: Error | null }> {
   try {
-    // Generate unique filename
-    const fileName = `${userId}/${Date.now()}.jpg`;
-
-    // Convert file URI to blob
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
-      .upload(fileName, blob, {
-        contentType: "image/jpeg",
-        upsert: false,
+      .upload(filePath, arrayBuffer, {
+        contentType: selectedAsset.mimeType || "image/jpeg",
+        upsert: true,
       });
 
     if (error) {
+      console.error("Error uploading receipt:", error.message);
+      Alert.alert("Error uploading receipt:", error.message);
       return { url: null, error };
+    } else {
+      Alert.alert("Receipt uploaded successfully");
     }
 
     // Get public URL
     const { data: urlData } = supabase.storage
       .from(BUCKET_NAME)
       .getPublicUrl(data.path);
-
+    console.log("public url:", urlData.publicUrl);
     return { url: urlData.publicUrl, error: null };
   } catch (error) {
     return { url: null, error: error as Error };
