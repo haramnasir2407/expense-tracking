@@ -5,7 +5,7 @@ import { useExpenses } from "@/hooks/useExpenses";
 import { ExpenseFormData } from "@/types/expense";
 import { router } from "expo-router";
 import React from "react";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();
@@ -14,11 +14,19 @@ export default function AddExpenseScreen() {
 
   const handleSubmit = async (data: ExpenseFormData) => {
     const { error } = await addExpense(data);
-    if (error) Alert.alert("Error", error);
-    else
-      Alert.alert("Success", "Expense added successfully", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error adding expense",
+        text2: error,
+      });
+    } else {
+      Toast.show({
+        type: "success",
+        text1: "Expense added",
+      });
+      router.back();
+    }
   };
 
   return (

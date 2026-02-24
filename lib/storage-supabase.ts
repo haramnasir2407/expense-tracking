@@ -1,5 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 import { supabase } from "./supabase";
 
 // Must use EXPO_PUBLIC_ prefix for client-side env in Expo
@@ -22,10 +22,17 @@ export async function uploadReceipt(
 
     if (error) {
       console.error("Error uploading receipt:", error.message);
-      Alert.alert("Error uploading receipt:", error.message);
+      Toast.show({
+        type: "error",
+        text1: "Error uploading receipt",
+        text2: error.message,
+      });
       return { url: null, error };
     } else {
-      Alert.alert("Receipt uploaded successfully");
+      Toast.show({
+        type: "success",
+        text1: "Receipt uploaded successfully",
+      });
     }
 
     // Get public URL

@@ -18,11 +18,11 @@ import React, {
 } from "react";
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function ExpenseDetailScreen() {
   const colorScheme = useColorScheme();
@@ -39,22 +39,23 @@ export default function ExpenseDetailScreen() {
   }, [id, expenses]);
 
   const handleDelete = useCallback(() => {
-    Alert.alert(
-      "Delete Expense",
-      "Are you sure you want to delete this expense?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            const { error } = await deleteExpense(id);
-            if (error) Alert.alert("Error", error);
-            else router.back();
-          },
-        },
-      ],
-    );
+    // Immediately delete and show toast feedback
+    (async () => {
+      const { error } = await deleteExpense(id);
+      if (error) {
+        Toast.show({
+          type: "error",
+          text1: "Error deleting expense",
+          text2: error,
+        });
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Expense deleted",
+        });
+        router.back();
+      }
+    })();
   }, [deleteExpense, id]);
 
   useLayoutEffect(() => {
@@ -94,8 +95,19 @@ export default function ExpenseDetailScreen() {
 
   const handleUpdate = async (data: ExpenseFormData) => {
     const { error } = await updateExpense(id, data);
-    if (error) Alert.alert("Error", error);
-    else setIsEditing(false);
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error updating expense",
+        text2: error,
+      });
+    } else {
+      Toast.show({
+        type: "success",
+        text1: "Expense updated",
+      });
+      setIsEditing(false);
+    }
   };
 
   if (!expense) {

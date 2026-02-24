@@ -5,6 +5,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { router } from "expo-router";
 import React from "react";
+import Toast from "react-native-toast-message";
 import { Alert } from "react-native";
 
 export default function ProfileScreen() {
@@ -22,18 +23,23 @@ export default function ProfileScreen() {
   const toggleBiometric = async () => {
     try {
       await setBiometricEnabled(!biometricEnabled);
-      Alert.alert(
-        "Success",
-        biometricEnabled
-          ? "Biometric authentication has been disabled"
-          : "Biometric authentication has been enabled",
-      );
+      Toast.show({
+        type: "success",
+        text1: "Biometric settings updated",
+        text2: biometricEnabled
+          ? "Biometric authentication has been disabled."
+          : "Biometric authentication has been enabled.",
+      });
     } catch (error: unknown) {
       const message =
         error instanceof Error
           ? error.message
           : "Failed to update biometric settings";
-      Alert.alert("Error", message);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: message,
+      });
     }
   };
 
@@ -49,7 +55,12 @@ export default function ProfileScreen() {
       }
     }
     const { error } = await updateSettings({ budget_alerts_enabled: value });
-    if (error) Alert.alert("Error", error);
+    if (error)
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error,
+      });
   };
 
   const toggleDailyReminder = async (value: boolean) => {
@@ -64,7 +75,12 @@ export default function ProfileScreen() {
       }
     }
     const { error } = await updateSettings({ daily_reminder_enabled: value });
-    if (error) Alert.alert("Error", error);
+    if (error)
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error,
+      });
   };
 
   const changeBudgetThreshold = () => {
