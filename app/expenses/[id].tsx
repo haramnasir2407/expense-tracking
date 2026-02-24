@@ -1,5 +1,5 @@
 import { ExpenseDetailView } from "@/components/expenses/ExpenseDetailView";
-import ThemedView from "@/components/themed-view";
+import ThemedView from "@/components/primitives/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";

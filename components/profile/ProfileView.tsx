@@ -1,4 +1,4 @@
-import { ThemedText } from "@/components/themed-text";
+import { ThemedText } from "@/components/primitives/themed-text";
 import { NotificationSettings } from "@/types/notification";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@supabase/supabase-js";

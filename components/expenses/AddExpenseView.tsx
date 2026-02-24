@@ -2,7 +2,7 @@ import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { ExpenseFormData } from "@/types/expense";
 import { Stack } from "expo-router";
 import React from "react";
-import ThemedView from "../themed-view";
+import ThemedView from "../primitives/themed-view";
 
 interface AddExpenseViewProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;

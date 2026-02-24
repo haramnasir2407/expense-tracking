@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import React from "react";
-import { StyleSheet, View, useColorScheme } from "react-native";
+import { View, useColorScheme } from "react-native";
+import { themedViewStyles as styles } from "./styles";
 
 export default function ThemedView({
   children,
@@ -16,9 +17,3 @@ export default function ThemedView({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

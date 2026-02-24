@@ -5,7 +5,7 @@ import { DATE_RANGES } from "@/constants/dateRanges";
 import { AnalyticsData, DateRange } from "@/types/analytics";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { analyticsViewStyles as styles } from "./styles/analytics-view-styles";
+import { analyticsViewStyles as styles } from "./styles";
 
 interface AnalyticsViewProps {
   analytics: AnalyticsData;
