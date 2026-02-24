@@ -1,15 +1,31 @@
-# Expense Tracking App 💰
+# Expense Tracking App
 
-A personal finance mobile application built with Expo and React Native, featuring secure authentication and expense tracking.
+A personal finance mobile application built with Expo and React Native, featuring secure authentication, rich expense tracking, analytics, and budgeting.
 
 ## Features
 
-- ✅ **Secure Authentication**: Email/password login with Supabase
-- ✅ **Biometric Login**: Face ID, Touch ID, and Fingerprint support
-- ✅ **Email Verification**: Confirm user accounts via email
-- ✅ **Password Reset**: Easy password recovery flow
-- ✅ **Session Persistence**: Stay logged in across app restarts
-- 🚧 **Expense Tracking**: Coming soon!
+- **Secure Authentication**: Email/password login powered by Supabase Auth
+- **Biometric Login**: Face ID / Touch ID / fingerprint support where available
+- **Email Verification**: Confirm user accounts via email before full access
+- **Password Reset**: Complete forgot/reset password flows with strength meter
+- **Session Persistence**: Stay logged in across app restarts
+- **Expense Tracking**:
+  - Add, edit, and delete expenses
+  - Attach receipt images to expenses
+  - Group expenses by day with friendly labels (Today, Yesterday, etc.)
+- **Budgets**:
+  - Create and edit monthly category budgets
+  - See per‑category budget usage and remaining amounts
+  - Monthly budget summary card for quick overview
+- **Analytics Dashboard**:
+  - Visualize spending with charts (bar, line, pie)
+  - Filter by common date ranges
+- **Notifications & Sync**:
+  - Notification settings for budgeting and reminders
+  - Sync layer for persisting data via Supabase / SQLite
+- **Theming & UX**:
+  - Light/Dark mode aware via a centralized color system
+  - Reusable primitives like `ThemedView`, `ThemedText`, and `HapticTab`
 
 ## Get started
 
@@ -43,34 +59,52 @@ You can start developing by editing the files inside the **app** directory. This
 
 ## Project Structure
 
+High‑level overview (not exhaustive):
+
 ```
 app/
-├── (tabs)/           # Protected tab navigation
-│   ├── index.tsx     # Home/Expenses screen
-│   └── explore.tsx   # Explore screen
-├── auth/             # Authentication screens
+├── (tabs)/                  # Protected tab navigation
+│   ├── index.tsx            # Home / recent expenses
+│   ├── analytics.tsx        # Analytics dashboard
+│   ├── budgets.tsx          # Budgets screen
+│   └── profile.tsx          # Profile & settings
+├── auth/                    # Authentication flows
 │   ├── login.tsx
 │   ├── register.tsx
 │   ├── forgot-password.tsx
 │   ├── reset-password.tsx
 │   └── verify-email.tsx
-└── _layout.tsx       # Root layout with auth protection
-
-contexts/
-└── AuthContext.tsx   # Global authentication state
-
-lib/
-├── supabase.ts       # Supabase client configuration
-└── auth-utils.ts     # Authentication helper functions
+└── expenses/                # Expense‑specific routes
+    ├── add.tsx
+    └── [id].tsx             # Expense detail / edit
 
 components/
-├── auth/             # Reusable auth components
-│   ├── AuthInput.tsx
-│   ├── AuthButton.tsx
-│   └── SocialAuthButtons.tsx
+├── primitives/              # Base UI primitives
+│   ├── themed-view.tsx
+│   ├── themed-text.tsx
+│   └── haptic-tab.tsx
+├── auth/                    # Auth views & inputs
+├── expenses/                # Expense views & shared UI
+├── budgets/                 # Budget views & cards
+├── analytics/               # Charts & analytics UI
+└── profile/                 # Profile screen UI
+
+contexts/
+├── AuthContext.tsx          # Global authentication state
+└── (other domain contexts)
+
+lib/
+├── supabase.ts              # Supabase client configuration
+├── auth-utils.ts            # Authentication helpers
+├── expenses-*.ts            # Expense data access (Supabase / SQLite)
+├── storage-*.ts             # Storage helpers (Supabase / local)
+├── sync-service.ts          # Sync & background logic
+└── budgets.ts               # Budget data helpers
 
 types/
-└── auth.ts           # TypeScript type definitions
+├── auth.ts                  # Auth types
+├── expense.ts               # Expense types
+└── budget.ts                # Budget types
 ```
 
 ## Technology Stack
