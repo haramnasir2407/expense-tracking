@@ -5,10 +5,10 @@
 Supabase provides everything you need in one place:
 
 - **Authentication** (email/password, social login, password reset, email verification)
-- **Database** (PostgreSQL for storing expenses, categories, budgets)
+- **Database** (PostgreSQL for storing expenses, categories, budgets, notification settilngs)
 - **Real-time sync** (automatic updates across devices)
 - **Row-level security** (ensures users only see their own expense data)
-- **Storage** (for receipt images if you add that later)
+- **Storage** (for receipt images)
 - **Built-in API** (auto-generated REST and GraphQL APIs)
 
 ### 2. Perfect for Personal Finance Apps
@@ -31,7 +31,7 @@ Supabase provides everything you need in one place:
 - If you grow: $25/month for unlimited projects (vs Firebase $25+/month per project)
 - **Open source**: Can self-host if you want full control later
 
-## Alternative Options (and why I didn't recommend them)
+## Alternative Options
 
 ### Firebase Authentication
 
@@ -103,6 +103,8 @@ See analytics
 No network call required
 Background sync waits for connectivity
 
+
+### Summary
 Authentication is implemented using Supabase Auth with email/password credentials. Authenticated sessions are persisted securely using Expo SecureStore. Biometric authentication (Face ID / Fingerprint) is used as an app-level unlock mechanism on cold start, not as a replacement for authentication. This approach ensures strong security, offline usability, and a clean separation of concerns.
 
 ## Expo Go vs Development Build
@@ -168,14 +170,14 @@ This keeps logic and navigation in one place and makes views easy to test and re
 
 ### FlatList vs FlashList
 
-_TODO: Document decision and performance considerations_
+Flatlist is suitable for small scale apps, while flashlist is good for dynamic apps and animations.
 
 ## Hybrid approach
 
 An offline-first architecture with local SQLite and remote Supabase sync 
 
 - Local-first approach: SQLite as the primary data source
-- ync layer: Push changes to Supabase when online
+- Sync layer: Push changes to Supabase when online
 - Conflict resolution: Handle cases where data changes on both sides
 - Sync status tracking: Know which records need syncing
 

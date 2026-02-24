@@ -6,11 +6,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { registerStyles as styles } from "./styles";
 
 interface PasswordStrength {
   strength: number;
@@ -59,10 +59,7 @@ export function RegisterView({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style={isDark ? "light" : "dark"} />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>
             Create Account
@@ -149,31 +146,3 @@ export function RegisterView({
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { flexGrow: 1, padding: 24 },
-  header: { marginBottom: 32 },
-  title: { fontSize: 32, fontWeight: "bold", marginBottom: 8 },
-  subtitle: { fontSize: 16 },
-  form: { flex: 1 },
-  strengthContainer: { marginBottom: 16 },
-  strengthBarContainer: {
-    height: 4,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 2,
-    overflow: "hidden",
-    marginBottom: 8,
-  },
-  strengthBar: { height: "100%", borderRadius: 2 },
-  strengthText: { fontSize: 12, fontWeight: "600" },
-  registerButton: { marginBottom: 16 },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 24,
-  },
-  footerText: { fontSize: 14 },
-  footerLink: { fontSize: 14, fontWeight: "600" },
-});

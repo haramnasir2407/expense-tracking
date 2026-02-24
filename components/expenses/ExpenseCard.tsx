@@ -4,7 +4,8 @@ import { Expense } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { expenseCardStyles as styles } from "./styles";
 
 interface ExpenseCardProps {
   expense: Expense;
@@ -90,62 +91,3 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginHorizontal: 16,
-    marginBottom: 12,
-  },
-  iconContainer: {
-    marginRight: 12,
-    justifyContent: "center",
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  topRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  category: {
-    fontSize: 16,
-    fontWeight: "600",
-    flex: 1,
-  },
-  amount: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 8,
-  },
-  bottomRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  notes: {
-    fontSize: 14,
-    flex: 1,
-    marginRight: 8,
-  },
-  time: {
-    fontSize: 12,
-  },
-  receiptBadge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-  },
-});

@@ -1,8 +1,9 @@
 import { MonthlySpending } from "@/types/analytics";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Bar, CartesianChart } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
+import { monthlyBarChartStyles as styles } from "./styles";
 
 interface BarChartProps {
   data: MonthlySpending[];
@@ -65,19 +66,3 @@ function formatMonthLabel(month: string): string {
   const date = new Date(parseInt(year), parseInt(monthNum) - 1);
   return date.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  labelsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 20,
-    marginTop: 8,
-  },
-  label: {
-    fontSize: 11,
-    textAlign: "center",
-  },
-});

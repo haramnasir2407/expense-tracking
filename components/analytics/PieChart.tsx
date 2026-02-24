@@ -1,8 +1,9 @@
 import { CategorySpending } from "@/types/analytics";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Pie, PolarChart } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
+import { categoryPieChartStyles as styles } from "./styles";
 
 interface PieChartProps {
   data: CategorySpending[];
@@ -56,27 +57,3 @@ export function CategoryPieChart({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
-  legend: {
-    marginTop: 20,
-    width: "100%",
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  legendColor: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    marginRight: 8,
-  },
-  legendLabel: {
-    fontSize: 14,
-  },
-});

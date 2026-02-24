@@ -68,7 +68,6 @@ components/
 │   ├── AuthInput.tsx
 │   ├── AuthButton.tsx
 │   └── SocialAuthButtons.tsx
-└── BiometricSetup.tsx
 
 types/
 └── auth.ts           # TypeScript type definitions

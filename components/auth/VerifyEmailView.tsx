@@ -2,7 +2,8 @@ import { AuthButton } from "@/components/auth/AuthButton";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { verifyEmailStyles as styles } from "./styles";
 
 interface VerifyEmailViewProps {
   email: string;
@@ -103,56 +104,3 @@ export function VerifyEmailView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  message: { fontSize: 16, textAlign: "center", marginBottom: 8 },
-  email: {
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  instructions: {
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: 32,
-    paddingHorizontal: 20,
-    lineHeight: 22,
-  },
-  buttons: { width: "100%", maxWidth: 400 },
-  button: { marginBottom: 12 },
-  signOutButton: { padding: 12, alignItems: "center", marginTop: 8 },
-  signOutText: { fontSize: 14 },
-  infoBox: {
-    flexDirection: "row",
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 24,
-    gap: 12,
-    width: "100%",
-    maxWidth: 400,
-  },
-  infoText: { flex: 1, fontSize: 14, lineHeight: 20 },
-  skipButton: { padding: 16, marginTop: 16 },
-  skipText: { fontSize: 16, fontWeight: "600" },
-});

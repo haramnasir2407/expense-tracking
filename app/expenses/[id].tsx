@@ -1,7 +1,9 @@
 import { ExpenseDetailView } from "@/components/expenses/ExpenseDetailView";
+import ThemedView from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
+import { formatAmount, formatDate } from "@/lib/expense-utils";
 import { Expense, ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -100,35 +102,21 @@ export default function ExpenseDetailScreen() {
 
   if (!expense) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ThemedView>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.tint} />
         </View>
-      </View>
+      </ThemedView>
     );
   }
-
-  const formattedAmount = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(expense.amount);
-
-  const formattedDate = new Date(expense.date).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
 
   return (
     <>
       <Stack.Screen options={{ headerShown: true }} />
       <ExpenseDetailView
         expense={expense}
-        formattedAmount={formattedAmount}
-        formattedDate={formattedDate}
+        formattedAmount={formatAmount(expense.amount)}
+        formattedDate={formatDate(expense.date)}
         isEditing={isEditing}
         colors={colors}
         onUpdate={handleUpdate}

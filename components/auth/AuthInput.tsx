@@ -3,7 +3,6 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
-  StyleSheet,
   Text,
   TextInput,
   TextInputProps,
@@ -11,6 +10,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { authInputStyles as styles } from "./styles";
 
 interface AuthInputProps extends TextInputProps {
   label: string;
@@ -83,37 +83,3 @@ export function AuthInput({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 52,
-  },
-  icon: {
-    marginRight: 12,
-  },
-  input: {
-    fontSize: 16,
-    flex: 1,
-  },
-  eyeIcon: {
-    padding: 4,
-  },
-  errorText: {
-    color: "#ff4444",
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
-});

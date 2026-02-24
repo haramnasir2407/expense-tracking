@@ -1,15 +1,10 @@
 import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import { NotificationSettings } from "@/types/notification";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@supabase/supabase-js";
-import {
-  ScrollView,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Switch, TouchableOpacity, View } from "react-native";
+
+import { profileViewStyles as styles } from "./styles";
 
 interface ProfileViewProps {
   user: User | null;
@@ -50,7 +45,7 @@ export function ProfileView({
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ThemedView style={styles.content}>
+      <View style={styles.content}>
         <View style={styles.header}>
           <View
             style={[
@@ -66,7 +61,7 @@ export function ProfileView({
           <ThemedText style={styles.emailText}>{user?.email}</ThemedText>
         </View>
 
-        <ThemedView style={styles.section}>
+        <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Account Status
           </ThemedText>
@@ -96,9 +91,9 @@ export function ProfileView({
               </View>
             </View>
           </View>
-        </ThemedView>
+        </View>
 
-        <ThemedView style={styles.section}>
+        <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Settings
           </ThemedText>
@@ -140,9 +135,9 @@ export function ProfileView({
               />
             </TouchableOpacity>
           )}
-        </ThemedView>
+        </View>
 
-        <ThemedView style={styles.section}>
+        <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Notifications & Alerts
           </ThemedText>
@@ -228,9 +223,9 @@ export function ProfileView({
               />
             </View>
           </View>
-        </ThemedView>
+        </View>
 
-        <ThemedView style={styles.section}>
+        <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             About
           </ThemedText>
@@ -263,91 +258,8 @@ export function ProfileView({
               detailed insights.
             </ThemedText>
           </View>
-        </ThemedView>
-      </ThemedView>
+        </View>
+      </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { padding: 20 },
-  header: { alignItems: "center", marginBottom: 32, marginTop: 20 },
-  avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  welcomeText: { marginBottom: 8 },
-  emailText: { opacity: 0.7, fontSize: 14 },
-  section: { marginBottom: 24 },
-  sectionTitle: { marginBottom: 12 },
-  card: {
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  statusRow: { flexDirection: "row", justifyContent: "space-around" },
-  statusItem: { alignItems: "center", gap: 8 },
-  statusLabel: { fontSize: 14, opacity: 0.8 },
-  actionCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  actionLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
-  actionTitle: { fontSize: 16 },
-  infoCard: { flexDirection: "row", padding: 16, borderRadius: 12, gap: 12 },
-  infoText: { flex: 1, fontSize: 14, lineHeight: 20, opacity: 0.9 },
-  permissionBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#FF6B6B20",
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  permissionText: { fontSize: 13, color: "#FF6B6B", fontWeight: "600" },
-  settingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  settingLeft: { flexDirection: "row", alignItems: "center", gap: 12, flex: 1 },
-  settingTextContainer: { flex: 1 },
-  settingTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 2,
-  },
-  settingTitle: { fontSize: 15, fontWeight: "600" },
-  settingSubtitle: { fontSize: 12, opacity: 0.6 },
-  thresholdRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-  thresholdText: { fontSize: 13, opacity: 0.8 },
-});

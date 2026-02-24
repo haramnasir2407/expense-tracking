@@ -3,13 +3,13 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { BudgetFormData } from "@/types/budget";
 import React, { useState } from "react";
 import {
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { CategoryPicker } from "../expenses/CategoryPicker";
+import { budgetFormStyles as styles } from "./styles";
 
 interface BudgetFormProps {
   initialData?: Partial<BudgetFormData>;
@@ -103,54 +103,3 @@ export function BudgetForm({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  placeholder: {
-    color: "#999",
-  },
-  buttons: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 24,
-  },
-  inputText: {
-    color: "#333",
-  },
-  button: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#f0f0f0",
-  },
-  submitButton: {
-    backgroundColor: "#0a7ea4",
-  },
-  cancelText: {
-    color: "#666",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  submitText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

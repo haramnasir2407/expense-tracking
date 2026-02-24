@@ -7,10 +7,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
+import { forgotPasswordStyles as styles } from "./styles";
 
 interface ForgotPasswordViewProps {
   email: string;
@@ -75,10 +75,7 @@ export function ForgotPasswordView({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style={isDark ? "light" : "dark"} />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View
             style={[
@@ -124,59 +121,3 @@ export function ForgotPasswordView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { flexGrow: 1, padding: 24 },
-  header: { alignItems: "center", marginBottom: 40 },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  subtitle: { fontSize: 16, textAlign: "center", paddingHorizontal: 20 },
-  form: { flex: 1 },
-  submitButton: { marginBottom: 12 },
-  successContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  successIcon: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  successTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  successMessage: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 12,
-    paddingHorizontal: 20,
-    lineHeight: 24,
-  },
-  successNote: {
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: 32,
-    paddingHorizontal: 20,
-  },
-  backButton: { width: "100%", maxWidth: 300 },
-});

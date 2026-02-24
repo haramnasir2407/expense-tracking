@@ -12,11 +12,11 @@ import {
   ActivityIndicator,
   Alert,
   Image,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { receiptUploadStyles as styles } from "./styles";
 
 interface ReceiptUploadProps {
   receiptUrl?: string;
@@ -112,7 +112,11 @@ export function ReceiptUpload({
     }
   };
 
-  const handleUpload = async (filePath: string, arrayBuffer: ArrayBuffer, selectedAsset: ImagePicker.ImagePickerAsset) => {
+  const handleUpload = async (
+    filePath: string,
+    arrayBuffer: ArrayBuffer,
+    selectedAsset: ImagePicker.ImagePickerAsset,
+  ) => {
     if (!user?.id) {
       Alert.alert("Error", "You must be logged in to upload receipts");
       return;
@@ -120,7 +124,12 @@ export function ReceiptUpload({
 
     setUploading(true);
     try {
-      const { url, error } = await uploadReceipt(filePath, arrayBuffer, user.id, selectedAsset);
+      const { url, error } = await uploadReceipt(
+        filePath,
+        arrayBuffer,
+        user.id,
+        selectedAsset,
+      );
 
       if (error) {
         Alert.alert("Upload Failed", error.message);
@@ -204,38 +213,3 @@ export function ReceiptUpload({
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 200,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderStyle: "dashed",
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  emptyContainer: {
-    borderStyle: "dashed",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  removeButton: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    borderRadius: 14,
-  },
-  addText: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginTop: 8,
-  },
-  uploadingText: {
-    fontSize: 14,
-    marginTop: 8,
-  },
-});

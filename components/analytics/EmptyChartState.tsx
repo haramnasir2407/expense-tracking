@@ -1,6 +1,7 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Text, View } from "react-native";
+import { emptyChartStateStyles as styles } from "./styles";
 
 interface EmptyChartStateProps {
   message: string;
@@ -18,19 +19,3 @@ export function EmptyChartState({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f9f9f9",
-    borderRadius: 12,
-  },
-  message: {
-    marginTop: 12,
-    fontSize: 16,
-    color: "#999",
-    textAlign: "center",
-  },
-});

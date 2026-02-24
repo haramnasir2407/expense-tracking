@@ -7,10 +7,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
+import { resetPasswordStyles as styles } from "./styles";
 
 export interface PasswordStrengthDisplay {
   strength: number;
@@ -49,16 +49,16 @@ export function ResetPasswordView({
 }: ResetPasswordViewProps) {
   if (!sessionReady) {
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: colors.background,
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        ]}
-      >
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: colors.background,
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
+        >
         <StatusBar style={isDark ? "light" : "dark"} />
         <Text style={[styles.subtitle, { color: colors.text }]}>
           Setting up your session...
@@ -73,10 +73,7 @@ export function ResetPasswordView({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style={isDark ? "light" : "dark"} />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View
             style={[
@@ -150,36 +147,3 @@ export function ResetPasswordView({
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { flexGrow: 1, padding: 24 },
-  header: { alignItems: "center", marginBottom: 40 },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  subtitle: { fontSize: 16, textAlign: "center", paddingHorizontal: 20 },
-  form: { flex: 1 },
-  strengthContainer: { marginBottom: 16 },
-  strengthBarContainer: {
-    height: 4,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 2,
-    overflow: "hidden",
-    marginBottom: 8,
-  },
-  strengthBar: { height: "100%", borderRadius: 2 },
-  strengthText: { fontSize: 12, fontWeight: "600" },
-  submitButton: { marginTop: 8 },
-});
