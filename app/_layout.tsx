@@ -11,9 +11,10 @@ import { ActivityIndicator, View } from "react-native";
 import "react-native-reanimated";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import { ExpensesProvider } from "@/contexts/ExpensesContext";
 import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { initDatabase } from "@/lib/db";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -61,13 +62,21 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    try {
+      initDatabase();
+    } catch (error) {
+      console.error("Failed to initialize database:", error);
+    }
+  }, []);
+
   return (
-    <AuthProvider>
-      <ExpensesProvider>
+    <ReactQueryProvider>
+      <AuthProvider>
         <SyncProvider>
           <RootLayoutNav />
         </SyncProvider>
-      </ExpensesProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ReactQueryProvider>
   );
 }
