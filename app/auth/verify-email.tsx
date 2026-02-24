@@ -6,7 +6,7 @@ import { formatAuthError } from "@/lib/auth-utils";
 import { supabase } from "@/lib/supabase";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function VerifyEmailScreen() {
   const colorScheme = useColorScheme();
@@ -35,10 +35,12 @@ export default function VerifyEmailScreen() {
 
   async function handleResendEmail() {
     if (!signupEmail) {
-      Alert.alert(
-        "Missing email",
-        "We couldn't determine your email address. Please go back and register again.",
-      );
+      Toast.show({
+        type: "error",
+        text1: "Missing email",
+        text2:
+          "We couldn't determine your email address. Please go back and register again.",
+      });
       return;
     }
     setResendLoading(true);
@@ -47,20 +49,28 @@ export default function VerifyEmailScreen() {
         type: "signup",
         email: signupEmail,
       });
-      if (error) Alert.alert("Error", error.message);
+      if (error)
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.message,
+        });
       else {
-        Alert.alert(
-          "Email Sent",
-          "Verification email has been resent. Please check your inbox.",
-        );
+        Toast.show({
+          type: "success",
+          text1: "Email sent",
+          text2: "Verification email resent. Please check your inbox.",
+        });
         setResendCooldown(60);
       }
     } catch (error) {
-      Alert.alert(
-        "Error",
-        formatAuthError(error as Error)?.message ||
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          formatAuthError(error as Error)?.message ||
           "Failed to resend verification email. Please try again.",
-      );
+      });
     } finally {
       setResendLoading(false);
     }
@@ -73,21 +83,26 @@ export default function VerifyEmailScreen() {
         data: { session },
       } = await supabase.auth.refreshSession();
       if (session?.user?.email_confirmed_at) {
-        Alert.alert("Success", "Your email has been verified!", [
-          { text: "OK", onPress: () => router.replace("/(tabs)") },
-        ]);
+        Toast.show({
+          type: "success",
+          text1: "Email verified",
+        });
+        router.replace("/(tabs)");
       } else {
-        Alert.alert(
-          "Not Verified Yet",
-          "Please click the verification link in your email and try again.",
-        );
+        Toast.show({
+          type: "info",
+          text1: "Not verified yet",
+          text2: "Click the verification link in your email and try again.",
+        });
       }
     } catch (error) {
-      Alert.alert(
-        "Error",
-        formatAuthError(error as Error)?.message ||
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          formatAuthError(error as Error)?.message ||
           "Failed to check verification status. Please try again.",
-      );
+      });
     } finally {
       setChecking(false);
     }

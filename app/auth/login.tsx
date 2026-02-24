@@ -5,7 +5,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatAuthError, isValidEmail } from "@/lib/auth-utils";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const colorScheme = useColorScheme();
@@ -28,10 +28,11 @@ export default function LoginScreen() {
       const success = await authenticateWithBiometric();
       if (success) router.replace("/(tabs)");
       else
-        Alert.alert(
-          "Authentication Failed",
-          "Please try again or use your password.",
-        );
+        Toast.show({
+          type: "error",
+          text1: "Authentication failed",
+          text2: "Please try again or use your password.",
+        });
     } catch {
       // ignore
     }
@@ -60,14 +61,21 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const { error } = await signIn(email, password);
-      if (error) Alert.alert("Login Failed", error.message);
+      if (error)
+        Toast.show({
+          type: "error",
+          text1: "Login failed",
+          text2: error.message,
+        });
       else if (biometricEnabled) router.replace("/(tabs)");
     } catch (error) {
-      Alert.alert(
-        "Error",
-        formatAuthError(error as Error)?.message ||
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          formatAuthError(error as Error)?.message ||
           "An unexpected error occurred. Please try again.",
-      );
+      });
     } finally {
       setLoading(false);
     }

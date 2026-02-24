@@ -10,7 +10,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function ResetPasswordScreen() {
   const colorScheme = useColorScheme();
@@ -38,24 +38,30 @@ export default function ResetPasswordScreen() {
             refresh_token: refreshToken,
           });
           if (error) {
-            Alert.alert(
-              "Error",
-              "Failed to validate reset link. Please request a new one.",
-            );
+            Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: "Failed to validate reset link. Please request a new one.",
+            });
             router.replace("/auth/forgot-password");
           } else {
             setSessionReady(true);
           }
         } else {
-          Alert.alert(
-            "Invalid Link",
-            "Please use the link from your email to reset your password.",
-          );
+          Toast.show({
+            type: "error",
+            text1: "Invalid link",
+            text2: "Use the link from your email to reset your password.",
+          });
           router.replace("/auth/forgot-password");
         }
       } catch (error) {
         console.error("Error setting up session:", error);
-        Alert.alert("Error", "Something went wrong. Please try again.");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Something went wrong. Please try again.",
+        });
         router.replace("/auth/forgot-password");
       }
     }
@@ -87,21 +93,37 @@ export default function ResetPasswordScreen() {
 
   async function handleResetPassword() {
     if (!sessionReady) {
-      Alert.alert("Please wait", "Setting up your session...");
+      Toast.show({
+        type: "info",
+        text1: "Please wait",
+        text2: "Setting up your session...",
+      });
       return;
     }
     if (!validateForm()) return;
     setLoading(true);
     try {
       const { error } = await updatePassword(password);
-      if (error) Alert.alert("Error", error.message);
+      if (error)
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.message,
+        });
       else {
-        Alert.alert("Success", "Your password has been reset successfully!", [
-          { text: "OK", onPress: () => router.replace("/auth/login") },
-        ]);
+        Toast.show({
+          type: "success",
+          text1: "Password reset",
+          text2: "Your password has been reset successfully.",
+        });
+        router.replace("/auth/login");
       }
     } catch (error) {
-      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An unexpected error occurred. Please try again.",
+      });
     } finally {
       setLoading(false);
     }

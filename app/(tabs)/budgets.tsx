@@ -4,8 +4,8 @@ import { useBudgets } from "@/contexts/BudgetContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Budget, BudgetFormData } from "@/types/budget";
 import React, { useMemo, useState } from "react";
+import Toast from "react-native-toast-message";
 import { Alert } from "react-native";
-
 function getCurrentMonthKey(): string {
   const d = new Date();
   const y = d.getFullYear();
@@ -56,37 +56,44 @@ export default function BudgetsScreen() {
     }
     const { error } = await createBudget(data);
     if (error) {
-      Alert.alert("Error", error, [{ text: "OK" }]);
+      Toast.show({
+        type: "error",
+        text1: "Error creating budget",
+        text2: error,
+      });
       return;
     }
     setShowCreateForm(false);
-    Alert.alert("Success", "Budget created successfully.", [{ text: "OK" }]);
+    Toast.show({
+      type: "success",
+      text1: "Budget created",
+    });
   };
 
   const handleUpdateBudget = async (data: BudgetFormData) => {
     if (!editingBudget) return;
     const { error } = await updateBudget(editingBudget.id, data.amount);
     if (error) {
-      Alert.alert("Error", error, [{ text: "OK" }]);
+      Toast.show({
+        type: "error",
+        text1: "Error updating budget",
+        text2: error,
+      });
       return;
     }
     setEditingBudget(null);
-    Alert.alert("Success", "Budget updated successfully.", [{ text: "OK" }]);
+    Toast.show({
+      type: "success",
+      text1: "Budget updated",
+    });
   };
 
   const handleDeleteBudget = (budget: Budget) => {
-    Alert.alert(
-      "Delete Budget",
-      `Remove the ${budget.category} budget ($${budget.amount.toFixed(2)}/month)?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => deleteBudget(budget.id),
-        },
-      ],
-    );
+    deleteBudget(budget.id);
+    Toast.show({
+      type: "success",
+      text1: "Budget deleted",
+    });
   };
 
   return (

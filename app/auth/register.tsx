@@ -11,7 +11,7 @@ import {
 } from "@/lib/auth-utils";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function RegisterScreen() {
   const colorScheme = useColorScheme();
@@ -65,18 +65,25 @@ export default function RegisterScreen() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
       const { error } = await signUp(normalizedEmail, password);
-      if (error) Alert.alert("Registration Failed", error.message);
+      if (error)
+        Toast.show({
+          type: "error",
+          text1: "Registration failed",
+          text2: error.message,
+        });
       else
         router.replace({
           pathname: "/auth/verify-email",
           params: { email: normalizedEmail },
         });
     } catch (error) {
-      Alert.alert(
-        "Error",
-        formatAuthError(error as Error)?.message ||
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          formatAuthError(error as Error)?.message ||
           "An unexpected error occurred. Please try again.",
-      );
+      });
     } finally {
       setLoading(false);
     }

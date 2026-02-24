@@ -7,6 +7,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import Toast from "react-native-toast-message";
 import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
 
@@ -58,6 +59,7 @@ function RootLayoutNav() {
         <Stack.Screen name="expenses" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
+      <Toast />
     </ThemeProvider>
   );
 }

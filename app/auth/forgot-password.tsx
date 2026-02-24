@@ -5,7 +5,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { formatAuthError, isValidEmail } from "@/lib/auth-utils";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function ForgotPasswordScreen() {
   const colorScheme = useColorScheme();
@@ -35,14 +35,27 @@ export default function ForgotPasswordScreen() {
     setLoading(true);
     try {
       const { error } = await resetPassword(email);
-      if (error) Alert.alert("Error", error.message);
-      else setEmailSent(true);
+      if (error)
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: error.message,
+        });
+      else {
+        setEmailSent(true);
+        Toast.show({
+          type: "success",
+          text1: "Reset email sent",
+        });
+      }
     } catch (error) {
-      Alert.alert(
-        "Error",
-        formatAuthError(error as Error)?.message ||
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          formatAuthError(error as Error)?.message ||
           "An unexpected error occurred. Please try again.",
-      );
+      });
     } finally {
       setLoading(false);
     }
