@@ -11,11 +11,11 @@ import React from "react";
 import {
   Modal,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { budgetsViewStyles as styles } from "./styles";
 
 interface BudgetsViewProps {
   currentMonthSummary: MonthlyBudgetSummary | null;
@@ -240,64 +240,3 @@ export function BudgetsView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollView: { flex: 1 },
-  summaryCard: {
-    margin: 16,
-    padding: 20,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  summaryTitle: { fontSize: 20, fontWeight: "700", marginBottom: 16 },
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  summaryLabel: { fontSize: 16 },
-  summaryValue: { fontSize: 16, fontWeight: "600" },
-  overBudget: { color: "#FF6B6B" },
-  progressBar: {
-    height: 12,
-    borderRadius: 6,
-    marginTop: 16,
-    marginBottom: 8,
-    overflow: "hidden",
-  },
-  progressFill: { height: "100%", borderRadius: 6 },
-  percentageText: { fontSize: 14, textAlign: "center" },
-  section: { padding: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: "700", marginBottom: 16 },
-  emptyState: { alignItems: "center", padding: 40 },
-  emptyText: { fontSize: 18, fontWeight: "600", marginTop: 16 },
-  emptySubtext: { fontSize: 14, marginTop: 8, textAlign: "center" },
-  fab: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 8,
-  },
-  modalContainer: { flex: 1 },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-  },
-  modalTitle: { fontSize: 20, fontWeight: "700" },
-});

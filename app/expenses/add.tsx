@@ -1,11 +1,11 @@
 import { AddExpenseView } from "@/components/expenses/AddExpenseView";
 import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
 import { ExpenseFormData } from "@/types/expense";
 import { router } from "expo-router";
 import React from "react";
 import Toast from "react-native-toast-message";
+import { Alert, useColorScheme } from "react-native";
 
 export default function AddExpenseScreen() {
   const colorScheme = useColorScheme();

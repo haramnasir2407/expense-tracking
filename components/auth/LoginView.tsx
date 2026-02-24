@@ -7,11 +7,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { loginStyles as styles } from "./styles";
 
 interface LoginViewProps {
   email: string;
@@ -52,10 +52,7 @@ export function LoginView({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style={isDark ? "light" : "dark"} />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <View
             style={[
@@ -145,42 +142,3 @@ export function LoginView({
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scrollContent: { flexGrow: 1, padding: 24, paddingTop: 60 },
-  header: { alignItems: "center", marginBottom: 40 },
-  logoContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  title: { fontSize: 32, fontWeight: "bold", marginBottom: 8 },
-  subtitle: { fontSize: 16 },
-  form: { flex: 1 },
-  biometricButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 24,
-    gap: 12,
-  },
-  biometricText: { fontSize: 16, fontWeight: "600" },
-  forgotPassword: { alignSelf: "flex-end", marginBottom: 24 },
-  forgotPasswordText: { fontSize: 14, fontWeight: "600" },
-  loginButton: { marginBottom: 16 },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 24,
-  },
-  footerText: { fontSize: 14 },
-  footerLink: { fontSize: 14, fontWeight: "600" },
-});

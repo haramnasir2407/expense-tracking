@@ -2,7 +2,8 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { expenseSummaryStyles as styles } from "./styles";
 
 export function ExpenseSummary() {
   const colorScheme = useColorScheme();
@@ -57,46 +58,3 @@ export function ExpenseSummary() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    margin: 16,
-    padding: 20,
-    borderRadius: 16,
-  },
-  mainTotal: {
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  amount: {
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  statItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  statLabel: {
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  statAmount: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  divider: {
-    width: 1,
-    height: 40,
-    marginHorizontal: 16,
-  },
-});

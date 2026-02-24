@@ -2,8 +2,8 @@ import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { Expense, ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-
+import { Image, ScrollView, Text, View } from "react-native";
+import { expenseDetailViewStyles as styles } from "./styles";
 interface ExpenseDetailViewProps {
   expense: Expense;
   formattedAmount: string;
@@ -137,41 +137,3 @@ export function ExpenseDetailView({
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { padding: 16, paddingBottom: 40 },
-  amountCard: {
-    padding: 24,
-    borderRadius: 16,
-    alignItems: "center",
-    marginBottom: 24,
-    borderWidth: 1,
-  },
-  amountLabel: { fontSize: 14, fontWeight: "500", marginBottom: 8 },
-  amountValue: { fontSize: 40, fontWeight: "bold" },
-  section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 18, fontWeight: "600", marginBottom: 12 },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-  },
-  detailLabelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    flex: 1,
-  },
-  detailLabel: { fontSize: 16, fontWeight: "500" },
-  detailValue: { fontSize: 16, textAlign: "right", flex: 1 },
-  notesValue: { marginTop: 8 },
-  receiptImage: {
-    width: "100%",
-    height: 300,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-});

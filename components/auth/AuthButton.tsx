@@ -3,12 +3,12 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
 import {
   ActivityIndicator,
-  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
   ViewStyle,
 } from "react-native";
+import { authButtonStyles as styles } from "./styles";
 
 interface AuthButtonProps extends TouchableOpacityProps {
   title: string;
@@ -75,16 +75,3 @@ export function AuthButton({
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    height: 52,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 8,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

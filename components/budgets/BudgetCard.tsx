@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BudgetStatus } from "@/types/budget";
+import { budgetCardStyles as styles } from "./styles";
 
 interface BudgetCardProps {
   budget: BudgetStatus;
@@ -73,64 +74,3 @@ export function BudgetCard({ budget, onPress, onDelete, isDark = false }: Budget
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 8,
-  },
-  actionBtn: {
-    padding: 4,
-  },
-  category: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  percentage: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  progressBar: {
-    height: 8,
-    borderRadius: 4,
-    overflow: "hidden",
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  amount: {
-    fontSize: 14,
-  },
-  remaining: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-});

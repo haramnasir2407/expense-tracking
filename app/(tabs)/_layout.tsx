@@ -3,7 +3,7 @@ import { Tabs, router } from "expo-router";
 import React from "react";
 import { Alert, TouchableOpacity } from "react-native";
 
-import { HapticTab } from "@/components/haptic-tab";
+import { HapticTab } from "@/components/primitives/haptic-tab";
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";

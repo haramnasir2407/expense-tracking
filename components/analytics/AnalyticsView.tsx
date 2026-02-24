@@ -1,18 +1,11 @@
 import { MonthlyBarChart } from "@/components/analytics/BarChart";
 import { SpendingLineChart } from "@/components/analytics/LineChart";
 import { CategoryPieChart } from "@/components/analytics/PieChart";
+import { DATE_RANGES } from "@/constants/dateRanges";
 import { AnalyticsData, DateRange } from "@/types/analytics";
 import React from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-const DATE_RANGES: { label: string; value: DateRange }[] = [
-  { label: "Week", value: "week" },
-  { label: "Month", value: "month" },
-  { label: "3 Months", value: "3months" },
-  { label: "6 Months", value: "6months" },
-  { label: "Year", value: "year" },
-  { label: "All", value: "all" },
-];
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { analyticsViewStyles as styles } from "./styles";
 
 interface AnalyticsViewProps {
   analytics: AnalyticsData;
@@ -35,7 +28,9 @@ export function AnalyticsView({
   const textColor = isDark ? "#FFFFFF" : "#666";
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -45,7 +40,11 @@ export function AnalyticsView({
         {DATE_RANGES.map((range) => (
           <TouchableOpacity
             key={range.value}
-            style={[styles.rangeButton, { backgroundColor: buttonBg }, selectedRange === range.value && { backgroundColor: colors.tint }]}
+            style={[
+              styles.rangeButton,
+              { backgroundColor: buttonBg },
+              selectedRange === range.value && { backgroundColor: colors.tint },
+            ]}
             onPress={() => onSelectRange(range.value)}
           >
             <Text
@@ -63,23 +62,33 @@ export function AnalyticsView({
 
       <View style={styles.summaryGrid}>
         <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
-          <Text style={[styles.summaryLabel, { color: labelColor }]}>Total Spent</Text>
+          <Text style={[styles.summaryLabel, { color: labelColor }]}>
+            Total Spent
+          </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             ${analytics.totalSpent.toFixed(2)}
           </Text>
         </View>
         <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
-          <Text style={[styles.summaryLabel, { color: labelColor }]}>Avg/Day</Text>
+          <Text style={[styles.summaryLabel, { color: labelColor }]}>
+            Avg/Day
+          </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             ${analytics.averagePerDay.toFixed(2)}
           </Text>
         </View>
         <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
-          <Text style={[styles.summaryLabel, { color: labelColor }]}>Transactions</Text>
-          <Text style={[styles.summaryValue, { color: colors.text }]}>{analytics.transactionCount}</Text>
+          <Text style={[styles.summaryLabel, { color: labelColor }]}>
+            Transactions
+          </Text>
+          <Text style={[styles.summaryValue, { color: colors.text }]}>
+            {analytics.transactionCount}
+          </Text>
         </View>
         <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
-          <Text style={[styles.summaryLabel, { color: labelColor }]}>Avg/Transaction</Text>
+          <Text style={[styles.summaryLabel, { color: labelColor }]}>
+            Avg/Transaction
+          </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             ${analytics.averagePerTransaction.toFixed(2)}
           </Text>
@@ -87,27 +96,37 @@ export function AnalyticsView({
       </View>
 
       <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>Spending Over Time</Text>
+        <Text style={[styles.chartTitle, { color: colors.text }]}>
+          Spending Over Time
+        </Text>
         <SpendingLineChart data={analytics.dailyTotals} isDark={isDark} />
       </View>
       <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>Category Breakdown</Text>
+        <Text style={[styles.chartTitle, { color: colors.text }]}>
+          Category Breakdown
+        </Text>
         <CategoryPieChart data={analytics.byCategory} isDark={isDark} />
       </View>
       <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>Monthly Comparison</Text>
+        <Text style={[styles.chartTitle, { color: colors.text }]}>
+          Monthly Comparison
+        </Text>
         <MonthlyBarChart data={analytics.monthlyTotals} isDark={isDark} />
       </View>
 
       {analytics.monthOverMonthTrend.previous > 0 && (
         <View style={[styles.insightCard, { backgroundColor: cardBg }]}>
-          <Text style={[styles.insightTitle, { color: labelColor }]}>Month-over-Month</Text>
+          <Text style={[styles.insightTitle, { color: labelColor }]}>
+            Month-over-Month
+          </Text>
           <Text
             style={[
               styles.insightValue,
               {
                 color:
-                  analytics.monthOverMonthTrend.trend === "up" ? "#FF6B6B" : colors.tint,
+                  analytics.monthOverMonthTrend.trend === "up"
+                    ? "#FF6B6B"
+                    : colors.tint,
               },
             ]}
           >
@@ -124,48 +143,3 @@ export function AnalyticsView({
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  rangeSelector: { paddingVertical: 12 },
-  rangeSelectorContent: { paddingHorizontal: 16, gap: 8 },
-  rangeButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  rangeButtonText: { fontSize: 14, fontWeight: "600" },
-  rangeButtonTextActive: { color: "white" },
-  summaryGrid: { flexDirection: "row", flexWrap: "wrap", padding: 16, gap: 12 },
-  summaryCard: {
-    flex: 1,
-    minWidth: "45%",
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  summaryLabel: { fontSize: 12, marginBottom: 4 },
-  summaryValue: { fontSize: 20, fontWeight: "700" },
-  chartSection: {
-    padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  chartTitle: { fontSize: 18, fontWeight: "700", marginBottom: 16 },
-  insightCard: {
-    padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  insightTitle: { fontSize: 14, marginBottom: 4 },
-  insightValue: { fontSize: 32, fontWeight: "700", marginBottom: 4 },
-  insightDescription: { fontSize: 14 },
-});

@@ -2,7 +2,7 @@ import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { ExpenseFormData } from "@/types/expense";
 import { Stack } from "expo-router";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import ThemedView from "../primitives/themed-view";
 
 interface AddExpenseViewProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;
@@ -10,7 +10,11 @@ interface AddExpenseViewProps {
   colors: { background: string; text: string };
 }
 
-export function AddExpenseView({ onSubmit, onCancel, colors }: AddExpenseViewProps) {
+export function AddExpenseView({
+  onSubmit,
+  onCancel,
+  colors,
+}: AddExpenseViewProps) {
   return (
     <>
       <Stack.Screen
@@ -21,13 +25,13 @@ export function AddExpenseView({ onSubmit, onCancel, colors }: AddExpenseViewPro
           headerShadowVisible: false,
         }}
       />
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <ExpenseForm onSubmit={onSubmit} onCancel={onCancel} submitLabel="Add Expense" />
-      </View>
+      <ThemedView>
+        <ExpenseForm
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          submitLabel="Add Expense"
+        />
+      </ThemedView>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});

@@ -1,10 +1,10 @@
 import { DailySpending } from "@/types/analytics";
 import { Circle } from "@shopify/react-native-skia";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
-
+import { spendingLineChartStyles as styles } from "./styles";
 interface LineChartProps {
   data: DailySpending[];
   height?: number;
@@ -77,20 +77,3 @@ export function SpendingLineChart({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  tooltip: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    padding: 8,
-    borderRadius: 4,
-  },
-  tooltipText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-});
