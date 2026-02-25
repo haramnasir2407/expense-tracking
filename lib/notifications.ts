@@ -56,6 +56,23 @@ export async function scheduleBudgetAlert(
 }
 
 export async function scheduleDailyReminder(time: string) {
+  // In development, make this easy to test by firing soon instead of waiting for the real time.
+  if (__DEV__) {
+    console.log("Scheduling daily reminder in development mode");
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Daily Expense Reminder (Dev)",
+        body: "Test notification: daily reminder is configured correctly.",
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 5,
+        repeats: false,
+      },
+    });
+    return;
+  }
+
   const [hour, minute] = time.split(":").map(Number);
 
   await Notifications.scheduleNotificationAsync({
