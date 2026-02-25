@@ -1,7 +1,7 @@
 import { AnalyticsView } from "@/components/analytics/AnalyticsView";
 import { Colors } from "@/constants/theme";
-import { useExpenses } from "@/contexts/ExpensesContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useExpenses } from "@/hooks/useExpenses";
 import { DateRange } from "@/types/analytics";
 import React, { useMemo, useState } from "react";
 

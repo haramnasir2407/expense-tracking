@@ -41,9 +41,10 @@ async function pushToRemote(
     for (const item of queue) {
       const MAX_RETRIES = 3;
 
-      // Skip if too many retries
+      // Skip and remove if too many retries
       if (item.retry_count >= MAX_RETRIES) {
         console.warn(`Skipping queue item ${item.id} - too many retries`);
+        sqliteExpenses.removeFromSyncQueue(item.id);
         continue;
       }
 

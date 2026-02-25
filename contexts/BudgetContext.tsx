@@ -1,3 +1,4 @@
+import { useExpenses } from "@/hooks/useExpenses";
 import * as budgetCalculator from "@/lib/budget-calculator";
 import * as budgetService from "@/lib/budgets";
 import * as notificationService from "@/lib/notifications";
@@ -12,7 +13,6 @@ import React, {
   useState,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { useExpenses } from "./ExpensesContext";
 import { useNotifications } from "./NotificationContext";
 
 interface BudgetContextType {
@@ -39,7 +39,9 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [alertedCategories, setAlertedCategories] = useState<Set<string>>(new Set());
+  const [alertedCategories, setAlertedCategories] = useState<Set<string>>(
+    new Set(),
+  );
 
   const loadBudgets = useCallback(async () => {
     if (!user?.id) return;
@@ -92,7 +94,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     if (currentMonthSummary && notificationSettings) {
       checkBudgetAlerts();
     }
-    
+
     // Reset alerted categories when month changes
     if (currentMonthSummary) {
       const currentMonth = currentMonthSummary.month;
@@ -111,7 +113,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
 
   async function checkBudgetAlerts() {
     if (!currentMonthSummary || !notificationSettings) return;
-    
+
     // Only check if budget alerts are enabled
     if (!notificationSettings.budget_alerts_enabled) return;
 
@@ -120,13 +122,16 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
 
     for (const categoryStatus of currentMonthSummary.categories) {
       const alertKey = `${monthKey}-${categoryStatus.category}`;
-      
+
       // Only alert if: 1) above threshold, 2) not already alerted this month
       if (
         categoryStatus.percentageUsed >= threshold &&
         !alertedCategories.has(alertKey)
       ) {
-        await notificationService.scheduleBudgetAlert(categoryStatus, threshold);
+        await notificationService.scheduleBudgetAlert(
+          categoryStatus,
+          threshold,
+        );
         setAlertedCategories((prev) => new Set(prev).add(alertKey));
       }
     }

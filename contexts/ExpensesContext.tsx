@@ -1,17 +1,17 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { calculateAnalytics } from "@/lib/analytics";
 import { initDatabase } from "@/lib/db";
 import * as expenseService from "@/lib/expenses-sqlite";
-import { calculateAnalytics } from "@/lib/analytics";
-import { Expense, ExpenseFormData, GroupedExpenses } from "@/types/expense";
 import { AnalyticsData, DateRange } from "@/types/analytics";
+import { Expense, ExpenseFormData, GroupedExpenses } from "@/types/expense";
 import React, {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useState,
   useMemo,
-  useCallback,
+  useState,
 } from "react";
 
 interface ExpensesContextType {
@@ -45,9 +45,9 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       initDatabase();
-      console.log('Database initialized');
+      console.log("Database initialized");
     } catch (error) {
-      console.error('Failed to initialize database:', error);
+      console.error("Failed to initialize database:", error);
     }
   }, []);
 

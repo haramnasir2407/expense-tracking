@@ -7,16 +7,16 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
-import Toast from "react-native-toast-message";
 import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { BudgetProvider } from "@/contexts/BudgetContext";
-import { ExpensesProvider } from "@/contexts/ExpensesContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -66,8 +66,8 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <ExpensesProvider>
+    <ReactQueryProvider>
+      <AuthProvider>
         <NotificationProvider>
           <BudgetProvider>
             <SyncProvider>
@@ -75,7 +75,7 @@ export default function RootLayout() {
             </SyncProvider>
           </BudgetProvider>
         </NotificationProvider>
-      </ExpensesProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ReactQueryProvider>
   );
 }
