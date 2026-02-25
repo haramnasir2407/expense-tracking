@@ -1,4 +1,3 @@
-import "react-native-get-random-values"; // Must be first for UUID support
 import {
   DarkTheme,
   DefaultTheme,
@@ -8,12 +7,12 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { initDatabase } from "@/lib/db";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 export const unstable_settings = {
@@ -62,14 +61,6 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
-  useEffect(() => {
-    try {
-      initDatabase();
-    } catch (error) {
-      console.error("Failed to initialize database:", error);
-    }
-  }, []);
-
   return (
     <ReactQueryProvider>
       <AuthProvider>

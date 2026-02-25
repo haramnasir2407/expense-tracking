@@ -35,7 +35,7 @@ export function ReactQueryProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Wire React Query focus status to React Native AppState
-  // This lets React Query know when the app is in the foreground so it can refetch on focus 
+  // This lets React Query know when the app is in the foreground so it can refetch on focus
   // and avoid doing work when the app is backgrounded
   useEffect(() => {
     const subscription = AppState.addEventListener(

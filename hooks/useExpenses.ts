@@ -62,7 +62,6 @@ export function useExpenses() {
   const expensesQuery = useQuery({
     queryKey,
     enabled: Boolean(userId),
-    initialData: [] as Expense[],
     queryFn: async () => {
       if (!userId) return [];
       initDatabase();
@@ -73,7 +72,7 @@ export function useExpenses() {
   });
 
   const expenses = useMemo(
-    () => (userId ? expensesQuery.data : []),
+    () => (userId ? expensesQuery.data ?? [] : []),
     [userId, expensesQuery.data],
   );
 

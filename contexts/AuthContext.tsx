@@ -11,7 +11,6 @@ import React, {
   useState,
 } from "react";
 
-// TODO: Add a key for the biometric enabled state (for different accounts)
 const BIOMETRIC_ENABLED_KEY = "biometric_enabled";
 const BIOMETRIC_EMAIL_KEY = "biometric_email";
 
