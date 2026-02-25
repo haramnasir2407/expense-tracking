@@ -136,16 +136,6 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     };
   }, [user?.id, sync]);
 
-  // Initial sync when user logs in
-  useEffect(() => {
-    if (user?.id) {
-      // Small delay to let the UI render first
-      setTimeout(() => {
-        sync();
-      }, 1000);
-    }
-  }, [user?.id]);
-
   // Update unsynced count periodically
   useEffect(() => {
     if (!user?.id) return;
