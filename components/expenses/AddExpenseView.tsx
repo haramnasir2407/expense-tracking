@@ -1,7 +1,9 @@
 import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { ExpenseFormData } from "@/types/expense";
+import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import ThemedView from "../primitives/themed-view";
 
 interface AddExpenseViewProps {
@@ -23,6 +25,14 @@ export function AddExpenseView({
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
           headerShadowVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={onCancel}
+              style={{ padding: 8, marginLeft: 8 }}
+            >
+              <Ionicons name="arrow-back" size={24} color={colors.text} />
+            </TouchableOpacity>
+          ),
         }}
       />
       <ThemedView>

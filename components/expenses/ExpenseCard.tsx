@@ -77,16 +77,6 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
             {formatTime(expense.date)}
           </Text>
         </View>
-
-        {expense.receipt_url && (
-          <View style={styles.receiptBadge}>
-            <Ionicons
-              name="image-outline"
-              size={12}
-              color={colors.text + "99"}
-            />
-          </View>
-        )}
       </View>
     </TouchableOpacity>
   );

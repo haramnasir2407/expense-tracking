@@ -104,27 +104,28 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     if (data) {
       setSettings(data);
 
-      if (data.daily_reminder_enabled && hasPermission) {
-        await scheduleDailyReminder();
-      } else {
+      const touchedDailyEnabled =
+        Object.prototype.hasOwnProperty.call(
+          updates,
+          "daily_reminder_enabled",
+        );
+      const touchedDailyTime = Object.prototype.hasOwnProperty.call(
+        updates,
+        "daily_reminder_time",
+      );
+
+      // Only reschedule/cancel when the daily reminder fields actually changed
+      if ((touchedDailyEnabled || touchedDailyTime) && data.daily_reminder_enabled && hasPermission) {
+        await notificationService.cancelAllNotifications();
+        await notificationService.scheduleDailyReminder(
+          data.daily_reminder_time,
+        );
+      } else if (touchedDailyEnabled && !data.daily_reminder_enabled) {
         await notificationService.cancelAllNotifications();
       }
     }
 
     return { error: null };
-  }
-
-  async function scheduleDailyReminder() {
-    if (!settings?.daily_reminder_enabled || !hasPermission) return;
-
-    await notificationService.cancelAllNotifications();
-    await notificationService.scheduleDailyReminder(
-      settings.daily_reminder_time,
-    );
-  }
-
-  async function cancelAllNotifications() {
-    await notificationService.cancelAllNotifications();
   }
 
   const value: NotificationContextType = {
@@ -133,8 +134,16 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     hasPermission,
     requestPermission,
     updateSettings,
-    scheduleDailyReminder,
-    cancelAllNotifications,
+    scheduleDailyReminder: async () => {
+      if (!settings?.daily_reminder_enabled || !hasPermission) return;
+      await notificationService.cancelAllNotifications();
+      await notificationService.scheduleDailyReminder(
+        settings.daily_reminder_time,
+      );
+    },
+    cancelAllNotifications: async () => {
+      await notificationService.cancelAllNotifications();
+    },
   };
 
   return (

@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useSync } from "@/contexts/SyncContext";
 import { calculateAnalytics } from "@/lib/analytics";
 import { initDatabase } from "@/lib/db";
 import { groupExpensesByDate, totalForPeriod } from "@/lib/expense-utils";
@@ -15,6 +16,7 @@ export function useExpenses() {
   const { user } = useAuth();
   const userId = user?.id;
   const queryClient = useQueryClient();
+  const { isOnline, sync } = useSync();
 
   const queryKey = expensesQueryKey(userId);
 
@@ -210,6 +212,10 @@ export function useExpenses() {
     async (data: ExpenseFormData) => {
       try {
         await addMutation.mutateAsync(data);
+        if (isOnline && userId) {
+          // Fire-and-forget sync to push changes to Supabase immediately
+          sync();
+        }
         return { error: null as string | null };
       } catch (err) {
         return {
@@ -217,13 +223,16 @@ export function useExpenses() {
         };
       }
     },
-    [addMutation],
+    [addMutation, isOnline, sync, userId],
   );
 
   const updateExpense = useCallback(
     async (id: string, updates: Partial<ExpenseFormData>) => {
       try {
         await updateMutation.mutateAsync({ id, updates });
+        if (isOnline && userId) {
+          sync();
+        }
         return { error: null as string | null };
       } catch (err) {
         return {
@@ -232,13 +241,16 @@ export function useExpenses() {
         };
       }
     },
-    [updateMutation],
+    [updateMutation, isOnline, sync, userId],
   );
 
   const deleteExpense = useCallback(
     async (id: string) => {
       try {
         await deleteMutation.mutateAsync(id);
+        if (isOnline && userId) {
+          sync();
+        }
         return { error: null as string | null };
       } catch (err) {
         return {
@@ -247,7 +259,7 @@ export function useExpenses() {
         };
       }
     },
-    [deleteMutation],
+    [deleteMutation, isOnline, sync, userId],
   );
 
   return {

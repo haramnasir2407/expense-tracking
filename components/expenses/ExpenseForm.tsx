@@ -3,6 +3,10 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { useHeaderHeight } from "@react-navigation/elements";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -32,6 +36,7 @@ export function ExpenseForm({
 }: ExpenseFormProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
+  const headerHeight = useHeaderHeight();
 
   const [amount, setAmount] = useState(initialData?.amount || "");
   const [category, setCategory] = useState(initialData?.category || "");
@@ -40,6 +45,7 @@ export function ExpenseForm({
   // Use empty string when no receipt so updates can clear the field
   const [receiptUrl, setReceiptUrl] = useState(initialData?.receipt_url || "");
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [amountError, setAmountError] = useState("");
@@ -94,6 +100,7 @@ export function ExpenseForm({
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? headerHeight : 0}
     >
       <ScrollView
         style={styles.scrollView}
@@ -167,18 +174,26 @@ export function ExpenseForm({
           {/* Date Picker */}
           <View style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>Date</Text>
-            <View
-              style={[styles.dateDisplay, { borderColor: colors.text + "30" }]}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => setShowDatePicker(true)}
             >
-              <Ionicons
-                name="calendar-outline"
-                size={20}
-                color={colors.text + "99"}
-              />
-              <Text style={[styles.dateText, { color: colors.text }]}>
-                {formatDate(date)}
-              </Text>
-            </View>
+              <View
+                style={[
+                  styles.dateDisplay,
+                  { borderColor: colors.text + "30" },
+                ]}
+              >
+                <Ionicons
+                  name="calendar-outline"
+                  size={20}
+                  color={colors.text + "99"}
+                />
+                <Text style={[styles.dateText, { color: colors.text }]}>
+                  {formatDate(date)}
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
           {/* Notes Input */}
@@ -236,6 +251,23 @@ export function ExpenseForm({
           </View>
         </View>
       </ScrollView>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display={Platform.OS === "ios" ? "inline" : "default"}
+          onChange={(
+            _event: DateTimePickerEvent,
+            selectedDate?: Date | undefined,
+          ) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              setDate(selectedDate);
+            }
+          }}
+        />
+      )}
 
       {/* Category Picker Modal */}
       <CategoryPicker
