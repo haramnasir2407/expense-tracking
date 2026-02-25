@@ -1,4 +1,4 @@
-import { MonthlySpending } from "@/types/analytics";
+import { MonthlySpending, DateRange } from "@/types/analytics";
 import React from "react";
 import { Text, View } from "react-native";
 import { Bar, CartesianChart } from "victory-native";
@@ -9,27 +9,52 @@ interface BarChartProps {
   data: MonthlySpending[];
   height?: number;
   isDark?: boolean;
+  xLabel?: string;
+  yLabel?: string;
+  dateRange?: DateRange;
 }
 
 export function MonthlyBarChart({
   data,
   height = 200,
   isDark = false,
+  xLabel = "Month",
+  yLabel = "Amount ($)",
+  dateRange,
 }: BarChartProps) {
   const labelColor = isDark ? "#8E8E93" : "#666";
 
-  if (data.length === 0) {
-    return <EmptyChartState message="No monthly data to display" />;
+  // Require at least 2 distinct months for comparison
+  if (data.length <= 1) {
+    return <EmptyChartState message="Not enough monthly data to display" />;
+  }
+
+  // Compute year range when using wider ranges
+  let yearRangeLabel: string | null = null;
+  if (dateRange === "year" || dateRange === "all") {
+    const years = data
+      .map((d) => parseInt(d.month.split("-")[0], 10))
+      .filter((y) => !Number.isNaN(y));
+    if (years.length > 0) {
+      const minYear = Math.min(...years);
+      const maxYear = Math.max(...years);
+      yearRangeLabel =
+        minYear === maxYear ? `${minYear}` : `${minYear}-${maxYear}`;
+    }
   }
 
   const chartData = data.map((d, index) => ({
     x: index,
     y: d.amount,
-    label: formatMonthLabel(d.month),
+    label: formatMonthLabel(d.month, dateRange),
   }));
 
   return (
     <View style={[styles.container, { height: height + 30 }]}>
+      <View style={styles.yAxisLabelContainer}>
+        <Text style={styles.yAxisLabelText}>{yLabel}</Text>
+      </View>
+
       <View style={{ height }}>
         <CartesianChart
           data={chartData}
@@ -57,12 +82,25 @@ export function MonthlyBarChart({
           </Text>
         ))}
       </View>
+
+      {yearRangeLabel && (
+        <View style={styles.yearRangeContainer}>
+          <Text style={[styles.yearRangeLabel, { color: labelColor }]}>
+            ({yearRangeLabel})
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
 
-function formatMonthLabel(month: string): string {
+function formatMonthLabel(month: string, range?: DateRange): string {
   const [year, monthNum] = month.split("-");
-  const date = new Date(parseInt(year), parseInt(monthNum) - 1);
-  return date.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+  const date = new Date(parseInt(year, 10), parseInt(monthNum, 10) - 1);
+
+  const showYear = range !== "year" && range !== "all";
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    ...(showYear ? { year: "2-digit" } : {}),
+  });
 }

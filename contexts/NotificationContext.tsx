@@ -1,5 +1,5 @@
-import * as notificationSettingsService from "@/lib/notification-settings";
-import * as notificationService from "@/lib/notifications";
+import * as notificationSettingsService from "@/service/notification-settings";
+import * as notificationService from "@/service/notifications";
 import { NotificationSettings } from "@/types/notification";
 import React, {
   ReactNode,

@@ -2,7 +2,7 @@ import { ForgotPasswordView } from "@/components/auth/ForgotPasswordView";
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { formatAuthError, isValidEmail } from "@/lib/auth-utils";
+import { formatAuthError, isValidEmail } from "@/utils/auth";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import Toast from "react-native-toast-message";

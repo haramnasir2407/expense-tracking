@@ -6,5 +6,5 @@ export const DATE_RANGES: { label: string; value: DateRange }[] = [
   { label: "3 Months", value: "3months" },
   { label: "6 Months", value: "6months" },
   { label: "Year", value: "year" },
-  { label: "All", value: "all" },
+  // { label: "All", value: "all" },
 ];

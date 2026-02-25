@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { calculateAnalytics } from "@/lib/analytics";
-import { initDatabase } from "@/lib/db";
-import * as expenseService from "@/lib/expenses-sqlite";
+import { calculateAnalytics } from "@/service/analytics";
+import { initDatabase } from "@/service/db";
+import * as expenseService from "@/service/expenses-sqlite";
 import { AnalyticsData, DateRange } from "@/types/analytics";
 import { Expense, ExpenseFormData, GroupedExpenses } from "@/types/expense";
 import React, {

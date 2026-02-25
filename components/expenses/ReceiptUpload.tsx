@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { deleteReceipt, uploadReceipt } from "@/lib/storage-supabase";
+import { deleteReceipt, uploadReceipt } from "@/service/storage-supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system/legacy";

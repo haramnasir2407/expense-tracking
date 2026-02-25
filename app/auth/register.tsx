@@ -8,7 +8,7 @@ import {
   isStrongPassword,
   isValidEmail,
   passwordsMatch,
-} from "@/lib/auth-utils";
+} from "@/utils/auth";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import Toast from "react-native-toast-message";

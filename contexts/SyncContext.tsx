@@ -1,22 +1,22 @@
+import {
+  SyncResult,
+  SyncStatus,
+  forcePullFromRemote,
+  getSyncStats,
+  isOnline,
+  setupAutoSync,
+  syncExpenses,
+} from "@/service/sync-service";
 import React, {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
-  useCallback,
-} from 'react';
-import { useAuth } from './AuthContext';
-import {
-  syncExpenses,
-  forcePullFromRemote,
-  setupAutoSync,
-  getSyncStats,
-  isOnline,
-  SyncResult,
-  SyncStatus,
-} from '@/lib/sync-service';
-import { AppState, AppStateStatus } from 'react-native';
+} from "react";
+import { AppState, AppStateStatus } from "react-native";
+import { useAuth } from "./AuthContext";
 
 interface SyncContextType {
   syncStatus: SyncStatus;
@@ -32,7 +32,7 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 
 export function SyncProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [lastSyncResult, setLastSyncResult] = useState<SyncResult | null>(null);
   const [unsyncedCount, setUnsyncedCount] = useState(0);
@@ -63,22 +63,22 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const sync = useCallback(async () => {
     if (!user?.id) return;
 
-    setSyncStatus('syncing');
+    setSyncStatus("syncing");
     try {
       const result = await syncExpenses(user.id);
       setLastSyncResult(result);
       setLastSyncTime(new Date());
-      setSyncStatus(result.success ? 'success' : 'error');
-      
+      setSyncStatus(result.success ? "success" : "error");
+
       // Update unsynced count after sync
       updateUnsyncedCount();
 
       // Reset status after 3 seconds
-      setTimeout(() => setSyncStatus('idle'), 3000);
+      setTimeout(() => setSyncStatus("idle"), 3000);
     } catch (error) {
-      console.error('Sync error:', error);
-      setSyncStatus('error');
-      setTimeout(() => setSyncStatus('idle'), 3000);
+      console.error("Sync error:", error);
+      setSyncStatus("error");
+      setTimeout(() => setSyncStatus("idle"), 3000);
     }
   }, [user?.id, updateUnsyncedCount]);
 
@@ -86,18 +86,18 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const forcePull = useCallback(async () => {
     if (!user?.id) return;
 
-    setSyncStatus('syncing');
+    setSyncStatus("syncing");
     try {
       const result = await forcePullFromRemote(user.id);
       setLastSyncResult(result);
       setLastSyncTime(new Date());
-      setSyncStatus(result.success ? 'success' : 'error');
-      
-      setTimeout(() => setSyncStatus('idle'), 3000);
+      setSyncStatus(result.success ? "success" : "error");
+
+      setTimeout(() => setSyncStatus("idle"), 3000);
     } catch (error) {
-      console.error('Force pull error:', error);
-      setSyncStatus('error');
-      setTimeout(() => setSyncStatus('idle'), 3000);
+      console.error("Force pull error:", error);
+      setSyncStatus("error");
+      setTimeout(() => setSyncStatus("idle"), 3000);
     }
   }, [user?.id]);
 
@@ -119,7 +119,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     if (!user?.id) return;
 
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'active') {
+      if (nextAppState === "active") {
         // App came to foreground, trigger sync if online
         isOnline().then((status) => {
           if (status) {
@@ -129,7 +129,10 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
 
     return () => {
       subscription.remove();
@@ -172,7 +175,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
 export function useSync() {
   const context = useContext(SyncContext);
   if (context === undefined) {
-    throw new Error('useSync must be used within a SyncProvider');
+    throw new Error("useSync must be used within a SyncProvider");
   }
   return context;
 }

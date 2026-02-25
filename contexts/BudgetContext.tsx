@@ -1,7 +1,7 @@
 import { useExpenses } from "@/hooks/useExpenses";
-import * as budgetCalculator from "@/lib/budget-calculator";
-import * as budgetService from "@/lib/budgets";
-import * as notificationService from "@/lib/notifications";
+import * as budgetCalculator from "@/service/budget-calculator";
+import * as budgetService from "@/service/budgets";
+import * as notificationService from "@/service/notifications";
 import { Budget, BudgetFormData, MonthlyBudgetSummary } from "@/types/budget";
 import React, {
   ReactNode,

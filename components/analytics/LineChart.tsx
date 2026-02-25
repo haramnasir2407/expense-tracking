@@ -9,6 +9,9 @@ interface LineChartProps {
   data: DailySpending[];
   height?: number;
   isDark?: boolean;
+  xLabel?: string;
+  yLabel?: string;
+  transactionCount?: number;
 }
 
 // useChartPressState is a Victory Native hook that tracks touch interactions
@@ -16,6 +19,9 @@ export function SpendingLineChart({
   data,
   height = 200,
   isDark = false,
+  xLabel = "Date",
+  yLabel = "Amount ($)",
+  transactionCount,
 }: LineChartProps) {
   const { state, isActive } = useChartPressState({ x: 0, y: { y: 0 } });
 
@@ -24,8 +30,11 @@ export function SpendingLineChart({
     y: d.amount,
   }));
 
-  if (data.length === 0) {
-    return <EmptyChartState message="No spending data to display" />;
+  const effectiveCount = transactionCount ?? data.length;
+
+  // Require at least 2 transactions for a meaningful trend
+  if (effectiveCount <= 1) {
+    return <EmptyChartState message="Not enough spending data to display" />;
   }
 
   return (
@@ -74,6 +83,14 @@ export function SpendingLineChart({
           </Text>
         </View>
       )}
+
+      <View style={styles.yAxisLabelContainer}>
+        <Text style={styles.yAxisLabelText}>{yLabel}</Text>
+      </View>
+
+      <View style={styles.axisLabelsContainer}>
+        <Text style={styles.axisLabel}>{xLabel}</Text>
+      </View>
     </View>
   );
 }
