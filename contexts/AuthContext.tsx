@@ -1,6 +1,6 @@
-import { formatAuthError } from "@/lib/auth-utils";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/service/supabase";
 import { AuthContextType, AuthError, Session, User } from "@/types/auth";
+import { formatAuthError } from "@/utils/auth";
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
 import React, {

@@ -2,12 +2,12 @@ import { ResetPasswordView } from "@/components/auth/ResetPasswordView";
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { supabase } from "@/service/supabase";
 import {
   getPasswordStrength,
   isStrongPassword,
   passwordsMatch,
-} from "@/lib/auth-utils";
-import { supabase } from "@/lib/supabase";
+} from "@/utils/auth";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";

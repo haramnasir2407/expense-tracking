@@ -9,78 +9,31 @@ import {
 } from "@/types/analytics";
 import { Expense } from "@/types/expense";
 
-export function calculateAnalytics(
-  expenses: Expense[],
-  dateRange?: DateRange,
-): AnalyticsData {
-  const filteredExpenses = filterByDateRange(expenses, dateRange);
-
-  if (filteredExpenses.length === 0) {
-    return getEmptyAnalytics();
-  }
-
+export function getEmptyAnalytics(): AnalyticsData {
   return {
-    totalSpent: calculateTotalSpent(filteredExpenses),
-    averagePerDay: calculateAveragePerDay(filteredExpenses, dateRange),
-    averagePerTransaction: calculateAveragePerTransaction(filteredExpenses),
-    transactionCount: filteredExpenses.length,
-    byCategory: aggregateByCategory(filteredExpenses),
-    dailyTotals: aggregateByDay(filteredExpenses),
-    monthlyTotals: aggregateByMonth(filteredExpenses),
-    monthOverMonthTrend: calculateMonthOverMonthTrend(expenses),
-    topCategory: getTopCategory(filteredExpenses),
+    totalSpent: 0,
+    averagePerDay: 0,
+    averagePerTransaction: 0,
+    transactionCount: 0,
+    byCategory: [],
+    dailyTotals: [],
+    monthlyTotals: [],
+    monthOverMonthTrend: {
+      current: 0,
+      previous: 0,
+      change: 0,
+      trend: "stable",
+    },
+    topCategory: null,
   };
 }
 
-function filterByDateRange(expenses: Expense[], range?: DateRange): Expense[] {
-  if (!range || range === "all") return expenses;
-
-  const now = new Date();
-  const cutoffDate = new Date();
-
-  switch (range) {
-    case "week":
-      cutoffDate.setDate(now.getDate() - 7);
-      break;
-    case "month":
-      cutoffDate.setMonth(now.getMonth() - 1);
-      break;
-    case "3months":
-      cutoffDate.setMonth(now.getMonth() - 3);
-      break;
-    case "6months":
-      cutoffDate.setMonth(now.getMonth() - 6);
-      break;
-    case "year":
-      cutoffDate.setFullYear(now.getFullYear() - 1);
-      break;
-  }
-
-  return expenses.filter((e) => new Date(e.date) >= cutoffDate);
-}
-
-function calculateTotalSpent(expenses: Expense[]): number {
-  return expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-}
-
-function calculateAveragePerDay(
-  expenses: Expense[],
-  range?: DateRange,
-): number {
-  if (expenses.length === 0) return 0;
-
-  const total = calculateTotalSpent(expenses);
-  const days = getDaysInRange(range);
-
-  return total / days;
-}
-
-function calculateAveragePerTransaction(expenses: Expense[]): number {
+export function calculateAveragePerTransaction(expenses: Expense[]): number {
   if (expenses.length === 0) return 0;
   return calculateTotalSpent(expenses) / expenses.length;
 }
 
-function aggregateByCategory(expenses: Expense[]): CategorySpending[] {
+export function aggregateByCategory(expenses: Expense[]): CategorySpending[] {
   const categoryMap = new Map<string, { amount: number; count: number }>();
   const total = calculateTotalSpent(expenses);
 
@@ -106,7 +59,7 @@ function aggregateByCategory(expenses: Expense[]): CategorySpending[] {
     .sort((a, b) => b.amount - a.amount);
 }
 
-function aggregateByDay(expenses: Expense[]): DailySpending[] {
+export function aggregateByDay(expenses: Expense[]): DailySpending[] {
   const dayMap = new Map<string, number>();
 
   expenses.forEach((expense) => {
@@ -120,7 +73,7 @@ function aggregateByDay(expenses: Expense[]): DailySpending[] {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-function aggregateByMonth(expenses: Expense[]): MonthlySpending[] {
+export function aggregateByMonth(expenses: Expense[]): MonthlySpending[] {
   const monthMap = new Map<string, { amount: number; count: number }>();
 
   expenses.forEach((expense) => {
@@ -142,7 +95,7 @@ function aggregateByMonth(expenses: Expense[]): MonthlySpending[] {
     .sort((a, b) => a.month.localeCompare(b.month));
 }
 
-function calculateMonthOverMonthTrend(expenses: Expense[]): SpendingTrend {
+export function calculateMonthOverMonthTrend(expenses: Expense[]): SpendingTrend {
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -171,12 +124,12 @@ function calculateMonthOverMonthTrend(expenses: Expense[]): SpendingTrend {
   };
 }
 
-function getTopCategory(expenses: Expense[]): CategorySpending | null {
+export function getTopCategory(expenses: Expense[]): CategorySpending | null {
   const byCategory = aggregateByCategory(expenses);
   return byCategory.length > 0 ? byCategory[0] : null;
 }
 
-function getDaysInRange(range?: DateRange): number {
+export function getDaysInRange(range?: DateRange): number {
   switch (range) {
     case "week":
       return 7;
@@ -193,21 +146,45 @@ function getDaysInRange(range?: DateRange): number {
   }
 }
 
-function getEmptyAnalytics(): AnalyticsData {
-  return {
-    totalSpent: 0,
-    averagePerDay: 0,
-    averagePerTransaction: 0,
-    transactionCount: 0,
-    byCategory: [],
-    dailyTotals: [],
-    monthlyTotals: [],
-    monthOverMonthTrend: {
-      current: 0,
-      previous: 0,
-      change: 0,
-      trend: "stable",
-    },
-    topCategory: null,
-  };
+export function filterByDateRange(expenses: Expense[], range?: DateRange): Expense[] {
+  if (!range || range === "all") return expenses;
+
+  const now = new Date();
+  const cutoffDate = new Date();
+
+  switch (range) {
+    case "week":
+      cutoffDate.setDate(now.getDate() - 7);
+      break;
+    case "month":
+      cutoffDate.setMonth(now.getMonth() - 1);
+      break;
+    case "3months":
+      cutoffDate.setMonth(now.getMonth() - 3);
+      break;
+    case "6months":
+      cutoffDate.setMonth(now.getMonth() - 6);
+      break;
+    case "year":
+      cutoffDate.setFullYear(now.getFullYear() - 1);
+      break;
+  }
+
+  return expenses.filter((e) => new Date(e.date) >= cutoffDate);
+}
+
+export function calculateTotalSpent(expenses: Expense[]): number {
+  return expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+}
+
+export function calculateAveragePerDay(
+  expenses: Expense[],
+  range?: DateRange,
+): number {
+  if (expenses.length === 0) return 0;
+
+  const total = calculateTotalSpent(expenses);
+  const days = getDaysInRange(range);
+
+  return total / days;
 }

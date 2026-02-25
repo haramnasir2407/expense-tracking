@@ -3,8 +3,8 @@ import ThemedView from "@/components/primitives/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
-import { formatAmount, formatDate } from "@/lib/expense-utils";
 import { Expense, ExpenseFormData } from "@/types/expense";
+import { formatAmount, formatDate } from "@/utils/expense";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Stack,

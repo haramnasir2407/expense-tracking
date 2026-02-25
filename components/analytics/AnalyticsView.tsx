@@ -11,6 +11,9 @@ interface AnalyticsViewProps {
   analytics: AnalyticsData;
   selectedRange: DateRange;
   onSelectRange: (range: DateRange) => void;
+  selectedCategory: string;
+  categories: string[];
+  onSelectCategory: (category: string) => void;
   isDark: boolean;
   colors: { background: string; text: string; tint: string };
 }
@@ -19,6 +22,9 @@ export function AnalyticsView({
   analytics,
   selectedRange,
   onSelectRange,
+  selectedCategory,
+  categories,
+  onSelectCategory,
   isDark,
   colors,
 }: AnalyticsViewProps) {
@@ -58,6 +64,41 @@ export function AnalyticsView({
             </Text>
           </TouchableOpacity>
         ))}
+      </ScrollView>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={[styles.rangeSelector, { backgroundColor: cardBg }]}
+        contentContainerStyle={styles.rangeSelectorContent}
+      >
+        {categories.map((category) => {
+          const isAll = category === "all";
+          const isActive = selectedCategory === category;
+          const label = isAll ? "All" : category;
+
+          return (
+            <TouchableOpacity
+              key={category}
+              style={[
+                styles.rangeButton,
+                { backgroundColor: buttonBg },
+                isActive && { backgroundColor: colors.tint },
+              ]}
+              onPress={() => onSelectCategory(category)}
+            >
+              <Text
+                style={[
+                  styles.rangeButtonText,
+                  { color: textColor },
+                  isActive && styles.rangeButtonTextActive,
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
 
       <View style={styles.summaryGrid}>
@@ -111,7 +152,11 @@ export function AnalyticsView({
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Monthly Comparison
         </Text>
-        <MonthlyBarChart data={analytics.monthlyTotals} isDark={isDark} />
+        <MonthlyBarChart
+          data={analytics.monthlyTotals}
+          isDark={isDark}
+          dateRange={selectedRange}
+        />
       </View>
 
       {analytics.monthOverMonthTrend.previous > 0 && (

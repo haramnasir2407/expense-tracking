@@ -51,13 +51,39 @@ export const monthlyBarChartStyles = StyleSheet.create({
   },
   labelsContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 20,
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
     marginTop: 8,
   },
   label: {
     fontSize: 11,
     textAlign: "center",
+  },
+  yearRangeContainer: {
+    marginTop: 6,
+    alignItems: "center",
+  },
+  yearRangeLabel: {
+    fontSize: 11,
+  },
+  axisLabelsContainer: {
+    alignItems: "center",
+    marginTop: 6,
+  },
+  axisLabel: {
+    fontSize: 11,
+    color: "#999",
+  },
+  yAxisLabelContainer: {
+    position: "absolute",
+    left: "-12%",
+    top: "50%",
+    transform: [{ translateY: -40 }, { rotate: "-90deg" }],
+    paddingHorizontal: 4,
+  },
+  yAxisLabelText: {
+    fontSize: 11,
+    color: "#999",
   },
 });
 
@@ -91,6 +117,26 @@ export const spendingLineChartStyles = StyleSheet.create({
   tooltipText: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  axisLabelsContainer: {
+    alignItems: "center",
+    paddingHorizontal: 4,
+    marginTop: 4,
+  },
+  axisLabel: {
+    fontSize: 11,
+    color: "#999",
+  },
+  yAxisLabelContainer: {
+    position: "absolute",
+    left: "-12%",
+    top: "50%",
+    transform: [{ translateY: -40 }, { rotate: "-90deg" }],
+    paddingHorizontal: 4,
+  },
+  yAxisLabelText: {
+    fontSize: 11,
+    color: "#999",
   },
 });
 
