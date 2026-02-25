@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -16,6 +15,7 @@ import {
 } from "react-native";
 import { CategoryPicker } from "./CategoryPicker";
 import { ReceiptUpload } from "./ReceiptUpload";
+import { expenseFormStyles as styles } from "./styles";
 
 interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
@@ -37,7 +37,8 @@ export function ExpenseForm({
   const [category, setCategory] = useState(initialData?.category || "");
   const [date, setDate] = useState(initialData?.date || new Date());
   const [notes, setNotes] = useState(initialData?.notes || "");
-  const [receiptUrl, setReceiptUrl] = useState(initialData?.receipt_url);
+  // Use empty string when no receipt so updates can clear the field
+  const [receiptUrl, setReceiptUrl] = useState(initialData?.receipt_url || "");
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -203,16 +204,14 @@ export function ExpenseForm({
             />
           </View>
 
-          {/* Receipt Upload - Temporarily disabled for Expo Go */}
-          {/* Uncomment when using development build or remove for production */}
           <View style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>
               Receipt (Optional)
             </Text>
             <ReceiptUpload
-              receiptUrl={receiptUrl}
+              receiptUrl={receiptUrl || undefined}
               onUpload={setReceiptUrl}
-              onRemove={() => setReceiptUrl(undefined)}
+              onRemove={() => setReceiptUrl("")}
             />
           </View>
         </View>
@@ -251,103 +250,3 @@ export function ExpenseForm({
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 0,
-  },
-  field: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  currencySymbol: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  pickerButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  pickerButtonText: {
-    fontSize: 16,
-  },
-  dateDisplay: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 56,
-    gap: 12,
-  },
-  dateText: {
-    fontSize: 16,
-  },
-  textArea: {
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    minHeight: 100,
-  },
-  errorText: {
-    fontSize: 12,
-    color: "#FF4444",
-    marginTop: 4,
-  },
-  footer: {
-    flexDirection: "row",
-    padding: 16,
-    borderTopWidth: 1,
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    height: 52,
-    borderWidth: 1,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 8,
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  submitButtonContainer: {
-    flex: 1,
-  },
-});

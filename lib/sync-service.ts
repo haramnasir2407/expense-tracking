@@ -41,9 +41,10 @@ async function pushToRemote(
     for (const item of queue) {
       const MAX_RETRIES = 3;
 
-      // Skip if too many retries
+      // Skip and remove if too many retries
       if (item.retry_count >= MAX_RETRIES) {
         console.warn(`Skipping queue item ${item.id} - too many retries`);
+        sqliteExpenses.removeFromSyncQueue(item.id);
         continue;
       }
 
@@ -215,8 +216,9 @@ async function pushToRemote(
       }
     }
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : "Unknown error";
+    const errorMsg = getErrorMessage(error);
     console.error("Error pushing to remote:", errorMsg);
+    console.error("Push error details:", error);
     errors.push(`Push failed: ${errorMsg}`);
   }
 
@@ -256,8 +258,7 @@ async function pullFromRemote(
         await sqliteExpenses.upsertExpenseFromRemote(remoteExpense as Expense);
         successCount++;
       } catch (error) {
-        const errorMsg =
-          error instanceof Error ? error.message : "Unknown error";
+        const errorMsg = getErrorMessage(error);
         console.error(`Error upserting expense ${remoteExpense.id}:`, errorMsg);
         errors.push(`Upsert ${remoteExpense.id}: ${errorMsg}`);
       }
@@ -266,12 +267,26 @@ async function pullFromRemote(
     // TODO: Handle deletions - detect expenses that exist locally but not remotely
     // This requires storing deletion timestamps or using a tombstone approach
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : "Unknown error";
+    const errorMsg = getErrorMessage(error);
     console.error("Error pulling from remote:", errorMsg);
+    console.error("Pull error details:", error);
     errors.push(`Pull failed: ${errorMsg}`);
   }
 
   return { count: successCount, errors };
+}
+
+/**
+ * Extract a readable message from unknown error (Supabase errors are not always Error instances)
+ */
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object" && "message" in error && typeof (error as { message: unknown }).message === "string") {
+    return (error as { message: string }).message;
+  }
+  if (error != null) return String(error);
+  return "Unknown error";
 }
 
 /**

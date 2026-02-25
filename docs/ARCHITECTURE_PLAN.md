@@ -5,10 +5,10 @@
 Supabase provides everything you need in one place:
 
 - **Authentication** (email/password, social login, password reset, email verification)
-- **Database** (PostgreSQL for storing expenses, categories, budgets)
+- **Database** (PostgreSQL for storing expenses, categories, budgets, notification settilngs)
 - **Real-time sync** (automatic updates across devices)
 - **Row-level security** (ensures users only see their own expense data)
-- **Storage** (for receipt images if you add that later)
+- **Storage** (for receipt images)
 - **Built-in API** (auto-generated REST and GraphQL APIs)
 
 ### 2. Perfect for Personal Finance Apps
@@ -31,7 +31,7 @@ Supabase provides everything you need in one place:
 - If you grow: $25/month for unlimited projects (vs Firebase $25+/month per project)
 - **Open source**: Can self-host if you want full control later
 
-## Alternative Options (and why I didn't recommend them)
+## Alternative Options
 
 ### Firebase Authentication
 
@@ -103,6 +103,8 @@ See analytics
 No network call required
 Background sync waits for connectivity
 
+
+### Summary
 Authentication is implemented using Supabase Auth with email/password credentials. Authenticated sessions are persisted securely using Expo SecureStore. Biometric authentication (Face ID / Fingerprint) is used as an app-level unlock mechanism on cold start, not as a replacement for authentication. This approach ensures strong security, offline usability, and a clean separation of concerns.
 
 ## Expo Go vs Development Build
@@ -155,17 +157,57 @@ ON expenses(user_id, date DESC);
 - Makes your app much **faster** when loading expenses
 - Especially important as users accumulate hundreds or thousands of expenses
 
+## Screen architecture (Container / Presentational)
+
+Screens use a **container/presentational** split:
+
+- **Containers** (in `app/`): Thin screen files that use hooks (`useAuth`, `useExpenses`, `useBudgets`, `useColorScheme`, etc.), local state, and event handlers. They pass all data and callbacks as props to a single View component. No layout/JSX beyond that.
+- **Views** (in `components/<domain>/`): Presentational components that receive everything via props and only render UI (and existing subcomponents like `ExpenseForm`, `AuthInput`, `BudgetCard`). Examples: `HomeView`, `AnalyticsView`, `BudgetsView`, `ProfileView`, `LoginView`, `RegisterView`, `AddExpenseView`, `ExpenseDetailView`, and auth views for forgot-password, reset-password, verify-email.
+
+This keeps logic and navigation in one place and makes views easy to test and reuse.
+
 ## UI Performance
 
 ### FlatList vs FlashList
 
-_TODO: Document decision and performance considerations_
+Flatlist is suitable for small scale apps, while flashlist is good for dynamic apps and animations.
 
 ## Hybrid approach
 
 An offline-first architecture with local SQLite and remote Supabase sync 
 
 - Local-first approach: SQLite as the primary data source
-- ync layer: Push changes to Supabase when online
+- Sync layer: Push changes to Supabase when online
 - Conflict resolution: Handle cases where data changes on both sides
 - Sync status tracking: Know which records need syncing
+
+
+## Why PolarChart + Pie.Chart?
+
+Victory Native uses a Container + Renderer pattern:
+
+┌─────────────────────────────────┐
+│  PolarChart (Container)          │  ← Handles data & coordinates
+│  ┌──────────────────────────┐   │
+│  │  Pie.Chart (Renderer)    │   │  ← Draws the actual chart
+│  └──────────────────────────┘   │
+└─────────────────────────────────┘
+
+<CartesianChart> for Line/Bar charts (X/Y coordinates)
+
+
+Polar Coordinates (for Pie charts)
+
+- Measures angles (degrees)
+- Perfect for circular charts
+
+
+Cartesian Coordinates (for Line/Bar charts)
+
+- Measures X and Y positions
+- Perfect for grid-based charts
+
+
+<CoordinateSystem>
+  <Renderer />
+</CoordinateSystem>

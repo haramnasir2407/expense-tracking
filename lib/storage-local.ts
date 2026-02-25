@@ -1,7 +1,7 @@
-import { Paths, Directory, File } from 'expo-file-system';
+import { Directory, File, Paths } from "expo-file-system";
 
 // Create receipts directory in the app's document directory
-const receiptsDir = new Directory(Paths.document, 'receipts');
+const receiptsDir = new Directory(Paths.document, "receipts");
 
 /**
  * Initialize receipts directory
@@ -20,14 +20,14 @@ async function ensureReceiptsDirectory() {
  */
 export async function uploadReceipt(
   fileUri: string,
-  userId: string
+  userId: string,
 ): Promise<{ url: string | null; error: Error | null }> {
   try {
     await ensureReceiptsDirectory();
 
     // Generate unique filename
     const fileName = `${userId}_${Date.now()}.jpg`;
-    const destinationFile = receiptsDir.createFile(fileName, 'image/jpeg');
+    const destinationFile = receiptsDir.createFile(fileName, "image/jpeg");
 
     // Copy the file to our receipts directory
     const response = await fetch(fileUri);
@@ -37,7 +37,7 @@ export async function uploadReceipt(
 
     return { url: destinationFile.uri, error: null };
   } catch (error) {
-    console.error('Error uploading receipt:', error);
+    console.error("Error uploading receipt:", error);
     return { url: null, error: error as Error };
   }
 }
@@ -48,18 +48,18 @@ export async function uploadReceipt(
  * @returns Object with error if any
  */
 export async function deleteReceipt(
-  url: string
+  url: string,
 ): Promise<{ error: Error | null }> {
   try {
     const file = new File(url);
-    
+
     if (file.exists) {
       await file.delete();
     }
 
     return { error: null };
   } catch (error) {
-    console.error('Error deleting receipt:', error);
+    console.error("Error deleting receipt:", error);
     return { error: error as Error };
   }
 }
@@ -83,7 +83,7 @@ export async function receiptExists(url: string): Promise<boolean> {
     const file = new File(url);
     return file.exists;
   } catch (error) {
-    console.error('Error checking receipt existence:', error);
+    console.error("Error checking receipt existence:", error);
     return false;
   }
 }
@@ -92,22 +92,22 @@ export async function receiptExists(url: string): Promise<boolean> {
  * Delete all receipts for a user (useful for cleanup)
  * @param userId - The user ID
  */
-export async function deleteAllUserReceipts(userId: string): Promise<{ error: Error | null }> {
+export async function deleteAllUserReceipts(
+  userId: string,
+): Promise<{ error: Error | null }> {
   try {
     await ensureReceiptsDirectory();
-    
+
     const items = receiptsDir.list();
-    const userFiles = items.filter(item => 
-      item instanceof File && item.name.startsWith(userId)
+    const userFiles = items.filter(
+      (item) => item instanceof File && item.name.startsWith(userId),
     );
 
-    await Promise.all(
-      userFiles.map(file => file.delete())
-    );
+    await Promise.all(userFiles.map((file) => file.delete()));
 
     return { error: null };
   } catch (error) {
-    console.error('Error deleting user receipts:', error);
+    console.error("Error deleting user receipts:", error);
     return { error: error as Error };
   }
 }

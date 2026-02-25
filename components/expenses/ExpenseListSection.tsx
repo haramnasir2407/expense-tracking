@@ -2,8 +2,9 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Expense } from "@/types/expense";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { ExpenseCard } from "./ExpenseCard";
+import { expenseListSectionStyles as styles } from "./styles";
 
 interface ExpenseListSectionProps {
   date: string;
@@ -64,28 +65,3 @@ export function ExpenseListSection({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 24,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  totalText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  expensesList: {
-    paddingTop: 12,
-  },
-});

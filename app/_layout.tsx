@@ -9,8 +9,11 @@ import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { BudgetProvider } from "@/contexts/BudgetContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
@@ -56,6 +59,7 @@ function RootLayoutNav() {
         <Stack.Screen name="expenses" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
+      <Toast />
     </ThemeProvider>
   );
 }
@@ -64,9 +68,13 @@ export default function RootLayout() {
   return (
     <ReactQueryProvider>
       <AuthProvider>
-        <SyncProvider>
-          <RootLayoutNav />
-        </SyncProvider>
+        <NotificationProvider>
+          <BudgetProvider>
+            <SyncProvider>
+              <RootLayoutNav />
+            </SyncProvider>
+          </BudgetProvider>
+        </NotificationProvider>
       </AuthProvider>
     </ReactQueryProvider>
   );

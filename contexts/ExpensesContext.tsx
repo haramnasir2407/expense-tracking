@@ -1,12 +1,16 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { calculateAnalytics } from "@/lib/analytics";
 import { initDatabase } from "@/lib/db";
 import * as expenseService from "@/lib/expenses-sqlite";
+import { AnalyticsData, DateRange } from "@/types/analytics";
 import { Expense, ExpenseFormData, GroupedExpenses } from "@/types/expense";
 import React, {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -23,6 +27,8 @@ interface ExpensesContextType {
   deleteExpense: (id: string) => Promise<{ error: string | null }>;
   refresh: () => Promise<void>;
   getTotalAmount: (period?: "today" | "week" | "month" | "all") => number;
+  analytics: AnalyticsData;
+  getAnalytics: (dateRange?: DateRange) => AnalyticsData;
 }
 
 const ExpensesContext = createContext<ExpensesContextType | undefined>(
@@ -39,9 +45,9 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       initDatabase();
-      console.log('Database initialized');
+      console.log("Database initialized");
     } catch (error) {
-      console.error('Failed to initialize database:', error);
+      console.error("Failed to initialize database:", error);
     }
   }, []);
 
@@ -227,6 +233,17 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
     return filteredExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
   }
 
+  const analytics = useMemo(() => {
+    return calculateAnalytics(expenses, "month");
+  }, [expenses]);
+
+  const getAnalytics = useCallback(
+    (dateRange?: DateRange) => {
+      return calculateAnalytics(expenses, dateRange);
+    },
+    [expenses],
+  );
+
   const value: ExpensesContextType = {
     expenses,
     groupedExpenses: getGroupedExpenses(),
@@ -237,6 +254,8 @@ export function ExpensesProvider({ children }: { children: ReactNode }) {
     deleteExpense,
     refresh: loadExpenses,
     getTotalAmount,
+    analytics,
+    getAnalytics,
   };
 
   return (
