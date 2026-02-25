@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getCategories } from "@/service/expenses-supabase";
 import { Category } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -41,11 +42,38 @@ export function CategoryPicker({
 
   async function loadCategories() {
     setLoading(true);
-    const { data, error } = await getCategories();
-    if (!error && data) {
-      setCategories(data);
+
+    try {
+      // Try to load cached categories first for instant/offline display
+      const cached = await SecureStore.getItemAsync("expense_categories");
+      if (cached) {
+        console.log("Using cached categories")
+        try {
+          const parsed = JSON.parse(cached) as Category[];
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setCategories(parsed);
+            setLoading(false);
+          }
+        } catch {
+          // Ignore parse errors and fall through to network fetch
+        }
+      }
+
+      // Always attempt to refresh from backend when picker opens
+      const { data, error } = await getCategories();
+      if (!error && data) {
+        setCategories(data);
+        await SecureStore.setItemAsync(
+          "expense_categories",
+          JSON.stringify(data),
+        );
+      } else if (!cached) {
+        // Only keep spinner if we have neither cache nor fresh data
+        setLoading(false);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   const handleSelect = (categoryName: string) => {

@@ -69,11 +69,11 @@ export default function RootLayout() {
     <ReactQueryProvider>
       <AuthProvider>
         <NotificationProvider>
-          <BudgetProvider>
-            <SyncProvider>
+          <SyncProvider>
+            <BudgetProvider>
               <RootLayoutNav />
-            </SyncProvider>
-          </BudgetProvider>
+            </BudgetProvider>
+          </SyncProvider>
         </NotificationProvider>
       </AuthProvider>
     </ReactQueryProvider>
