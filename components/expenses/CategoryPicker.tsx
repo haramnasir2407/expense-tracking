@@ -1,3 +1,4 @@
+import { CATEGORIES } from "@/constants/categories";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getCategories } from "@/service/expenses-supabase";
@@ -47,7 +48,7 @@ export function CategoryPicker({
       // Try to load cached categories first for instant/offline display
       const cached = await SecureStore.getItemAsync("expense_categories");
       if (cached) {
-        console.log("Using cached categories")
+        console.log("Using cached categories");
         try {
           const parsed = JSON.parse(cached) as Category[];
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -68,8 +69,20 @@ export function CategoryPicker({
           JSON.stringify(data),
         );
       } else if (!cached) {
-        // Only keep spinner if we have neither cache nor fresh data
-        setLoading(false);
+        // No cache and no backend data – fall back to hard-coded defaults
+        console.log(
+          "No cache and no backend data - falling back to hard-coded defaults",
+        );
+        if (CATEGORIES.length > 0) {
+          setCategories(
+            CATEGORIES.map((c, index) => ({
+              id: String(index),
+              name: c.name,
+              icon: c.icon,
+              color: c.color,
+            })),
+          );
+        }
       }
     } finally {
       setLoading(false);

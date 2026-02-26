@@ -21,6 +21,7 @@ interface ProfileViewProps {
   onChangeBudgetThreshold: () => void;
   onRequestPermission: () => void;
   onVerifyEmailPress: () => void;
+  onTriggerBackgroundSync: () => void;
 }
 
 export function ProfileView({
@@ -38,6 +39,7 @@ export function ProfileView({
   onChangeBudgetThreshold,
   onRequestPermission,
   onVerifyEmailPress,
+  onTriggerBackgroundSync,
 }: ProfileViewProps) {
   const thresholdRowBg = isDark ? "#2C2C2E" : "#f0f0f0";
 
@@ -258,6 +260,25 @@ export function ProfileView({
               detailed insights.
             </ThemedText>
           </View>
+          <TouchableOpacity
+            style={[
+              styles.actionCard,
+              { backgroundColor: colors.background, marginTop: 16 },
+            ]}
+            onPress={onTriggerBackgroundSync}
+          >
+            <View style={styles.actionLeft}>
+              <Ionicons name="sync" size={24} color={colors.tint} />
+              <ThemedText style={styles.actionTitle}>
+                Trigger background sync (test)
+              </ThemedText>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={colors.text + "60"}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

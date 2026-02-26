@@ -17,6 +17,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
+import { registerBackgroundSyncTaskAsync } from "@/service/background-sync-task";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -27,6 +28,13 @@ function RootLayoutNav() {
   const { user, initialized } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+
+  useEffect(() => {
+    // Register once when the shell mounts
+    registerBackgroundSyncTaskAsync().catch((e) => {
+      console.log("[BackgroundSync] register failed", e);
+    });
+  }, []);
 
   useEffect(() => {
     if (!initialized) return;
