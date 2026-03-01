@@ -4,6 +4,16 @@ export const analyticsViewStyles = StyleSheet.create({
   container: { flex: 1 },
   rangeSelector: { paddingVertical: 12 },
   rangeSelectorContent: { paddingHorizontal: 16, gap: 8 },
+  categoryFilterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 8,
+    borderRadius: 12,
+  },
   rangeButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   rangeButtonText: { fontSize: 14, fontWeight: "600" },
   rangeButtonTextActive: { color: "white" },
@@ -107,6 +117,27 @@ export const spendingLineChartStyles = StyleSheet.create({
   container: {
     width: "100%",
   },
+  legendRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
+    marginTop: 8,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  legendDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  legendText: {
+    fontSize: 12,
+    color: "#666",
+  },
   tooltip: {
     position: "absolute",
     top: 10,
@@ -121,7 +152,7 @@ export const spendingLineChartStyles = StyleSheet.create({
   axisLabelsContainer: {
     alignItems: "center",
     paddingHorizontal: 4,
-    marginTop: 4,
+    marginTop: 6,
   },
   axisLabel: {
     fontSize: 11,

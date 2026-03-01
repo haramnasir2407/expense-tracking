@@ -21,6 +21,8 @@ interface CategoryPickerProps {
   selectedCategory?: string;
   onSelect: (category: string) => void;
   onClose: () => void;
+  /** When true, show an "All" option first (e.g. for analytics filter). */
+  showAllOption?: boolean;
 }
 
 export function CategoryPicker({
@@ -28,6 +30,7 @@ export function CategoryPicker({
   selectedCategory,
   onSelect,
   onClose,
+  showAllOption,
 }: CategoryPickerProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
@@ -76,7 +79,7 @@ export function CategoryPicker({
     }
   }
 
-  const handleSelect = (categoryName: string) => {
+  const handleSelect = (categoryName: string): void => {
     onSelect(categoryName);
     onClose();
   };
@@ -109,6 +112,40 @@ export function CategoryPicker({
             </View>
           ) : (
             <ScrollView style={styles.scrollView}>
+              {showAllOption && (
+                <TouchableOpacity
+                  style={[
+                    styles.categoryItem,
+                    {
+                      backgroundColor:
+                        selectedCategory === "all" || !selectedCategory
+                          ? colors.tint + "20"
+                          : "transparent",
+                      borderColor: colors.text + "20",
+                    },
+                  ]}
+                  onPress={() => handleSelect("all")}
+                >
+                  <View
+                    style={[
+                      styles.iconCircle,
+                      { backgroundColor: colors.tint + "40" },
+                    ]}
+                  >
+                    <Ionicons name="apps" size={24} color="#FFFFFF" />
+                  </View>
+                  <Text style={[styles.categoryName, { color: colors.text }]}>
+                    All
+                  </Text>
+                  {(selectedCategory === "all" || !selectedCategory) && (
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color={colors.tint}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
               {categories.map((category) => (
                 <TouchableOpacity
                   key={category.id}

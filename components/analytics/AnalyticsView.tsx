@@ -1,9 +1,11 @@
 import { MonthlyBarChart } from "@/components/analytics/BarChart";
 import { SpendingLineChart } from "@/components/analytics/LineChart";
 import { CategoryPieChart } from "@/components/analytics/PieChart";
+import { CategoryPicker } from "@/components/expenses/CategoryPicker";
 import { DATE_RANGES } from "@/constants/dateRanges";
-import { AnalyticsData, DateRange } from "@/types/analytics";
-import React from "react";
+import { AnalyticsData, DailySpending, DateRange } from "@/types/analytics";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { analyticsViewStyles as styles } from "./styles";
 
@@ -12,8 +14,8 @@ interface AnalyticsViewProps {
   selectedRange: DateRange;
   onSelectRange: (range: DateRange) => void;
   selectedCategory: string;
-  categories: string[];
   onSelectCategory: (category: string) => void;
+  dailyBudgetSeries?: DailySpending[] | null;
   isDark: boolean;
   colors: { background: string; text: string; tint: string };
 }
@@ -23,15 +25,18 @@ export function AnalyticsView({
   selectedRange,
   onSelectRange,
   selectedCategory,
-  categories,
   onSelectCategory,
+  dailyBudgetSeries,
   isDark,
   colors,
 }: AnalyticsViewProps) {
+  const [categoryPickerVisible, setCategoryPickerVisible] = useState(false);
   const cardBg = isDark ? "#1C1C1E" : "white";
   const buttonBg = isDark ? "#2C2C2E" : "#f0f0f0";
   const labelColor = isDark ? "#8E8E93" : "#999";
   const textColor = isDark ? "#FFFFFF" : "#666";
+  const categoryLabel =
+    selectedCategory === "all" ? "Filter by category" : selectedCategory;
 
   return (
     <ScrollView
@@ -66,40 +71,24 @@ export function AnalyticsView({
         ))}
       </ScrollView>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={[styles.rangeSelector, { backgroundColor: cardBg }]}
-        contentContainerStyle={styles.rangeSelectorContent}
+      <TouchableOpacity
+        style={[styles.rangeSelector, styles.categoryFilterButton, { backgroundColor: cardBg }]}
+        onPress={() => setCategoryPickerVisible(true)}
+        activeOpacity={0.7}
       >
-        {categories.map((category) => {
-          const isAll = category === "all";
-          const isActive = selectedCategory === category;
-          const label = isAll ? "All" : category;
+        <Text style={[styles.rangeButtonText, { color: textColor }]}>
+          {categoryLabel}
+        </Text>
+        <Ionicons name="chevron-down" size={20} color={textColor} />
+      </TouchableOpacity>
 
-          return (
-            <TouchableOpacity
-              key={category}
-              style={[
-                styles.rangeButton,
-                { backgroundColor: buttonBg },
-                isActive && { backgroundColor: colors.tint },
-              ]}
-              onPress={() => onSelectCategory(category)}
-            >
-              <Text
-                style={[
-                  styles.rangeButtonText,
-                  { color: textColor },
-                  isActive && styles.rangeButtonTextActive,
-                ]}
-              >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+      <CategoryPicker
+        visible={categoryPickerVisible}
+        selectedCategory={selectedCategory}
+        onSelect={onSelectCategory}
+        onClose={() => setCategoryPickerVisible(false)}
+        showAllOption
+      />
 
       <View style={styles.summaryGrid}>
         <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
@@ -140,7 +129,11 @@ export function AnalyticsView({
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Spending Over Time
         </Text>
-        <SpendingLineChart data={analytics.dailyTotals} isDark={isDark} />
+        <SpendingLineChart
+          data={analytics.dailyTotals}
+          budgetData={dailyBudgetSeries ?? undefined}
+          isDark={isDark}
+        />
       </View>
       <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
         <Text style={[styles.chartTitle, { color: colors.text }]}>
