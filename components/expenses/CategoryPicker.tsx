@@ -1,10 +1,8 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { getCategories } from "@/service/expenses-supabase";
-import { Category } from "@/types/expense";
+import { useExpenseCategories } from "@/hooks/useExpenseCategories";
 import { Ionicons } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -34,50 +32,7 @@ export function CategoryPicker({
 }: CategoryPickerProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (visible) {
-      loadCategories();
-    }
-  }, [visible]);
-
-  async function loadCategories() {
-    setLoading(true);
-
-    try {
-      // Try to load cached categories first for instant/offline display
-      const cached = await SecureStore.getItemAsync("expense_categories");
-      if (cached) {
-        console.log("Using cached categories")
-        try {
-          const parsed = JSON.parse(cached) as Category[];
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setCategories(parsed);
-            setLoading(false);
-          }
-        } catch {
-          // Ignore parse errors and fall through to network fetch
-        }
-      }
-
-      // Always attempt to refresh from backend when picker opens
-      const { data, error } = await getCategories();
-      if (!error && data) {
-        setCategories(data);
-        await SecureStore.setItemAsync(
-          "expense_categories",
-          JSON.stringify(data),
-        );
-      } else if (!cached) {
-        // Only keep spinner if we have neither cache nor fresh data
-        setLoading(false);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { categories, isLoading } = useExpenseCategories({ enabled: visible });
 
   const handleSelect = (categoryName: string): void => {
     onSelect(categoryName);
@@ -106,7 +61,7 @@ export function CategoryPicker({
             </TouchableOpacity>
           </View>
 
-          {loading ? (
+          {isLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.tint} />
             </View>
