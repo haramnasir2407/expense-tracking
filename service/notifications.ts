@@ -57,12 +57,15 @@ export async function scheduleBudgetAlert(
 
 export async function scheduleDailyReminder(time: string) {
   // In development, make this easy to test by firing soon instead of waiting for the real time.
+  const dailyReminderData = { type: "daily_reminder" as const };
+
   if (__DEV__) {
     console.log("Scheduling daily reminder in development mode");
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Daily Expense Reminder (Dev)",
         body: "Test notification: daily reminder is configured correctly.",
+        data: dailyReminderData,
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
@@ -79,6 +82,7 @@ export async function scheduleDailyReminder(time: string) {
     content: {
       title: "Daily Expense Reminder",
       body: "Don't forget to log today's expenses!",
+      data: dailyReminderData,
     },
     trigger: {
       // DAILY is supported on both iOS and Android; CALENDAR is iOS-only
