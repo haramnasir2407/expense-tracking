@@ -274,21 +274,43 @@ export const expenseFormStyles = StyleSheet.create({
     borderTopWidth: 1,
     gap: 12,
   },
-  cancelButton: {
-    flex: 1,
-    height: 52,
-    borderWidth: 1,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 8,
-  },
   cancelButtonText: {
     fontSize: 16,
     fontWeight: "600",
   },
   submitButtonContainer: {
     flex: 1,
+  },
+
+  buttons: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 24,
+  },
+  inputText: {
+    color: "#333",
+  },
+  button: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#f0f0f0",
+  },
+  submitButton: {
+    backgroundColor: "#0a7ea4",
+  },
+  cancelText: {
+    color: "#666",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  submitText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
 
@@ -354,4 +376,3 @@ export const expenseListSectionStyles = StyleSheet.create({
     paddingTop: 12,
   },
 });
-

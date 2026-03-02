@@ -4,9 +4,10 @@ import { CategoryPieChart } from "@/components/analytics/PieChart";
 import { CategoryPicker } from "@/components/expenses/CategoryPicker";
 import { DATE_RANGES } from "@/constants/dateRanges";
 import { AnalyticsData, DailySpending, DateRange } from "@/types/analytics";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Card } from "../primitives/card";
+import { AppPressable } from "../primitives/app-pressable";
 import { analyticsViewStyles as styles } from "./styles";
 
 interface AnalyticsViewProps {
@@ -71,16 +72,19 @@ export function AnalyticsView({
         ))}
       </ScrollView>
 
-      <TouchableOpacity
-        style={[styles.rangeSelector, styles.categoryFilterButton, { backgroundColor: cardBg }]}
+      <AppPressable
+        style={[
+          styles.rangeSelector,
+          styles.categoryFilterButton,
+          { backgroundColor: cardBg },
+        ]}
         onPress={() => setCategoryPickerVisible(true)}
-        activeOpacity={0.7}
+        rightIcon="chevron-down"
       >
         <Text style={[styles.rangeButtonText, { color: textColor }]}>
           {categoryLabel}
         </Text>
-        <Ionicons name="chevron-down" size={20} color={textColor} />
-      </TouchableOpacity>
+      </AppPressable>
 
       <CategoryPicker
         visible={categoryPickerVisible}
@@ -91,41 +95,44 @@ export function AnalyticsView({
       />
 
       <View style={styles.summaryGrid}>
-        <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Total Spent
           </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             ${analytics.totalSpent.toFixed(2)}
           </Text>
-        </View>
-        <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        </Card>
+        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Avg/Day
           </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             ${analytics.averagePerDay.toFixed(2)}
           </Text>
-        </View>
-        <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        </Card>
+        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Transactions
           </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             {analytics.transactionCount}
           </Text>
-        </View>
-        <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        </Card>
+        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Avg/Transaction
           </Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>
             ${analytics.averagePerTransaction.toFixed(2)}
           </Text>
-        </View>
+        </Card>
       </View>
 
-      <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
+      <Card
+        noShadow
+        style={[styles.chartSection, { backgroundColor: cardBg }]}
+      >
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Spending Over Time
         </Text>
@@ -134,14 +141,20 @@ export function AnalyticsView({
           budgetData={dailyBudgetSeries ?? undefined}
           isDark={isDark}
         />
-      </View>
-      <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
+      </Card>
+      <Card
+        noShadow
+        style={[styles.chartSection, { backgroundColor: cardBg }]}
+      >
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Category Breakdown
         </Text>
         <CategoryPieChart data={analytics.byCategory} isDark={isDark} />
-      </View>
-      <View style={[styles.chartSection, { backgroundColor: cardBg }]}>
+      </Card>
+      <Card
+        noShadow
+        style={[styles.chartSection, { backgroundColor: cardBg }]}
+      >
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Monthly Comparison
         </Text>
@@ -150,10 +163,13 @@ export function AnalyticsView({
           isDark={isDark}
           dateRange={selectedRange}
         />
-      </View>
+      </Card>
 
       {analytics.monthOverMonthTrend.previous > 0 && (
-        <View style={[styles.insightCard, { backgroundColor: cardBg }]}>
+        <Card
+          noShadow
+          style={[styles.insightCard, { backgroundColor: cardBg }]}
+        >
           <Text style={[styles.insightTitle, { color: labelColor }]}>
             Month-over-Month
           </Text>
@@ -176,7 +192,7 @@ export function AnalyticsView({
               ? "Spending increased from last month"
               : "Spending decreased from last month"}
           </Text>
-        </View>
+        </Card>
       )}
     </ScrollView>
   );

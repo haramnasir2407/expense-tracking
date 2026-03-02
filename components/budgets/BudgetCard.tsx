@@ -1,7 +1,7 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { BudgetStatus } from "@/types/budget";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { budgetCardStyles as styles } from "./styles";
 
 interface BudgetCardProps {
@@ -11,7 +11,12 @@ interface BudgetCardProps {
   isDark?: boolean;
 }
 
-export function BudgetCard({ budget, onPress, onDelete, isDark = false }: BudgetCardProps) {
+export function BudgetCard({
+  budget,
+  onPress,
+  onDelete,
+  isDark = false,
+}: BudgetCardProps) {
   const getStatusColor = () => {
     if (budget.isOverBudget) return "#FF6B6B";
     if (budget.percentageUsed >= 80) return "#F39C12";
@@ -22,13 +27,18 @@ export function BudgetCard({ budget, onPress, onDelete, isDark = false }: Budget
 
   return (
     <TouchableOpacity
-      style={[styles.container, { backgroundColor: isDark ? '#1C1C1E' : 'white' }]}
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? "#1C1C1E" : "white" },
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
       disabled={!onPress && !showActions}
     >
       <View style={styles.header}>
-        <Text style={[styles.category, { color: isDark ? '#ECEDEE' : '#333' }]}>{budget.category}</Text>
+        <Text style={[styles.category, { color: isDark ? "#ECEDEE" : "#333" }]}>
+          {budget.category}
+        </Text>
         <View style={styles.headerRight}>
           <Text style={[styles.percentage, { color: getStatusColor() }]}>
             {budget.percentageUsed}%
@@ -37,7 +47,10 @@ export function BudgetCard({ budget, onPress, onDelete, isDark = false }: Budget
             <View style={styles.actions}>
               {onDelete != null && (
                 <TouchableOpacity
-                  onPress={(e) => { e?.stopPropagation?.(); onDelete(); }}
+                  onPress={(e) => {
+                    e?.stopPropagation?.();
+                    onDelete();
+                  }}
                   style={styles.actionBtn}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
@@ -49,7 +62,12 @@ export function BudgetCard({ budget, onPress, onDelete, isDark = false }: Budget
         </View>
       </View>
 
-      <View style={[styles.progressBar, { backgroundColor: isDark ? '#2C2C2E' : '#f0f0f0' }]}>
+      <View
+        style={[
+          styles.progressBar,
+          { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
+        ]}
+      >
         <View
           style={[
             styles.progressFill,
@@ -62,7 +80,7 @@ export function BudgetCard({ budget, onPress, onDelete, isDark = false }: Budget
       </View>
 
       <View style={styles.footer}>
-        <Text style={[styles.amount, { color: isDark ? '#8E8E93' : '#666' }]}>
+        <Text style={[styles.amount, { color: isDark ? "#8E8E93" : "#666" }]}>
           ${budget.actualAmount.toFixed(2)} of ${budget.budgetAmount.toFixed(2)}
         </Text>
         <Text style={[styles.remaining, { color: getStatusColor() }]}>
@@ -73,4 +91,3 @@ export function BudgetCard({ budget, onPress, onDelete, isDark = false }: Budget
     </TouchableOpacity>
   );
 }
-

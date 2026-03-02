@@ -2,13 +2,10 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { BudgetFormData } from "@/types/budget";
 import React, { useState } from "react";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { CategoryPicker } from "../expenses/CategoryPicker";
+import { ActionButtons } from "../primitives/action-buttons";
+import { AppPressable } from "../primitives/app-pressable";
 import { budgetFormStyles as styles } from "./styles";
 
 interface BudgetFormProps {
@@ -53,14 +50,14 @@ export function BudgetForm({
           <Text style={{ color: colors.text }}>{category}</Text>
         </View>
       ) : (
-        <TouchableOpacity
+        <AppPressable
           style={styles.input}
           onPress={() => setShowCategoryPicker(true)}
         >
           <Text style={category ? { color: colors.text } : styles.placeholder}>
             {category || "Select Category"}
           </Text>
-        </TouchableOpacity>
+        </AppPressable>
       )}
 
       <Text style={[styles.label, { color: colors.text }]}>Monthly Budget</Text>
@@ -72,23 +69,19 @@ export function BudgetForm({
         keyboardType="decimal-pad"
       />
 
-      <View style={styles.buttons}>
-        <TouchableOpacity
-          style={[styles.button, styles.cancelButton]}
-          onPress={onCancel}
-          disabled={loading}
-        >
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.submitButton]}
-          onPress={handleSubmit}
-          disabled={loading || !amount || !category}
-        >
-          <Text style={styles.submitText}>Save</Text>
-        </TouchableOpacity>
-      </View>
+      <ActionButtons
+        containerStyle={styles.buttons}
+        buttonStyle={styles.button}
+        cancelButtonStyle={styles.cancelButton}
+        submitButtonStyle={styles.submitButton}
+        cancelButtonTextStyle={styles.cancelText}
+        submitButtonTextStyle={styles.submitText}
+        submitLabel="Save"
+        onCancel={onCancel}
+        onSubmit={handleSubmit}
+        loading={loading}
+        submitButtonDisabled={loading || !amount || !category}
+      />
 
       <CategoryPicker
         visible={showCategoryPicker}
@@ -102,4 +95,3 @@ export function BudgetForm({
     </View>
   );
 }
-

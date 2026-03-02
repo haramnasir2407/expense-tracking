@@ -3,6 +3,7 @@ import { Expense, ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, ScrollView, Text, View } from "react-native";
+import { Card } from "../primitives/card";
 import { expenseDetailViewStyles as styles } from "./styles";
 interface ExpenseDetailViewProps {
   expense: Expense;
@@ -45,12 +46,13 @@ export function ExpenseDetailView({
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
     >
-      <View
+      <Card
+        noShadow
+        borderColor={colors.tint + "40"}
         style={[
           styles.amountCard,
           {
             backgroundColor: colors.tint + "20",
-            borderColor: colors.tint + "40",
           },
         ]}
       >
@@ -60,7 +62,7 @@ export function ExpenseDetailView({
         <Text style={[styles.amountValue, { color: colors.text }]}>
           {formattedAmount}
         </Text>
-      </View>
+      </Card>
 
       <View style={styles.section}>
         <View

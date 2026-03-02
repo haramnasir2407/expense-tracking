@@ -8,13 +8,9 @@ import {
 } from "@/types/budget";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { AddButton } from "../primitives/add-button";
+import { Card } from "../primitives/card";
 import { budgetsViewStyles as styles } from "./styles";
 
 interface BudgetsViewProps {
@@ -58,7 +54,10 @@ export function BudgetsView({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView}>
         {currentMonthSummary && (
-          <View style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+          <Card
+            noShadow
+            style={[styles.summaryCard, { backgroundColor: cardBg }]}
+          >
             <Text style={[styles.summaryTitle, { color: colors.text }]}>
               This Month
             </Text>
@@ -123,7 +122,7 @@ export function BudgetsView({
             >
               {currentMonthSummary.percentageUsed}% used
             </Text>
-          </View>
+          </Card>
         )}
 
         <View style={styles.section}>
@@ -169,12 +168,7 @@ export function BudgetsView({
         </View>
       </ScrollView>
 
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.tint }]}
-        onPress={onOpenCreate}
-      >
-        <Ionicons name="add" size={32} color="white" />
-      </TouchableOpacity>
+      <AddButton onAddPress={onOpenCreate} colors={colors} />
 
       <Modal
         visible={showCreateForm}
@@ -239,4 +233,3 @@ export function BudgetsView({
     </View>
   );
 }
-

@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
 import React from "react";
 import { Text, View } from "react-native";
+import { Card } from "../primitives/card";
 import { expenseSummaryStyles as styles } from "./styles";
 
 export function ExpenseSummary() {
@@ -22,7 +23,10 @@ export function ExpenseSummary() {
   const monthTotal = getTotalAmount("month");
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.tint + "10" }]}>
+    <Card
+      noShadow
+      style={[styles.container, { backgroundColor: colors.tint + "10" }]}
+    >
       <View style={styles.mainTotal}>
         <Text style={[styles.label, { color: colors.text + "99" }]}>
           This Month
@@ -55,6 +59,6 @@ export function ExpenseSummary() {
           </Text>
         </View>
       </View>
-    </View>
+    </Card>
   );
 }

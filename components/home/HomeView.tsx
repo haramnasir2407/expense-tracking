@@ -1,14 +1,9 @@
 import { ExpenseListSection } from "@/components/expenses/ExpenseListSection";
 import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  FlatList,
-  RefreshControl,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 
+import { AddButton } from "../primitives/add-button";
 import { homeViewStyles as styles } from "./styles";
 
 export interface GroupedExpenseItem {
@@ -88,13 +83,7 @@ export function HomeView({
             : styles.listContent
         }
       />
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.tint }]}
-        onPress={onAddPress}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="add" size={28} color="#FFFFFF" />
-      </TouchableOpacity>
+      <AddButton onAddPress={onAddPress} colors={colors} />
     </View>
   );
 }

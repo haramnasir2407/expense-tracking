@@ -1,4 +1,3 @@
-import { CATEGORIES } from "@/constants/categories";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenseCategories } from "@/hooks/useExpenseCategories";
@@ -12,6 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { AppPressable } from "../primitives/app-pressable";
+import { IconCircle } from "../primitives/icon-circle";
 
 import { categoryPickerStyles as styles } from "./styles";
 
@@ -69,7 +70,7 @@ export function CategoryPicker({
           ) : (
             <ScrollView style={styles.scrollView}>
               {showAllOption && (
-                <TouchableOpacity
+                <AppPressable
                   style={[
                     styles.categoryItem,
                     {
@@ -82,14 +83,13 @@ export function CategoryPicker({
                   ]}
                   onPress={() => handleSelect("all")}
                 >
-                  <View
-                    style={[
-                      styles.iconCircle,
-                      { backgroundColor: colors.tint + "40" },
-                    ]}
+                  <IconCircle
+                    size={40}
+                    backgroundColor={colors.tint + "40"}
+                    style={{ marginRight: 12 }}
                   >
                     <Ionicons name="apps" size={24} color="#FFFFFF" />
-                  </View>
+                  </IconCircle>
                   <Text style={[styles.categoryName, { color: colors.text }]}>
                     All
                   </Text>
@@ -100,10 +100,10 @@ export function CategoryPicker({
                       color={colors.tint}
                     />
                   )}
-                </TouchableOpacity>
+                </AppPressable>
               )}
               {categories.map((category) => (
-                <TouchableOpacity
+                <AppPressable
                   key={category.id}
                   style={[
                     styles.categoryItem,
@@ -117,20 +117,19 @@ export function CategoryPicker({
                   ]}
                   onPress={() => handleSelect(category.name)}
                 >
-                  <View
-                    style={[
-                      styles.iconCircle,
-                      {
-                        backgroundColor: category.color || colors.tint + "20",
-                      },
-                    ]}
+                  <IconCircle
+                    size={40}
+                    backgroundColor={
+                      category.color || (colors.tint + "20")
+                    }
+                    style={{ marginRight: 12 }}
                   >
                     <Ionicons
                       name={(category.icon as any) || "pricetag"}
                       size={24}
                       color="#FFFFFF"
                     />
-                  </View>
+                  </IconCircle>
                   <Text style={[styles.categoryName, { color: colors.text }]}>
                     {category.name}
                   </Text>
@@ -141,7 +140,7 @@ export function CategoryPicker({
                       color={colors.tint}
                     />
                   )}
-                </TouchableOpacity>
+                </AppPressable>
               ))}
             </ScrollView>
           )}

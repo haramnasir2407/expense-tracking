@@ -1,4 +1,3 @@
-import { AuthButton } from "@/components/auth/AuthButton";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ExpenseFormData } from "@/types/expense";
@@ -17,6 +16,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ActionButtons } from "../primitives/action-buttons";
+import { AppPressable } from "../primitives/app-pressable";
 import { CategoryPicker } from "./CategoryPicker";
 import { ReceiptUpload } from "./ReceiptUpload";
 import { expenseFormStyles as styles } from "./styles";
@@ -103,7 +104,7 @@ export function ExpenseForm({
       keyboardVerticalOffset={Platform.OS === "ios" ? headerHeight : 0}
     >
       <ScrollView
-        style={styles.scrollView}
+        style={[styles.scrollView, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -144,7 +145,7 @@ export function ExpenseForm({
             <Text style={[styles.label, { color: colors.text }]}>
               Category *
             </Text>
-            <TouchableOpacity
+            <AppPressable
               style={[
                 styles.pickerButton,
                 {
@@ -152,6 +153,7 @@ export function ExpenseForm({
                   backgroundColor: colors.tint + "10",
                 },
               ]}
+              rightIcon="chevron-down"
               onPress={() => setShowCategoryPicker(true)}
             >
               <Text
@@ -164,8 +166,7 @@ export function ExpenseForm({
               >
                 {category || "Select a category"}
               </Text>
-              <Ionicons name="chevron-down" size={20} color={colors.text} />
-            </TouchableOpacity>
+            </AppPressable>
             {categoryError ? (
               <Text style={styles.errorText}>{categoryError}</Text>
             ) : null}
@@ -244,25 +245,22 @@ export function ExpenseForm({
           </View>
         </View>
 
-        {/* Action Buttons */}
-        <View style={[styles.footer, { borderTopColor: colors.text + "20" }]}>
-          <TouchableOpacity
-            style={[styles.cancelButton, { borderColor: colors.text + "30" }]}
-            onPress={onCancel}
-          >
-            <Text style={[styles.cancelButtonText, { color: colors.text }]}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.submitButtonContainer}>
-            <AuthButton
-              title={submitLabel}
-              loading={loading}
-              onPress={handleSubmit}
-            />
-          </View>
-        </View>
+        <ActionButtons
+          containerStyle={[
+            styles.footer,
+            { borderTopColor: colors.text + "20" },
+          ]}
+          buttonStyle={styles.button}
+          cancelButtonStyle={styles.cancelButton}
+          submitButtonStyle={styles.submitButton}
+          cancelButtonTextStyle={styles.cancelText}
+          submitButtonTextStyle={styles.submitText}
+          onCancel={onCancel}
+          onSubmit={handleSubmit}
+          loading={loading}
+          submitLabel={submitLabel}
+          submitButtonDisabled={loading}
+        />
       </ScrollView>
 
       {showDatePicker && (

@@ -4,7 +4,9 @@ import { Expense } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
+import { AppPressable } from "../primitives/app-pressable";
+import { IconCircle } from "../primitives/icon-circle";
 import { expenseCardStyles as styles } from "./styles";
 
 interface ExpenseCardProps {
@@ -35,7 +37,7 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
   };
 
   return (
-    <TouchableOpacity
+    <AppPressable
       style={[
         styles.container,
         {
@@ -44,14 +46,15 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
         },
       ]}
       onPress={handlePress}
-      activeOpacity={0.7}
     >
       <View style={styles.iconContainer}>
-        <View
-          style={[styles.iconCircle, { backgroundColor: colors.tint + "20" }]}
+        <IconCircle
+          size={48}
+          backgroundColor={colors.tint + "20"}
+          style={{ marginRight: 0 }}
         >
           <Ionicons name="receipt-outline" size={24} color={colors.tint} />
-        </View>
+        </IconCircle>
       </View>
 
       <View style={styles.contentContainer}>
@@ -78,6 +81,6 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </AppPressable>
   );
 }
