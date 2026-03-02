@@ -227,6 +227,19 @@ export function ExpenseForm({
               receiptUrl={receiptUrl || undefined}
               onUpload={setReceiptUrl}
               onRemove={() => setReceiptUrl("")}
+              onOcrPrefill={(data) => {
+                if (data.amount != null) setAmount(String(data.amount));
+                const receiptDate = data.date;
+                if (
+                  receiptDate instanceof Date &&
+                  !Number.isNaN(receiptDate.getTime())
+                ) {
+                  setDate(new Date(receiptDate.getTime()));
+                }
+                if (data.notes && !notes) {
+                  setNotes(data.notes);
+                }
+              }}
             />
           </View>
         </View>

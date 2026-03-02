@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
+import ExpoMlkitOcr from "expo-mlkit-ocr";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -18,21 +19,138 @@ import {
 import Toast from "react-native-toast-message";
 import { receiptUploadStyles as styles } from "./styles";
 
+type ReceiptOcrPrefill = {
+  amount?: number;
+  date?: Date;
+  notes?: string;
+};
+
 interface ReceiptUploadProps {
   receiptUrl?: string;
   onUpload: (url: string) => void;
   onRemove: () => void;
+  onOcrPrefill?: (data: ReceiptOcrPrefill) => void;
 }
 
 export function ReceiptUpload({
   receiptUrl,
   onUpload,
   onRemove,
+  onOcrPrefill,
 }: ReceiptUploadProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
+
+  const parseReceiptText = (text: string): ReceiptOcrPrefill => {
+    const lines = text.split(/\r?\n/).map((line) => line.trim());
+    const nonEmptyLines = lines.filter((line) => line.length > 0);
+
+    let amount: number | undefined;
+    const amountCandidates: { value: number; priority: number }[] = [];
+    const rupeeAmountCandidates: { value: number; priority: number }[] = [];
+
+    for (const rawLine of nonEmptyLines) {
+      const line = rawLine.trim();
+      const lower = line.toLowerCase();
+      const hasRupee =
+        /\brs\.?\b/.test(lower) || /\bpkr\b/.test(lower) || /₨/.test(line);
+
+      const matches = line.match(/([\d,]+[.,]\d{2})/g);
+      if (!matches) continue;
+
+      for (const match of matches) {
+        const normalized = parseFloat(match.replace(/,/g, "").replace(",", "."));
+        if (Number.isNaN(normalized)) continue;
+
+        let priority = 0;
+        if (/\btotal\b/.test(lower) || /\bamount\b/.test(lower)) {
+          priority += 2;
+        }
+        if (/\bchange\b/.test(lower) || /\btax\b/.test(lower)) {
+          priority -= 1;
+        }
+
+        if (hasRupee) {
+          priority += 3;
+          rupeeAmountCandidates.push({ value: normalized, priority });
+        } else {
+          amountCandidates.push({ value: normalized, priority });
+        }
+      }
+    }
+
+    const allCandidates =
+      rupeeAmountCandidates.length > 0 ? rupeeAmountCandidates : amountCandidates;
+
+    if (allCandidates.length > 0) {
+      allCandidates.sort(
+        (a, b) => b.priority - a.priority || b.value - a.value,
+      );
+      const pkrAmount = allCandidates[0].value;
+      const PKR_PER_USD = 280; // Approximate PKR → USD conversion rate
+      const usdAmount = pkrAmount / PKR_PER_USD;
+      amount = Number(usdAmount.toFixed(2));
+    }
+
+    let date: Date | undefined;
+    const datePatterns = [
+      /\b(\d{4}[-/]\d{1,2}[-/]\d{1,2})\b/, // 2026-03-02 or 2026/03/02
+      /\b(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})\b/, // 03/02/26 or 03/02/2026
+      /\b(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})\b/, // 2 Mar 2026
+    ];
+
+    outer: for (const line of nonEmptyLines) {
+      for (const pattern of datePatterns) {
+        const match = line.match(pattern);
+        if (match?.[1]) {
+          const candidate = new Date(match[1]);
+          if (!Number.isNaN(candidate.getTime())) {
+            date = candidate;
+            break outer;
+          }
+        }
+      }
+    }
+
+    let notes: string | undefined;
+    const candidateNoteLines = nonEmptyLines
+      .filter((line) => /[A-Za-z]/.test(line))
+      .slice(0, 3);
+    if (candidateNoteLines.length > 0) {
+      notes = candidateNoteLines.join(" · ");
+    }
+
+    return { amount, date, notes };
+  };
+
+  const runOcrPrefill = async (uri: string) => {
+    if (!onOcrPrefill) return;
+
+    try {
+      const result = await ExpoMlkitOcr.recognizeText(uri);
+      const fullText = result?.text?.trim();
+      if (!fullText) return;
+
+      const parsed = parseReceiptText(fullText);
+      const hasAmount = parsed.amount != null;
+      const hasDate =
+        parsed.date instanceof Date && !Number.isNaN(parsed.date.getTime());
+      const hasNotes = !!parsed.notes && parsed.notes.trim().length > 0;
+
+      if (hasAmount || hasDate || hasNotes) {
+        onOcrPrefill(parsed);
+        Toast.show({
+          type: "success",
+          text1: "Receipt scanned",
+          text2: "We pre-filled details from your receipt.",
+        });
+      }
+    } catch {
+      // Ignore OCR errors so upload flow still works
+    }
+  };
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -65,6 +183,8 @@ export function ReceiptUpload({
       }
 
       const selectedAsset = result.assets[0];
+      await runOcrPrefill(selectedAsset.uri);
+
       const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
@@ -101,6 +221,8 @@ export function ReceiptUpload({
       }
 
       const selectedAsset = result.assets[0];
+      await runOcrPrefill(selectedAsset.uri);
+
       const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
@@ -144,7 +266,7 @@ export function ReceiptUpload({
         });
         onUpload(url);
       }
-    } catch (error) {
+    } catch {
       Toast.show({
         type: "error",
         text1: "Upload error",
@@ -180,7 +302,7 @@ export function ReceiptUpload({
       { text: "Take Photo", onPress: takePhoto },
       { text: "Choose from Library", onPress: pickImage },
       { text: "Cancel", style: "cancel" },
-    ]);50
+    ]);
   };
 
   if (uploading) {
