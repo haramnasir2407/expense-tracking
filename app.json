@@ -12,7 +12,13 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Enable Face ID to quickly and securely access your expense tracker.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": [
+          "processing"
+        ],
+        "BGTaskSchedulerPermittedIdentifiers": [
+          "com.expo.modules.backgroundtask.processing"
+        ]
       },
       "bundleIdentifier": "com.haramnasir.expense-tracking"
     },
@@ -57,7 +63,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-background-task"
     ],
     "experiments": {
       "typedRoutes": true,
