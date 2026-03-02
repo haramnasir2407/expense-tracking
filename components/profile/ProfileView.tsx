@@ -2,8 +2,11 @@ import { ThemedText } from "@/components/primitives/themed-text";
 import { NotificationSettings } from "@/types/notification";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@supabase/supabase-js";
-import { ScrollView, Switch, TouchableOpacity, View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { AppPressable } from "../primitives/app-pressable";
+import { Card } from "../primitives/themed-card";
 
+import { ThemedSwitch } from "../primitives/themed-switch";
 import { profileViewStyles as styles } from "./styles";
 
 interface ProfileViewProps {
@@ -67,7 +70,10 @@ export function ProfileView({
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Account Status
           </ThemedText>
-          <View style={[styles.card, { backgroundColor: colors.background }]}>
+          <Card
+            noShadow
+            style={[styles.card, { backgroundColor: colors.background }]}
+          >
             <View style={styles.statusRow}>
               <View style={styles.statusItem}>
                 <Ionicons
@@ -92,16 +98,17 @@ export function ProfileView({
                 </ThemedText>
               </View>
             </View>
-          </View>
+          </Card>
         </View>
 
         <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Settings
           </ThemedText>
-          <TouchableOpacity
+          <AppPressable
             style={[styles.actionCard, { backgroundColor: colors.background }]}
             onPress={onToggleBiometric}
+            rightIcon="chevron-forward"
           >
             <View style={styles.actionLeft}>
               <Ionicons name="finger-print" size={24} color={colors.tint} />
@@ -109,20 +116,16 @@ export function ProfileView({
                 {biometricEnabled ? "Disable" : "Enable"} Biometric Login
               </ThemedText>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={colors.text + "60"}
-            />
-          </TouchableOpacity>
+          </AppPressable>
 
           {!emailConfirmed && (
-            <TouchableOpacity
+            <AppPressable
               style={[
                 styles.actionCard,
                 { backgroundColor: colors.background },
               ]}
               onPress={onVerifyEmailPress}
+              rightIcon="chevron-forward"
             >
               <View style={styles.actionLeft}>
                 <Ionicons name="mail" size={24} color={colors.tint} />
@@ -130,12 +133,7 @@ export function ProfileView({
                   Verify Email Address
                 </ThemedText>
               </View>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={colors.text + "60"}
-              />
-            </TouchableOpacity>
+            </AppPressable>
           )}
         </View>
 
@@ -143,9 +141,12 @@ export function ProfileView({
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Notifications & Alerts
           </ThemedText>
-          <View style={[styles.card, { backgroundColor: colors.background }]}>
+          <Card
+            noShadow
+            style={[styles.card, { backgroundColor: colors.background }]}
+          >
             {!hasPermission && (
-              <TouchableOpacity
+              <AppPressable
                 style={styles.permissionBanner}
                 onPress={onRequestPermission}
               >
@@ -153,7 +154,7 @@ export function ProfileView({
                 <ThemedText style={styles.permissionText}>
                   Enable notifications
                 </ThemedText>
-              </TouchableOpacity>
+              </AppPressable>
             )}
 
             <View style={styles.settingRow}>
@@ -170,7 +171,7 @@ export function ProfileView({
                   </ThemedText>
                 </View>
               </View>
-              <Switch
+              <ThemedSwitch
                 value={settings?.budget_alerts_enabled ?? true}
                 onValueChange={onToggleBudgetAlerts}
                 disabled={notifLoading}
@@ -182,22 +183,18 @@ export function ProfileView({
             </View>
 
             {settings?.budget_alerts_enabled && (
-              <TouchableOpacity
+              <AppPressable
                 style={[
                   styles.thresholdRow,
                   { backgroundColor: thresholdRowBg },
                 ]}
                 onPress={onChangeBudgetThreshold}
+                rightIcon="create-outline"
               >
                 <ThemedText style={styles.thresholdText}>
                   Alert threshold: {settings?.budget_threshold_percent || 80}%
                 </ThemedText>
-                <Ionicons
-                  name="create-outline"
-                  size={16}
-                  color={colors.text + "60"}
-                />
-              </TouchableOpacity>
+              </AppPressable>
             )}
 
             <View style={[styles.settingRow, { marginTop: 16 }]}>
@@ -214,7 +211,7 @@ export function ProfileView({
                   </ThemedText>
                 </View>
               </View>
-              <Switch
+              <ThemedSwitch
                 value={settings?.daily_reminder_enabled ?? false}
                 onValueChange={onToggleDailyReminder}
                 disabled={notifLoading}
@@ -224,14 +221,14 @@ export function ProfileView({
                 }
               />
             </View>
-          </View>
+          </Card>
         </View>
 
         <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             About
           </ThemedText>
-          <View
+          <Card
             style={[styles.infoCard, { backgroundColor: colors.tint + "10" }]}
           >
             <Ionicons
@@ -243,8 +240,8 @@ export function ProfileView({
               Your data is securely stored and only accessible to you with
               end-to-end encryption.
             </ThemedText>
-          </View>
-          <View
+          </Card>
+          <Card
             style={[
               styles.infoCard,
               { backgroundColor: colors.tint + "10", marginTop: 12 },
@@ -259,13 +256,14 @@ export function ProfileView({
               Track your expenses efficiently with categories, receipts, and
               detailed insights.
             </ThemedText>
-          </View>
-          <TouchableOpacity
+          </Card>
+          <AppPressable
             style={[
               styles.actionCard,
               { backgroundColor: colors.background, marginTop: 16 },
             ]}
             onPress={onTriggerBackgroundSync}
+            rightIcon="chevron-forward"
           >
             <View style={styles.actionLeft}>
               <Ionicons name="sync" size={24} color={colors.tint} />
@@ -273,12 +271,7 @@ export function ProfileView({
                 Trigger background sync (test)
               </ThemedText>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={colors.text + "60"}
-            />
-          </TouchableOpacity>
+          </AppPressable>
         </View>
       </View>
     </ScrollView>

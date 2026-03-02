@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { AddButton } from "../primitives/add-button";
-import { Card } from "../primitives/card";
+import { Card } from "../primitives/themed-card";
 import { budgetsViewStyles as styles } from "./styles";
 
 interface BudgetsViewProps {

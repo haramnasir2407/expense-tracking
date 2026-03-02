@@ -6,8 +6,8 @@ import { DATE_RANGES } from "@/constants/dateRanges";
 import { AnalyticsData, DailySpending, DateRange } from "@/types/analytics";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Card } from "../primitives/card";
 import { AppPressable } from "../primitives/app-pressable";
+import { Card } from "../primitives/themed-card";
 import { analyticsViewStyles as styles } from "./styles";
 
 interface AnalyticsViewProps {
@@ -95,7 +95,10 @@ export function AnalyticsView({
       />
 
       <View style={styles.summaryGrid}>
-        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        <Card
+          noShadow
+          style={[styles.summaryCard, { backgroundColor: cardBg }]}
+        >
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Total Spent
           </Text>
@@ -103,7 +106,10 @@ export function AnalyticsView({
             ${analytics.totalSpent.toFixed(2)}
           </Text>
         </Card>
-        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        <Card
+          noShadow
+          style={[styles.summaryCard, { backgroundColor: cardBg }]}
+        >
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Avg/Day
           </Text>
@@ -111,7 +117,10 @@ export function AnalyticsView({
             ${analytics.averagePerDay.toFixed(2)}
           </Text>
         </Card>
-        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        <Card
+          noShadow
+          style={[styles.summaryCard, { backgroundColor: cardBg }]}
+        >
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Transactions
           </Text>
@@ -119,7 +128,10 @@ export function AnalyticsView({
             {analytics.transactionCount}
           </Text>
         </Card>
-        <Card noShadow style={[styles.summaryCard, { backgroundColor: cardBg }]}>
+        <Card
+          noShadow
+          style={[styles.summaryCard, { backgroundColor: cardBg }]}
+        >
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Avg/Transaction
           </Text>
@@ -129,10 +141,7 @@ export function AnalyticsView({
         </Card>
       </View>
 
-      <Card
-        noShadow
-        style={[styles.chartSection, { backgroundColor: cardBg }]}
-      >
+      <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Spending Over Time
         </Text>
@@ -142,19 +151,13 @@ export function AnalyticsView({
           isDark={isDark}
         />
       </Card>
-      <Card
-        noShadow
-        style={[styles.chartSection, { backgroundColor: cardBg }]}
-      >
+      <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Category Breakdown
         </Text>
         <CategoryPieChart data={analytics.byCategory} isDark={isDark} />
       </Card>
-      <Card
-        noShadow
-        style={[styles.chartSection, { backgroundColor: cardBg }]}
-      >
+      <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
         <Text style={[styles.chartTitle, { color: colors.text }]}>
           Monthly Comparison
         </Text>

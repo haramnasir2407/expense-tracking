@@ -3,7 +3,7 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
 import React from "react";
 import { Text, View } from "react-native";
-import { Card } from "../primitives/card";
+import { Card } from "../primitives/themed-card";
 import { expenseSummaryStyles as styles } from "./styles";
 
 export function ExpenseSummary() {

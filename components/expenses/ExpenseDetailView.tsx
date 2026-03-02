@@ -3,7 +3,7 @@ import { Expense, ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, ScrollView, Text, View } from "react-native";
-import { Card } from "../primitives/card";
+import { Card } from "../primitives/themed-card";
 import { expenseDetailViewStyles as styles } from "./styles";
 interface ExpenseDetailViewProps {
   expense: Expense;
