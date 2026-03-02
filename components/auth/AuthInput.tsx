@@ -4,12 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   Text,
-  TextInput,
   TextInputProps,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
+import { ThemedTextInput } from "../primitives/themed-text-input";
 import { authInputStyles as styles } from "./styles";
 
 interface AuthInputProps extends TextInputProps {
@@ -52,7 +52,7 @@ export function AuthInput({
             style={styles.icon}
           />
         )}
-        <TextInput
+        <ThemedTextInput
           style={[
             styles.input,
             {
@@ -60,7 +60,6 @@ export function AuthInput({
               flex: 1,
             },
           ]}
-          placeholderTextColor={colors.text + "60"}
           secureTextEntry={isPassword && !showPassword}
           autoCapitalize="none"
           {...textInputProps}

@@ -59,3 +59,12 @@ export function totalForPeriod(
 
   return filteredExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
 }
+
+export const formatDateString = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};

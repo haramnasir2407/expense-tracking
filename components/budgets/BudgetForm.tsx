@@ -2,10 +2,11 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { BudgetFormData } from "@/types/budget";
 import React, { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Text, View } from "react-native";
 import { CategoryPicker } from "../expenses/CategoryPicker";
 import { ActionButtons } from "../primitives/action-buttons";
 import { AppPressable } from "../primitives/app-pressable";
+import { ThemedTextInput } from "../primitives/themed-text-input";
 import { budgetFormStyles as styles } from "./styles";
 
 interface BudgetFormProps {
@@ -61,8 +62,8 @@ export function BudgetForm({
       )}
 
       <Text style={[styles.label, { color: colors.text }]}>Monthly Budget</Text>
-      <TextInput
-        style={[styles.input, { color: colors.text }]}
+      <ThemedTextInput
+        style={styles.input}
         value={amount}
         onChangeText={setAmount}
         placeholder="0.00"

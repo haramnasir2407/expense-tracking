@@ -12,15 +12,16 @@ import {
   Platform,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { ActionButtons } from "../primitives/action-buttons";
 import { AppPressable } from "../primitives/app-pressable";
+import { ThemedTextInput } from "../primitives/themed-text-input";
 import { CategoryPicker } from "./CategoryPicker";
 import { ReceiptUpload } from "./ReceiptUpload";
 import { expenseFormStyles as styles } from "./styles";
+import { formatDateString } from "@/utils/expense";
 
 interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
@@ -88,15 +89,6 @@ export function ExpenseForm({
     }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -122,15 +114,14 @@ export function ExpenseForm({
               <Text style={[styles.currencySymbol, { color: colors.text }]}>
                 $
               </Text>
-              <TextInput
-                style={[styles.input, { color: colors.text }]}
+              <ThemedTextInput
+                style={styles.input}
                 value={amount}
                 onChangeText={(text) => {
                   setAmount(text);
                   setAmountError("");
                 }}
                 placeholder="0.00"
-                placeholderTextColor={colors.text + "50"}
                 keyboardType="decimal-pad"
                 autoFocus
               />
@@ -191,7 +182,7 @@ export function ExpenseForm({
                   color={colors.text + "99"}
                 />
                 <Text style={[styles.dateText, { color: colors.text }]}>
-                  {formatDate(date)}
+                  {formatDateString(date)}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -202,18 +193,16 @@ export function ExpenseForm({
             <Text style={[styles.label, { color: colors.text }]}>
               Notes (Optional)
             </Text>
-            <TextInput
+            <ThemedTextInput
               style={[
                 styles.textArea,
                 {
                   borderColor: colors.text + "30",
-                  color: colors.text,
                 },
               ]}
               value={notes}
               onChangeText={setNotes}
               placeholder="Add any additional details..."
-              placeholderTextColor={colors.text + "50"}
               multiline
               numberOfLines={4}
               textAlignVertical="top"
