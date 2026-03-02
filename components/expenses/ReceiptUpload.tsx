@@ -61,7 +61,9 @@ export function ReceiptUpload({
       if (!matches) continue;
 
       for (const match of matches) {
-        const normalized = parseFloat(match.replace(/,/g, "").replace(",", "."));
+        const normalized = parseFloat(
+          match.replace(/,/g, "").replace(",", "."),
+        );
         if (Number.isNaN(normalized)) continue;
 
         let priority = 0;
@@ -82,7 +84,9 @@ export function ReceiptUpload({
     }
 
     const allCandidates =
-      rupeeAmountCandidates.length > 0 ? rupeeAmountCandidates : amountCandidates;
+      rupeeAmountCandidates.length > 0
+        ? rupeeAmountCandidates
+        : amountCandidates;
 
     if (allCandidates.length > 0) {
       allCandidates.sort(
@@ -101,15 +105,102 @@ export function ReceiptUpload({
       /\b(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})\b/, // 2 Mar 2026
     ];
 
+    const monthMap: Record<string, number> = {
+      jan: 0,
+      january: 0,
+      feb: 1,
+      february: 1,
+      mar: 2,
+      march: 2,
+      apr: 3,
+      april: 3,
+      may: 4,
+      jun: 5,
+      june: 5,
+      jul: 6,
+      july: 6,
+      aug: 7,
+      august: 7,
+      sep: 8,
+      sept: 8,
+      september: 8,
+      oct: 9,
+      october: 9,
+      nov: 10,
+      november: 10,
+      dec: 11,
+      december: 11,
+    };
+
+    const extractTime = (source: string): { hours: number; minutes: number } | null => {
+      const timeMatch = source.match(
+        /\b(\d{1,2}):([0-5]\d)(?:\s*([AaPp][Mm]))?\b/,
+      );
+      if (!timeMatch) return null;
+
+      let hours = Number.parseInt(timeMatch[1], 10);
+      const minutes = Number.parseInt(timeMatch[2], 10);
+      const meridian = timeMatch[3]?.toLowerCase();
+
+      if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+
+      if (meridian) {
+        if (meridian === "pm" && hours < 12) {
+          hours += 12;
+        } else if (meridian === "am" && hours === 12) {
+          hours = 0;
+        }
+      }
+
+      return { hours, minutes };
+    };
+
     outer: for (const line of nonEmptyLines) {
-      for (const pattern of datePatterns) {
+      for (let i = 0; i < datePatterns.length; i++) {
+        const pattern = datePatterns[i];
         const match = line.match(pattern);
-        if (match?.[1]) {
-          const candidate = new Date(match[1]);
-          if (!Number.isNaN(candidate.getTime())) {
-            date = candidate;
-            break outer;
+        if (!match?.[1]) continue;
+
+        const raw = match[1];
+        let candidate: Date | undefined;
+
+        if (i < 2) {
+          // ISO-like or numeric dates: let Date parse them
+          const d = new Date(raw);
+          if (!Number.isNaN(d.getTime())) {
+            candidate = d;
           }
+        } else {
+          // parse manually for cross-platform safety
+          const parts = raw.split(/\s+/);
+          if (parts.length === 3) {
+            const [dayStr, monthStr, yearStr] = parts;
+            const day = Number.parseInt(dayStr, 10);
+            const year = Number.parseInt(yearStr, 10);
+            const monthIdx = monthMap[monthStr.toLowerCase()];
+
+            if (
+              Number.isFinite(day) &&
+              Number.isFinite(year) &&
+              monthIdx != null
+            ) {
+              const d = new Date(year, monthIdx, day);
+              if (!Number.isNaN(d.getTime())) {
+                candidate = d;
+              }
+            }
+          }
+        }
+
+        if (candidate) {
+          // If there's a time on the same line, apply it to the candidate date
+          const time = extractTime(line);
+          if (time) {
+            candidate.setHours(time.hours, time.minutes, 0, 0);
+          }
+
+          date = candidate;
+          break outer;
         }
       }
     }

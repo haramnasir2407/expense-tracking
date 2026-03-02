@@ -1,6 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ExpenseFormData } from "@/types/expense";
+import { formatDateString } from "@/utils/expense";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -21,7 +22,6 @@ import { ThemedTextInput } from "../primitives/themed-text-input";
 import { CategoryPicker } from "./CategoryPicker";
 import { ReceiptUpload } from "./ReceiptUpload";
 import { expenseFormStyles as styles } from "./styles";
-import { formatDateString } from "@/utils/expense";
 
 interface ExpenseFormProps {
   initialData?: Partial<ExpenseFormData>;
