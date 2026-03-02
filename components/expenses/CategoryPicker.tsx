@@ -1,3 +1,4 @@
+import { CATEGORIES } from "@/constants/categories";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenseCategories } from "@/hooks/useExpenseCategories";

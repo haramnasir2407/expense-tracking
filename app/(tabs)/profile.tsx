@@ -3,6 +3,7 @@ import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { triggerBackgroundSyncTaskForTesting } from "@/service/background-sync-task";
 import { router } from "expo-router";
 import React from "react";
 import Toast from "react-native-toast-message";
@@ -107,6 +108,25 @@ export default function ProfileScreen() {
     );
   };
 
+  const handleTriggerBackgroundSync = async () => {
+    try {
+      await triggerBackgroundSyncTaskForTesting();
+      Toast.show({
+        type: "success",
+        text1: "Background sync triggered",
+        text2: "Check logs for sync output.",
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to trigger sync";
+      Toast.show({
+        type: "error",
+        text1: "Error triggering background sync",
+        text2: message,
+      });
+    }
+  };
+
   return (
     <ProfileView
       user={user ?? null}
@@ -123,6 +143,7 @@ export default function ProfileScreen() {
       onChangeBudgetThreshold={changeBudgetThreshold}
       onRequestPermission={requestPermission}
       onVerifyEmailPress={() => router.push("/auth/verify-email")}
+      onTriggerBackgroundSync={handleTriggerBackgroundSync}
     />
   );
 }
