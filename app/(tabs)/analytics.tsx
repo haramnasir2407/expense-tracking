@@ -1,10 +1,13 @@
 import { AnalyticsView } from "@/components/analytics/AnalyticsView";
 import { DUMMY_EXPENSES } from "@/constants/analytics";
+import { DUMMY_MONTHLY_BUDGETS } from "@/constants/dummyBudgets";
 import { Colors } from "@/constants/theme";
+import { useBudgets } from "@/contexts/BudgetContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
 import { calculateAnalytics } from "@/service/analytics";
-import { DateRange } from "@/types/analytics";
+import { DailySpending, DateRange } from "@/types/analytics";
+import { Budget } from "@/types/budget";
 import { Expense } from "@/types/expense";
 import React, { useMemo, useState } from "react";
 
@@ -33,16 +36,32 @@ function getShiftedDummyExpenses(): Expense[] {
   });
 }
 
+function getCategoryBudgetForMonth(
+  category: string,
+  monthKey: string,
+  budgets: Budget[],
+): number {
+  const monthStart = `${monthKey}-01`;
+  const real = budgets.find(
+    (b) => b.category === category && b.month === monthStart,
+  );
+  if (real) return real.amount;
+  return DUMMY_MONTHLY_BUDGETS[category] ?? 0;
+}
+
 export default function AnalyticsScreen() {
   const { expenses } = useExpenses();
+  const { budgets } = useBudgets();
   const [selectedRange, setSelectedRange] = useState<DateRange>("month");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
 
   const analytics = useMemo(() => {
-    const baseExpenses =
-      expenses.length > 0 ? expenses : getShiftedDummyExpenses();
+    // const baseExpenses =
+    //   expenses.length > 0 ? expenses : getShiftedDummyExpenses();
+
+    const baseExpenses = getShiftedDummyExpenses();
 
     const filteredByCategory =
       selectedCategory === "all"
@@ -52,12 +71,25 @@ export default function AnalyticsScreen() {
     return calculateAnalytics(filteredByCategory, selectedRange);
   }, [expenses, selectedCategory, selectedRange]);
 
-  const categories = useMemo(() => {
-    const baseExpenses =
-      expenses.length > 0 ? expenses : getShiftedDummyExpenses();
-    const unique = Array.from(new Set(baseExpenses.map((e) => e.category)));
-    return ["all", ...unique];
-  }, [expenses]);
+  const dailyBudgetSeries = useMemo((): DailySpending[] | null => {
+    if (selectedCategory === "all" || analytics.dailyTotals.length === 0) {
+      return null;
+    }
+    return analytics.dailyTotals.map(({ date }) => {
+      const d = new Date(date);
+      const y = d.getFullYear();
+      const m = d.getMonth();
+      const monthKey = `${y}-${String(m + 1).padStart(2, "0")}`;
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      const monthlyBudget = getCategoryBudgetForMonth(
+        selectedCategory,
+        monthKey,
+        budgets,
+      );
+      const dailyBudget = daysInMonth > 0 ? monthlyBudget / daysInMonth : 0;
+      return { date, amount: dailyBudget };
+    });
+  }, [selectedCategory, analytics.dailyTotals, budgets]);
 
   return (
     <AnalyticsView
@@ -65,8 +97,8 @@ export default function AnalyticsScreen() {
       selectedRange={selectedRange}
       onSelectRange={setSelectedRange}
       selectedCategory={selectedCategory}
-      categories={categories}
       onSelectCategory={setSelectedCategory}
+      dailyBudgetSeries={dailyBudgetSeries}
       isDark={colorScheme === "dark"}
       colors={colors}
     />

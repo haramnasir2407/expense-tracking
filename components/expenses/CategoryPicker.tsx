@@ -1,11 +1,9 @@
 import { CATEGORIES } from "@/constants/categories";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { getCategories } from "@/service/expenses-supabase";
-import { Category } from "@/types/expense";
+import { useExpenseCategories } from "@/hooks/useExpenseCategories";
 import { Ionicons } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -22,6 +20,8 @@ interface CategoryPickerProps {
   selectedCategory?: string;
   onSelect: (category: string) => void;
   onClose: () => void;
+  /** When true, show an "All" option first (e.g. for analytics filter). */
+  showAllOption?: boolean;
 }
 
 export function CategoryPicker({
@@ -29,67 +29,13 @@ export function CategoryPicker({
   selectedCategory,
   onSelect,
   onClose,
+  showAllOption,
 }: CategoryPickerProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { categories, isLoading } = useExpenseCategories({ enabled: visible });
 
-  useEffect(() => {
-    if (visible) {
-      loadCategories();
-    }
-  }, [visible]);
-
-  async function loadCategories() {
-    setLoading(true);
-
-    try {
-      // Try to load cached categories first for instant/offline display
-      const cached = await SecureStore.getItemAsync("expense_categories");
-      if (cached) {
-        console.log("Using cached categories");
-        try {
-          const parsed = JSON.parse(cached) as Category[];
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setCategories(parsed);
-            setLoading(false);
-          }
-        } catch {
-          // Ignore parse errors and fall through to network fetch
-        }
-      }
-
-      // Always attempt to refresh from backend when picker opens
-      const { data, error } = await getCategories();
-      if (!error && data) {
-        setCategories(data);
-        await SecureStore.setItemAsync(
-          "expense_categories",
-          JSON.stringify(data),
-        );
-      } else if (!cached) {
-        // No cache and no backend data – fall back to hard-coded defaults
-        console.log(
-          "No cache and no backend data - falling back to hard-coded defaults",
-        );
-        if (CATEGORIES.length > 0) {
-          setCategories(
-            CATEGORIES.map((c, index) => ({
-              id: String(index),
-              name: c.name,
-              icon: c.icon,
-              color: c.color,
-            })),
-          );
-        }
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleSelect = (categoryName: string) => {
+  const handleSelect = (categoryName: string): void => {
     onSelect(categoryName);
     onClose();
   };
@@ -116,12 +62,46 @@ export function CategoryPicker({
             </TouchableOpacity>
           </View>
 
-          {loading ? (
+          {isLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.tint} />
             </View>
           ) : (
             <ScrollView style={styles.scrollView}>
+              {showAllOption && (
+                <TouchableOpacity
+                  style={[
+                    styles.categoryItem,
+                    {
+                      backgroundColor:
+                        selectedCategory === "all" || !selectedCategory
+                          ? colors.tint + "20"
+                          : "transparent",
+                      borderColor: colors.text + "20",
+                    },
+                  ]}
+                  onPress={() => handleSelect("all")}
+                >
+                  <View
+                    style={[
+                      styles.iconCircle,
+                      { backgroundColor: colors.tint + "40" },
+                    ]}
+                  >
+                    <Ionicons name="apps" size={24} color="#FFFFFF" />
+                  </View>
+                  <Text style={[styles.categoryName, { color: colors.text }]}>
+                    All
+                  </Text>
+                  {(selectedCategory === "all" || !selectedCategory) && (
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color={colors.tint}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
               {categories.map((category) => (
                 <TouchableOpacity
                   key={category.id}

@@ -5,8 +5,14 @@ import { Text, View } from "react-native";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
 import { spendingLineChartStyles as styles } from "./styles";
+
+const SPENDING_COLOR = "#4ECDC4";
+const BUDGET_LINE_COLOR = "#F7A072";
+
 interface LineChartProps {
   data: DailySpending[];
+  /** When a category is selected, daily budget (monthly budget / days in month) per date; same order as data. */
+  budgetData?: DailySpending[];
   height?: number;
   isDark?: boolean;
   xLabel?: string;
@@ -17,17 +23,25 @@ interface LineChartProps {
 // useChartPressState is a Victory Native hook that tracks touch interactions
 export function SpendingLineChart({
   data,
+  budgetData,
   height = 200,
   isDark = false,
   xLabel = "Date",
   yLabel = "Amount ($)",
   transactionCount,
 }: LineChartProps) {
-  const { state, isActive } = useChartPressState({ x: 0, y: { y: 0 } });
+  const showBudget =
+    budgetData &&
+    budgetData.length === data.length &&
+    budgetData.some((b) => b.amount > 0);
+  const stateSingle = useChartPressState({ x: 0, y: { y: 0 } });
+  const stateDual = useChartPressState({ x: 0, y: { y: 0, budget: 0 } });
+  const { state, isActive } = showBudget ? stateDual : stateSingle;
 
-  const chartData = data.map((d) => ({
+  const chartData = data.map((d, i) => ({
     x: new Date(d.date).getTime(),
     y: d.amount,
+    ...(showBudget && budgetData ? { budget: budgetData[i]?.amount ?? 0 } : {}),
   }));
 
   const effectiveCount = transactionCount ?? data.length;
@@ -39,33 +53,72 @@ export function SpendingLineChart({
 
   return (
     <View style={[styles.container, { height }]}>
-      <CartesianChart
-        data={chartData}
-        xKey="x"
-        yKeys={["y"]}
-        domainPadding={{ left: 20, right: 20, top: 20 }}
-        chartPressState={state}
-      >
-        {({ points }) => (
-          <>
-            <Line
-              points={points.y}
-              color="#4ECDC4"
-              strokeWidth={3}
-              curveType="catmullRom"
-              animate={{ type: "timing", duration: 300 }}
-            />
-            {isActive && (
-              <Circle
-                cx={state.x.position}
-                cy={state.y.y.position}
-                r={5}
-                color="#4ECDC4"
+      {showBudget ? (
+        <CartesianChart
+          data={chartData}
+          xKey="x"
+          yKeys={["y", "budget"]}
+          domainPadding={{ left: 20, right: 20, top: 20 }}
+          chartPressState={stateDual.state}
+        >
+          {({ points }) => (
+            <>
+              <Line
+                points={points.y}
+                color={SPENDING_COLOR}
+                strokeWidth={3}
+                curveType="catmullRom"
+                animate={{ type: "timing", duration: 300 }}
               />
-            )}
-          </>
-        )}
-      </CartesianChart>
+              {points.budget && (
+                <Line
+                  points={points.budget}
+                  color={BUDGET_LINE_COLOR}
+                  strokeWidth={2}
+                  curveType="linear"
+                  animate={{ type: "timing", duration: 300 }}
+                />
+              )}
+              {isActive && (
+                <Circle
+                  cx={state.x.position}
+                  cy={state.y.y.position}
+                  r={5}
+                  color={SPENDING_COLOR}
+                />
+              )}
+            </>
+          )}
+        </CartesianChart>
+      ) : (
+        <CartesianChart
+          data={chartData}
+          xKey="x"
+          yKeys={["y"]}
+          domainPadding={{ left: 20, right: 20, top: 20 }}
+          chartPressState={stateSingle.state}
+        >
+          {({ points }) => (
+            <>
+              <Line
+                points={points.y}
+                color={SPENDING_COLOR}
+                strokeWidth={3}
+                curveType="catmullRom"
+                animate={{ type: "timing", duration: 300 }}
+              />
+              {isActive && (
+                <Circle
+                  cx={state.x.position}
+                  cy={state.y.y.position}
+                  r={5}
+                  color={SPENDING_COLOR}
+                />
+              )}
+            </>
+          )}
+        </CartesianChart>
+      )}
 
       {isActive && (
         <View
@@ -81,6 +134,27 @@ export function SpendingLineChart({
           <Text style={[styles.tooltipText, { color: "white" }]}>
             ${state.y.y.value.value.toFixed(2)}
           </Text>
+        </View>
+      )}
+
+      {showBudget && (
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View
+              style={[styles.legendDot, { backgroundColor: SPENDING_COLOR }]}
+            />
+            <Text style={[styles.legendText, isDark && { color: "#8E8E93" }]}>
+              Spending
+            </Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View
+              style={[styles.legendDot, { backgroundColor: BUDGET_LINE_COLOR }]}
+            />
+            <Text style={[styles.legendText, isDark && { color: "#8E8E93" }]}>
+              Budget
+            </Text>
+          </View>
         </View>
       )}
 

@@ -4,8 +4,9 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { Stack, useRouter, useSegments } from "expo-router";
+import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
 import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
@@ -28,6 +29,8 @@ function RootLayoutNav() {
   const { user, initialized } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
+  const lastResponseHandled = useRef(false);
 
   useEffect(() => {
     // Register once when the shell mounts
@@ -49,6 +52,27 @@ function RootLayoutNav() {
       router.replace("/(tabs)");
     }
   }, [user, segments, initialized, router]);
+
+  // Deep link: when app is opened from a daily reminder notification tap, go to expenses tab
+  useEffect(() => {
+    if (!user || !lastNotificationResponse) return;
+    const data = lastNotificationResponse.notification?.request?.content?.data as { type?: string } | undefined;
+    if (data?.type !== "daily_reminder") return;
+    if (lastResponseHandled.current) return;
+    lastResponseHandled.current = true;
+    router.replace("/(tabs)");
+  }, [user, lastNotificationResponse, router]);
+
+  // Listen for notification taps when app is in foreground or background
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification?.request?.content?.data as { type?: string } | undefined;
+      if (data?.type === "daily_reminder" && user) {
+        router.replace("/(tabs)");
+      }
+    });
+    return () => sub.remove();
+  }, [user, router]);
 
   // Show loading screen while checking auth state
   if (!initialized) {
