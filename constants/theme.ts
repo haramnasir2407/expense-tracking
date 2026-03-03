@@ -4,6 +4,7 @@
  */
 
 import { Platform } from "react-native";
+import { createTokens } from "tamagui";
 
 const tintColorLight = "#0a7ea4";
 const tintColorDark = "#0a7ea4";
@@ -26,6 +27,28 @@ export const Colors = {
     tabIconSelected: tintColorDark,
   },
 };
+
+export const tokens = createTokens({
+  color: {
+    primary: "#000000",
+    secondary: "#000000",
+    tertiary: "#000000",
+  },
+  size: {
+    small: 12,
+    medium: 16,
+    large: 20,
+    xlarge: 24,
+    xxlarge: 28,
+    xxxlarge: 32,
+  },
+  font: {
+    sans: "system-ui",
+    serif: "ui-serif",
+    rounded: "ui-rounded",
+    mono: "ui-monospace",
+  },
+});
 
 export const Fonts = Platform.select({
   ios: {
