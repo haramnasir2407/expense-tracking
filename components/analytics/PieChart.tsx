@@ -1,6 +1,6 @@
 import { CategorySpending } from "@/types/analytics";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View } from "tamagui";
 import { Pie, PolarChart } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
 import { categoryPieChartStyles as styles } from "./styles";

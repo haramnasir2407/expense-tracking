@@ -1,4 +1,4 @@
-import { Switch } from "react-native";
+import { Switch } from "tamagui";
 
 interface SwitchProps {
   value: boolean;
@@ -17,11 +17,20 @@ export function ThemedSwitch({
 }: SwitchProps) {
   return (
     <Switch
-      value={value}
-      onValueChange={onValueChange}
+      checked={value}
+      onCheckedChange={onValueChange}
       disabled={disabled}
-      trackColor={trackColor}
-      thumbColor={thumbColor}
-    />
+      size="$3"
+      {...({
+        backgroundColor: value ? trackColor.true : trackColor.false,
+      } as any)}
+    >
+      <Switch.Thumb
+        animation="bouncy"
+        {...({
+          backgroundColor: thumbColor,
+        } as any)}
+      />
+    </Switch>
   );
 }

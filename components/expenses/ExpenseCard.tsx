@@ -4,7 +4,7 @@ import { Expense } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, XStack, YStack } from "tamagui";
 import { AppPressable } from "../primitives/app-pressable";
 import { IconCircle } from "../primitives/icon-circle";
 import { expenseCardStyles as styles } from "./styles";
@@ -43,11 +43,12 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
         {
           backgroundColor: colors.background,
           borderColor: colors.text + "20",
+          borderWidth: 1,
         },
       ]}
       onPress={handlePress}
     >
-      <View style={styles.iconContainer}>
+      <YStack style={styles.iconContainer}>
         <IconCircle
           size={48}
           backgroundColor={colors.tint + "20"}
@@ -55,19 +56,19 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
         >
           <Ionicons name="receipt-outline" size={24} color={colors.tint} />
         </IconCircle>
-      </View>
+      </YStack>
 
-      <View style={styles.contentContainer}>
-        <View style={styles.topRow}>
+      <YStack style={styles.contentContainer}>
+        <XStack style={styles.topRow}>
           <Text style={[styles.category, { color: colors.text }]}>
             {expense.category}
           </Text>
           <Text style={[styles.amount, { color: colors.text }]}>
             {formatAmount(expense.amount)}
           </Text>
-        </View>
+        </XStack>
 
-        <View style={styles.bottomRow}>
+        <XStack style={styles.bottomRow}>
           {expense.notes && (
             <Text
               style={[styles.notes, { color: colors.text + "99" }]}
@@ -79,8 +80,8 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
           <Text style={[styles.time, { color: colors.text + "66" }]}>
             {formatTime(expense.date)}
           </Text>
-        </View>
-      </View>
+        </XStack>
+      </YStack>
     </AppPressable>
   );
 }

@@ -1,7 +1,7 @@
 import { DailySpending } from "@/types/analytics";
 import { Circle } from "@shopify/react-native-skia";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View } from "tamagui";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
 import { spendingLineChartStyles as styles } from "./styles";

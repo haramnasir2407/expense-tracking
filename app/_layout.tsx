@@ -1,3 +1,5 @@
+import "../tamagui.generated.css";
+
 import {
   DarkTheme,
   DefaultTheme,
@@ -11,6 +13,7 @@ import { ActivityIndicator, View } from "react-native";
 import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
+import { TamaguiProvider } from "tamagui";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { BudgetProvider } from "@/contexts/BudgetContext";
@@ -19,6 +22,7 @@ import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 import { registerBackgroundSyncTaskAsync } from "@/service/background-sync-task";
+import { tamaguiConfig } from "@/tamagui.config";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -84,15 +88,20 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="expenses" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
-      <Toast />
-    </ThemeProvider>
+    <TamaguiProvider
+      config={tamaguiConfig}
+      defaultTheme={colorScheme === "dark" ? "dark" : "light"}
+    >
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+          <Stack.Screen name="expenses" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+        <Toast />
+      </ThemeProvider>
+    </TamaguiProvider>
   );
 }
 

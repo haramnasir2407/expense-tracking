@@ -8,7 +8,8 @@ import {
 } from "@/types/budget";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Modal, ScrollView } from "react-native";
+import { Button, Text, View, YStack } from "tamagui";
 import { AddButton } from "../primitives/add-button";
 import { Card } from "../primitives/themed-card";
 import { budgetsViewStyles as styles } from "./styles";
@@ -51,12 +52,14 @@ export function BudgetsView({
   const emptySubColor = isDark ? "#636366" : "#999";
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <YStack style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView}>
         {currentMonthSummary && (
           <Card
             noShadow
-            style={[styles.summaryCard, { backgroundColor: cardBg }]}
+            style={styles.summaryCard}
+            backgroundColor={cardBg}
+            borderColor={borderColor}
           >
             <Text style={[styles.summaryTitle, { color: colors.text }]}>
               This Month
@@ -187,9 +190,9 @@ export function BudgetsView({
             <Text style={[styles.modalTitle, { color: colors.text }]}>
               Create Budget
             </Text>
-            <TouchableOpacity onPress={onCloseCreate}>
+            <Button unstyled onPress={onCloseCreate}>
               <Ionicons name="close" size={24} color={colors.text} />
-            </TouchableOpacity>
+            </Button>
           </View>
           <BudgetForm onSubmit={onCreateBudget} onCancel={onCloseCreate} />
         </View>
@@ -212,9 +215,9 @@ export function BudgetsView({
             <Text style={[styles.modalTitle, { color: colors.text }]}>
               Edit Budget
             </Text>
-            <TouchableOpacity onPress={onCloseEdit}>
+            <Button unstyled onPress={onCloseEdit}>
               <Ionicons name="close" size={24} color={colors.text} />
-            </TouchableOpacity>
+            </Button>
           </View>
           {editingBudget && (
             <BudgetForm
@@ -230,6 +233,6 @@ export function BudgetsView({
           )}
         </View>
       </Modal>
-    </View>
+    </YStack>
   );
 }

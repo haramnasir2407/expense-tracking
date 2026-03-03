@@ -2,7 +2,8 @@ import { ThemedText } from "@/components/primitives/themed-text";
 import { NotificationSettings } from "@/types/notification";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@supabase/supabase-js";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
+import { View, XStack, YStack } from "tamagui";
 import { AppPressable } from "../primitives/app-pressable";
 import { Card } from "../primitives/themed-card";
 
@@ -101,7 +102,7 @@ export function ProfileView({
           </Card>
         </View>
 
-        <View style={styles.section}>
+        <YStack style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Settings
           </ThemedText>
@@ -110,12 +111,12 @@ export function ProfileView({
             onPress={onToggleBiometric}
             rightIcon="chevron-forward"
           >
-            <View style={styles.actionLeft}>
+            <XStack style={styles.actionLeft}>
               <Ionicons name="finger-print" size={24} color={colors.tint} />
               <ThemedText style={styles.actionTitle}>
                 {biometricEnabled ? "Disable" : "Enable"} Biometric Login
               </ThemedText>
-            </View>
+            </XStack>
           </AppPressable>
 
           {!emailConfirmed && (
@@ -135,9 +136,9 @@ export function ProfileView({
               </View>
             </AppPressable>
           )}
-        </View>
+        </YStack>
 
-        <View style={styles.section}>
+        <YStack style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Notifications & Alerts
           </ThemedText>
@@ -222,7 +223,7 @@ export function ProfileView({
               />
             </View>
           </Card>
-        </View>
+        </YStack>
 
         <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>

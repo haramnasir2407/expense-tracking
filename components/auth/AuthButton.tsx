@@ -1,20 +1,18 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import React from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  ViewStyle,
-} from "react-native";
+import { ActivityIndicator, ViewStyle } from "react-native";
+
+import { Button, Text } from "tamagui";
 import { authButtonStyles as styles } from "./styles";
 
-interface AuthButtonProps extends TouchableOpacityProps {
+interface AuthButtonProps {
   title: string;
   loading?: boolean;
   variant?: "primary" | "secondary" | "outline";
   containerStyle?: ViewStyle;
+  onPress: () => void;
+  disabled?: boolean;
 }
 
 export function AuthButton({
@@ -22,13 +20,12 @@ export function AuthButton({
   loading = false,
   variant = "primary",
   containerStyle,
-  disabled,
-  ...touchableProps
+  onPress,
 }: AuthButtonProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
 
-  const isDisabled = disabled || loading;
+  const isDisabled = loading;
 
   const getButtonStyle = () => {
     if (variant === "primary") {
@@ -59,10 +56,11 @@ export function AuthButton({
   };
 
   return (
-    <TouchableOpacity
+    <Button
+      unstyled
       style={[styles.button, getButtonStyle(), containerStyle]}
       disabled={isDisabled}
-      {...touchableProps}
+      onPress={onPress}
     >
       {loading ? (
         <ActivityIndicator color={getTextColor()} />
@@ -71,7 +69,6 @@ export function AuthButton({
           {title}
         </Text>
       )}
-    </TouchableOpacity>
+    </Button>
   );
 }
-

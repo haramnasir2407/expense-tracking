@@ -1,7 +1,7 @@
 import { BudgetStatus } from "@/types/budget";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Button, Text, View } from "tamagui";
 import { budgetCardStyles as styles } from "./styles";
 
 interface BudgetCardProps {
@@ -26,13 +26,13 @@ export function BudgetCard({
   const showActions = onDelete != null;
 
   return (
-    <TouchableOpacity
+    <Button
+      unstyled
       style={[
         styles.container,
         { backgroundColor: isDark ? "#1C1C1E" : "white" },
       ]}
       onPress={onPress}
-      activeOpacity={0.7}
       disabled={!onPress && !showActions}
     >
       <View style={styles.header}>
@@ -46,7 +46,8 @@ export function BudgetCard({
           {showActions && (
             <View style={styles.actions}>
               {onDelete != null && (
-                <TouchableOpacity
+                <Button
+                  unstyled
                   onPress={(e) => {
                     e?.stopPropagation?.();
                     onDelete();
@@ -55,7 +56,7 @@ export function BudgetCard({
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
                   <Ionicons name="trash-outline" size={20} color="#FF6B6B" />
-                </TouchableOpacity>
+                </Button>
               )}
             </View>
           )}
@@ -88,6 +89,6 @@ export function BudgetCard({
           {Math.abs(budget.remaining).toFixed(2)}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Button>
   );
 }

@@ -5,7 +5,8 @@ import { CategoryPicker } from "@/components/expenses/CategoryPicker";
 import { DATE_RANGES } from "@/constants/dateRanges";
 import { AnalyticsData, DailySpending, DateRange } from "@/types/analytics";
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView } from "react-native";
+import { Button, Text, YStack } from "tamagui";
 import { AppPressable } from "../primitives/app-pressable";
 import { Card } from "../primitives/themed-card";
 import { analyticsViewStyles as styles } from "./styles";
@@ -50,7 +51,8 @@ export function AnalyticsView({
         contentContainerStyle={styles.rangeSelectorContent}
       >
         {DATE_RANGES.map((range) => (
-          <TouchableOpacity
+          <Button
+            unstyled
             key={range.value}
             style={[
               styles.rangeButton,
@@ -68,7 +70,7 @@ export function AnalyticsView({
             >
               {range.label}
             </Text>
-          </TouchableOpacity>
+          </Button>
         ))}
       </ScrollView>
 
@@ -94,7 +96,7 @@ export function AnalyticsView({
         showAllOption
       />
 
-      <View style={styles.summaryGrid}>
+      <YStack style={styles.summaryGrid}>
         <Card
           noShadow
           style={[styles.summaryCard, { backgroundColor: cardBg }]}
@@ -139,7 +141,7 @@ export function AnalyticsView({
             ${analytics.averagePerTransaction.toFixed(2)}
           </Text>
         </Card>
-      </View>
+      </YStack>
 
       <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
         <Text style={[styles.chartTitle, { color: colors.text }]}>
