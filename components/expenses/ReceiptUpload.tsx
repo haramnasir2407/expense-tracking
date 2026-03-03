@@ -1,7 +1,10 @@
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { deleteReceipt } from "@/service/storage-supabase";
+import {
+  deleteReceipt,
+  uploadReceiptFromLocalUri,
+} from "@/service/storage-supabase";
 import { Ionicons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
@@ -277,25 +280,53 @@ export function ReceiptUpload({
       const selectedAsset = result.assets[0];
       await runOcrPrefill(selectedAsset.uri);
 
-      const fileExt = selectedAsset.uri.split(".").pop() || "jpg";
-      const dir = `${FileSystem.documentDirectory}receipts/${user.id}`;
-      try {
-        await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-      } catch {
-        // directory may already exist
-      }
-      const localPath = `${dir}/${Date.now()}.${fileExt}`;
-      await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
-
+      // If we're offline, save to local storage and store the file:// URI.
       if (!isOnline) {
+        const fileExt = selectedAsset.uri.split(".").pop() || "jpg";
+        const dir = `${FileSystem.documentDirectory}receipts/${user.id}`;
+        try {
+          await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+        } catch {
+          // directory may already exist
+        }
+        const localPath = `${dir}/${Date.now()}.${fileExt}`;
+        await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
+
         Toast.show({
           type: "info",
           text1: "Saved receipt offline",
           text2: "It will sync when you're back online.",
         });
+
+        onUpload(localPath);
+        return;
       }
 
-      onUpload(localPath);
+      // If we're online, upload immediately and store the remote URL.
+      setUploading(true);
+      try {
+        const { url, error } = await uploadReceiptFromLocalUri(
+          selectedAsset.uri,
+          user.id,
+        );
+
+        if (error || !url) {
+          Toast.show({
+            type: "error",
+            text1: "Upload failed",
+            text2: error?.message ?? "Unable to upload receipt.",
+          });
+          return;
+        }
+
+        Toast.show({
+          type: "success",
+          text1: "Receipt uploaded",
+        });
+        onUpload(url);
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -324,25 +355,51 @@ export function ReceiptUpload({
       const selectedAsset = result.assets[0];
       await runOcrPrefill(selectedAsset.uri);
 
-      const fileExt = selectedAsset.uri.split(".").pop() || "jpg";
-      const dir = `${FileSystem.documentDirectory}receipts/${user.id}`;
-      try {
-        await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-      } catch {
-        // directory may already exist
-      }
-      const localPath = `${dir}/${Date.now()}.${fileExt}`;
-      await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
-
       if (!isOnline) {
+        const fileExt = selectedAsset.uri.split(".").pop() || "jpg";
+        const dir = `${FileSystem.documentDirectory}receipts/${user.id}`;
+        try {
+          await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+        } catch {
+          // directory may already exist
+        }
+        const localPath = `${dir}/${Date.now()}.${fileExt}`;
+        await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
+
         Toast.show({
           type: "info",
           text1: "Saved receipt offline",
           text2: "It will sync when you're back online.",
         });
+
+        onUpload(localPath);
+        return;
       }
 
-      onUpload(localPath);
+      setUploading(true);
+      try {
+        const { url, error } = await uploadReceiptFromLocalUri(
+          selectedAsset.uri,
+          user.id,
+        );
+
+        if (error || !url) {
+          Toast.show({
+            type: "error",
+            text1: "Upload failed",
+            text2: error?.message ?? "Unable to upload receipt.",
+          });
+          return;
+        }
+
+        Toast.show({
+          type: "success",
+          text1: "Receipt uploaded",
+        });
+        onUpload(url);
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
