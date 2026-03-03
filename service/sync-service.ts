@@ -1,7 +1,9 @@
+import { waitForExpensesStoreHydration } from "@/stores/expenses-store";
 import { Expense } from "@/types/expense";
 import NetInfo from "@react-native-community/netinfo";
-import * as sqliteExpenses from "./expenses-sqlite";
+import * as localExpenses from "./expenses-local";
 import * as supabaseExpenses from "./expenses-supabase";
+import { uploadReceiptFromLocalUri } from "./storage-supabase";
 
 export type SyncStatus = "idle" | "syncing" | "success" | "error";
 
@@ -31,10 +33,10 @@ async function pushToRemote(
 
   try {
     // Clean up any duplicate sync queue entries first
-    sqliteExpenses.removeDuplicateSyncQueueEntries();
+    localExpenses.removeDuplicateSyncQueueEntries(userId);
 
     // Get sync queue
-    const queue = sqliteExpenses.getSyncQueue();
+    const queue = localExpenses.getSyncQueue(userId);
 
     console.log(`Pushing ${queue.length} operations to remote...`);
 
@@ -44,7 +46,7 @@ async function pushToRemote(
       // Skip and remove if too many retries
       if (item.retry_count >= MAX_RETRIES) {
         console.warn(`Skipping queue item ${item.id} - too many retries`);
-        sqliteExpenses.removeFromSyncQueue(item.id);
+        localExpenses.removeFromSyncQueue(userId, item.id);
         continue;
       }
 
@@ -53,7 +55,8 @@ async function pushToRemote(
           case "create":
           case "update": {
             // Get current expense data from local DB
-            const { data: localExpense } = await sqliteExpenses.getExpenseById(
+            const { data: localExpense } = await localExpenses.getExpenseById(
+              userId,
               item.expense_id,
             );
 
@@ -61,17 +64,45 @@ async function pushToRemote(
               console.warn(
                 `Expense ${item.expense_id} not found locally, removing from queue`,
               );
-              sqliteExpenses.removeFromSyncQueue(item.id);
+              localExpenses.removeFromSyncQueue(userId, item.id);
               continue;
             }
 
             // Prepare expense data for sync
+            let receiptUrlForRemote: string | null =
+              (localExpense.receipt_url as string | null) ?? null;
+
+            // If the receipt URL points to a local file (offline-first),
+            // upload it to Supabase Storage first and use the public URL.
+            if (
+              receiptUrlForRemote &&
+              !/^https?:\/\//i.test(receiptUrlForRemote)
+            ) {
+              console.log(
+                "☁️ [Sync] Uploading offline receipt image for expense",
+                item.expense_id,
+              );
+              const { url, error } = await uploadReceiptFromLocalUri(
+                receiptUrlForRemote,
+                userId,
+              );
+              if (error || !url) {
+                console.error(
+                  "❌ [Sync] Failed to upload receipt image:",
+                  error?.message ?? "Unknown error",
+                );
+                throw error ?? new Error("Failed to upload receipt image");
+              }
+              receiptUrlForRemote = url;
+            }
+
             const expenseData = {
               amount: localExpense.amount.toString(),
               category: localExpense.category,
               date: new Date(localExpense.date),
               notes: localExpense.notes || "",
-              receipt_url: localExpense.receipt_url,
+              // ExpenseFormData expects receipt_url to be string | undefined
+              receipt_url: receiptUrlForRemote ?? undefined,
             };
 
             // Try to sync to Supabase - use upsert strategy
@@ -144,8 +175,8 @@ async function pushToRemote(
             }
 
             // Mark as synced
-            sqliteExpenses.markExpenseAsSynced(item.expense_id);
-            sqliteExpenses.removeFromSyncQueue(item.id);
+            localExpenses.markExpenseAsSynced(userId, item.expense_id);
+            localExpenses.removeFromSyncQueue(userId, item.id);
             console.log("✓ [Sync] Marked as synced in local database");
             successCount++;
             break;
@@ -185,7 +216,7 @@ async function pushToRemote(
               console.log("✅ [Sync] Deleted from Supabase successfully");
             }
 
-            sqliteExpenses.removeFromSyncQueue(item.id);
+            localExpenses.removeFromSyncQueue(userId, item.id);
             successCount++;
             break;
           }
@@ -211,8 +242,8 @@ async function pushToRemote(
         errors.push(`${item.operation} ${item.expense_id}: ${errorMsg}`);
 
         // Increment retry count
-        sqliteExpenses.incrementSyncRetryCount(item.id);
-        sqliteExpenses.markExpenseSyncFailed(item.expense_id, errorMsg);
+        localExpenses.incrementSyncRetryCount(userId, item.id);
+        localExpenses.markExpenseSyncFailed(userId, item.expense_id, errorMsg);
       }
     }
   } catch (error) {
@@ -255,7 +286,10 @@ async function pullFromRemote(
     // Upsert each remote expense into local DB
     for (const remoteExpense of remoteExpenses) {
       try {
-        await sqliteExpenses.upsertExpenseFromRemote(remoteExpense as Expense);
+        await localExpenses.upsertExpenseFromRemote(
+          userId,
+          remoteExpense as Expense,
+        );
         successCount++;
       } catch (error) {
         const errorMsg = getErrorMessage(error);
@@ -282,7 +316,12 @@ async function pullFromRemote(
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === "string") return error;
-  if (error && typeof error === "object" && "message" in error && typeof (error as { message: unknown }).message === "string") {
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof (error as { message: unknown }).message === "string"
+  ) {
     return (error as { message: string }).message;
   }
   if (error != null) return String(error);
@@ -296,6 +335,7 @@ function getErrorMessage(error: unknown): string {
  */
 export async function syncExpenses(userId: string): Promise<SyncResult> {
   console.log("Starting sync...");
+  await waitForExpensesStoreHydration();
 
   // Check if online
   const online = await isOnline();
@@ -335,6 +375,7 @@ export async function syncExpenses(userId: string): Promise<SyncResult> {
  */
 export async function forcePullFromRemote(userId: string): Promise<SyncResult> {
   console.log("Force pulling from remote...");
+  await waitForExpensesStoreHydration();
 
   const online = await isOnline();
   if (!online) {
@@ -379,8 +420,8 @@ export function setupAutoSync(
  * Get sync status/stats
  */
 export function getSyncStats(userId: string) {
-  const unsyncedExpenses = sqliteExpenses.getUnsyncedExpenses(userId);
-  const syncQueue = sqliteExpenses.getSyncQueue();
+  const unsyncedExpenses = localExpenses.getUnsyncedExpenses(userId);
+  const syncQueue = localExpenses.getSyncQueue(userId);
 
   return {
     unsyncedCount: unsyncedExpenses.length,
