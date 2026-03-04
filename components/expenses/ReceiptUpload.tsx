@@ -1,9 +1,11 @@
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { deleteReceipt, uploadReceipt } from "@/service/storage-supabase";
+import {
+  deleteReceipt,
+  uploadReceiptFromLocalUri,
+} from "@/service/storage-supabase";
 import { Ionicons } from "@expo/vector-icons";
-import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
 import ExpoMlkitOcr from "expo-mlkit-ocr";
@@ -17,6 +19,7 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import { useSync } from "@/contexts/SyncContext";
 import { receiptUploadStyles as styles } from "./styles";
 
 type ReceiptOcrPrefill = {
@@ -42,6 +45,7 @@ export function ReceiptUpload({
   const colors = Colors[colorScheme ?? "light"];
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const { isOnline } = useSync();
 
   const parseReceiptText = (text: string): ReceiptOcrPrefill => {
     const lines = text.split(/\r?\n/).map((line) => line.trim());
@@ -269,23 +273,60 @@ export function ReceiptUpload({
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       if (!user?.id) {
-        Alert.alert("Error", "You must be logged in to upload receipts");
+        Alert.alert("Error", "You must be logged in to add receipts");
         return;
       }
 
       const selectedAsset = result.assets[0];
       await runOcrPrefill(selectedAsset.uri);
 
-      const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      const arrayBuffer = decode(base64); // Decode base64 to ArrayBuffer
+      // If we're offline, save to local storage and store the file:// URI.
+      if (!isOnline) {
+        const fileExt = selectedAsset.uri.split(".").pop() || "jpg";
+        const dir = `${FileSystem.documentDirectory}receipts/${user.id}`;
+        try {
+          await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+        } catch {
+          // directory may already exist
+        }
+        const localPath = `${dir}/${Date.now()}.${fileExt}`;
+        await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
 
-      const fileExt = selectedAsset.uri.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${user.id}/${fileName}`; // user-specific path for RLS
+        Toast.show({
+          type: "info",
+          text1: "Saved receipt offline",
+          text2: "It will sync when you're back online.",
+        });
 
-      await handleUpload(filePath, arrayBuffer, selectedAsset);
+        onUpload(localPath);
+        return;
+      }
+
+      // If we're online, upload immediately and store the remote URL.
+      setUploading(true);
+      try {
+        const { url, error } = await uploadReceiptFromLocalUri(
+          selectedAsset.uri,
+          user.id,
+        );
+
+        if (error || !url) {
+          Toast.show({
+            type: "error",
+            text1: "Upload failed",
+            text2: error?.message ?? "Unable to upload receipt.",
+          });
+          return;
+        }
+
+        Toast.show({
+          type: "success",
+          text1: "Receipt uploaded",
+        });
+        onUpload(url);
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -307,70 +348,80 @@ export function ReceiptUpload({
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       if (!user?.id) {
-        Alert.alert("Error", "You must be logged in to upload receipts");
+        Alert.alert("Error", "You must be logged in to add receipts");
         return;
       }
 
       const selectedAsset = result.assets[0];
       await runOcrPrefill(selectedAsset.uri);
 
-      const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      const arrayBuffer = decode(base64); // Decode base64 to ArrayBuffer
-      const fileExt = selectedAsset.uri.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${user.id}/${fileName}`; // user-specific path for RLS
-      await handleUpload(filePath, arrayBuffer, selectedAsset);
-    }
-  };
+      if (!isOnline) {
+        const fileExt = selectedAsset.uri.split(".").pop() || "jpg";
+        const dir = `${FileSystem.documentDirectory}receipts/${user.id}`;
+        try {
+          await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+        } catch {
+          // directory may already exist
+        }
+        const localPath = `${dir}/${Date.now()}.${fileExt}`;
+        await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
 
-  const handleUpload = async (
-    filePath: string,
-    arrayBuffer: ArrayBuffer,
-    selectedAsset: ImagePicker.ImagePickerAsset,
-  ) => {
-    if (!user?.id) {
-      Alert.alert("Error", "You must be logged in to upload receipts");
-      return;
-    }
-
-    setUploading(true);
-    try {
-      const { url, error } = await uploadReceipt(
-        filePath,
-        arrayBuffer,
-        user.id,
-        selectedAsset,
-      );
-
-      if (error) {
         Toast.show({
-          type: "error",
-          text1: "Upload failed",
-          text2: error.message,
+          type: "info",
+          text1: "Saved receipt offline",
+          text2: "It will sync when you're back online.",
         });
-      } else if (url) {
+
+        onUpload(localPath);
+        return;
+      }
+
+      setUploading(true);
+      try {
+        const { url, error } = await uploadReceiptFromLocalUri(
+          selectedAsset.uri,
+          user.id,
+        );
+
+        if (error || !url) {
+          Toast.show({
+            type: "error",
+            text1: "Upload failed",
+            text2: error?.message ?? "Unable to upload receipt.",
+          });
+          return;
+        }
+
         Toast.show({
           type: "success",
           text1: "Receipt uploaded",
         });
         onUpload(url);
+      } finally {
+        setUploading(false);
       }
-    } catch {
-      Toast.show({
-        type: "error",
-        text1: "Upload error",
-        text2: "Failed to upload receipt.",
-      });
-    } finally {
-      setUploading(false);
     }
   };
 
   const handleRemove = async () => {
     if (!receiptUrl) return;
 
+    // If this is a local file, delete it from the filesystem only.
+    if (receiptUrl.startsWith("file://")) {
+      try {
+        await FileSystem.deleteAsync(receiptUrl, { idempotent: true });
+      } catch {
+        // ignore delete errors for local files
+      }
+      onRemove();
+      Toast.show({
+        type: "success",
+        text1: "Receipt removed",
+      });
+      return;
+    }
+
+    // Otherwise, delete from remote storage.
     const { error } = await deleteReceipt(receiptUrl);
     if (error) {
       Toast.show({

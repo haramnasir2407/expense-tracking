@@ -1,9 +1,29 @@
+import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
+import { decode } from "base64-arraybuffer";
 import Toast from "react-native-toast-message";
 import { supabase } from "./supabase";
 
 // Must use EXPO_PUBLIC_ prefix for client-side env in Expo
 const BUCKET_NAME = process.env.EXPO_PUBLIC_SUPABASE_BUCKET_NAME || "receipts";
+
+function guessMimeTypeFromExtension(ext: string | undefined | null): string {
+  const lower = (ext || "").toLowerCase();
+  switch (lower) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "webp":
+      return "image/webp";
+    case "heic":
+    case "heif":
+      return "image/heic";
+    default:
+      return "image/jpeg";
+  }
+}
 
 export async function uploadReceipt(
   filePath: string,
@@ -69,4 +89,29 @@ export function getReceiptUrl(path: string): string {
   const { data } = supabase.storage.from(BUCKET_NAME).getPublicUrl(path);
 
   return data.publicUrl;
+}
+
+// Offline-first helper: upload a receipt image from a local file URI
+// and return its public URL. This is used by the sync layer when the
+// device comes back online.
+export async function uploadReceiptFromLocalUri(
+  localUri: string,
+  userId: string,
+): Promise<{ url: string | null; error: Error | null }> {
+  try {
+    const base64 = await FileSystem.readAsStringAsync(localUri, {
+      encoding: "base64",
+    });
+    const arrayBuffer = decode(base64);
+
+    const ext = localUri.split(".").pop();
+    const mimeType = guessMimeTypeFromExtension(ext);
+    const fileName = `${Date.now()}.${ext || "jpg"}`;
+    const filePath = `${userId}/${fileName}`;
+
+    const fakeAsset = { mimeType } as ImagePicker.ImagePickerAsset;
+    return await uploadReceipt(filePath, arrayBuffer, userId, fakeAsset);
+  } catch (error) {
+    return { url: null, error: error as Error };
+  }
 }
