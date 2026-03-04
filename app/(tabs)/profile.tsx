@@ -3,14 +3,28 @@ import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { triggerBackgroundSyncTaskForTesting } from "@/service/background-sync-task";
-import { router } from "expo-router";
-import React from "react";
+import {
+  getLastBackgroundSyncRun,
+  LastBackgroundSyncRun,
+  setLastBackgroundSyncRun,
+  triggerBackgroundSyncTaskForTesting,
+} from "@/service/background-sync-task";
+import { syncExpenses } from "@/service/sync-service";
+import { useFocusEffect, router } from "expo-router";
+import React, { useCallback, useState } from "react";
 import Toast from "react-native-toast-message";
 import { Alert } from "react-native";
 
 export default function ProfileScreen() {
   const { user, biometricEnabled, setBiometricEnabled } = useAuth();
+  const [lastBackgroundSync, setLastBackgroundSync] =
+    useState<LastBackgroundSyncRun | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      getLastBackgroundSyncRun().then(setLastBackgroundSync);
+    }, []),
+  );
   const {
     settings,
     hasPermission,
@@ -110,11 +124,35 @@ export default function ProfileScreen() {
 
   const handleTriggerBackgroundSync = async () => {
     try {
+      // Fire the native background task (runs in worker; logs may not show in Metro)
       await triggerBackgroundSyncTaskForTesting();
+      // Run the same sync in the foreground so you see immediate feedback in the toast
+      if (!user?.id) {
+        Toast.show({
+          type: "info",
+          text1: "Background sync triggered",
+          text2: "No user; background task will skip. Log in to sync.",
+        });
+        return;
+      }
+      const result = await syncExpenses(user.id);
+      const run: LastBackgroundSyncRun = {
+        at: Date.now(),
+        pushed: result.pushed,
+        pulled: result.pulled,
+        success: result.success,
+        reason: result.success ? "ok" : "sync_failed",
+      };
+      await setLastBackgroundSyncRun(run);
+      setLastBackgroundSync(run);
+      const detail =
+        result.success
+          ? `Pushed ${result.pushed}, pulled ${result.pulled}`
+          : result.errors?.join(", ") ?? "Sync failed";
       Toast.show({
-        type: "success",
-        text1: "Background sync triggered",
-        text2: "Check logs for sync output.",
+        type: result.success ? "success" : "error",
+        text1: "Background sync test",
+        text2: detail,
       });
     } catch (error) {
       const message =
@@ -144,6 +182,7 @@ export default function ProfileScreen() {
       onRequestPermission={requestPermission}
       onVerifyEmailPress={() => router.push("/auth/verify-email")}
       onTriggerBackgroundSync={handleTriggerBackgroundSync}
+      lastBackgroundSync={lastBackgroundSync}
     />
   );
 }

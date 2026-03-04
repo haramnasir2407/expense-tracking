@@ -1,3 +1,4 @@
+import { setBackgroundSyncUser } from "@/service/background-sync-task";
 import { supabase } from "@/service/supabase";
 import { AuthContextType, AuthError, Session, User } from "@/types/auth";
 import { formatAuthError } from "@/utils/auth";
@@ -22,6 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
   const [biometricEnabled, setBiometricEnabledState] = useState(false);
+
+  // Keep background sync task in sync with current user (for when app is backgrounded)
+  useEffect(() => {
+    const userId = user?.id ?? null;
+    setBackgroundSyncUser(userId).catch((e) => {
+      console.warn("[Auth] setBackgroundSyncUser failed", e);
+    });
+  }, [user?.id]);
 
   useEffect(() => {
     // Initialize auth state
