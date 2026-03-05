@@ -8,14 +8,8 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { useHeaderHeight } from "@react-navigation/elements";
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
+import { Button, Form, ScrollView, Text, XStack, YStack } from "tamagui";
 import { ActionButtons } from "../primitives/action-buttons";
 import { AppPressable } from "../primitives/app-pressable";
 import { ThemedTextInput } from "../primitives/themed-text-input";
@@ -101,11 +95,11 @@ export function ExpenseForm({
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
+        <Form style={styles.content} onSubmit={handleSubmit}>
           {/* Amount Input */}
-          <View style={styles.field}>
+          <YStack style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>Amount *</Text>
-            <View
+            <XStack
               style={[
                 styles.inputContainer,
                 { borderColor: colors.text + "30" },
@@ -125,25 +119,21 @@ export function ExpenseForm({
                 keyboardType="decimal-pad"
                 autoFocus
               />
-            </View>
+            </XStack>
             {amountError ? (
               <Text style={styles.errorText}>{amountError}</Text>
             ) : null}
-          </View>
+          </YStack>
 
           {/* Category Picker */}
-          <View style={styles.field}>
+          <YStack style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>
               Category *
             </Text>
             <AppPressable
-              style={[
-                styles.pickerButton,
-                {
-                  borderColor: colors.text + "30",
-                  backgroundColor: colors.tint + "10",
-                },
-              ]}
+              style={styles.pickerButton}
+              borderColor={category ? colors.tint + "80" : colors.text + "40"}
+              backgroundColor={category ? colors.tint + "15" : "transparent"}
               rightIcon="chevron-down"
               onPress={() => setShowCategoryPicker(true)}
             >
@@ -161,16 +151,17 @@ export function ExpenseForm({
             {categoryError ? (
               <Text style={styles.errorText}>{categoryError}</Text>
             ) : null}
-          </View>
+          </YStack>
 
           {/* Date Picker */}
-          <View style={styles.field}>
+          <YStack style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>Date</Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
+            <Button
+              unstyled
               onPress={() => setShowDatePicker(true)}
+              pressStyle={{ opacity: 0.8 }}
             >
-              <View
+              <XStack
                 style={[
                   styles.dateDisplay,
                   { borderColor: colors.text + "30" },
@@ -184,12 +175,12 @@ export function ExpenseForm({
                 <Text style={[styles.dateText, { color: colors.text }]}>
                   {formatDateString(date)}
                 </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+              </XStack>
+            </Button>
+          </YStack>
 
           {/* Notes Input */}
-          <View style={styles.field}>
+          <YStack style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>
               Notes (Optional)
             </Text>
@@ -207,9 +198,9 @@ export function ExpenseForm({
               numberOfLines={4}
               textAlignVertical="top"
             />
-          </View>
+          </YStack>
 
-          <View style={styles.field}>
+          <YStack style={styles.field}>
             <Text style={[styles.label, { color: colors.text }]}>
               Receipt (Optional)
             </Text>
@@ -231,8 +222,8 @@ export function ExpenseForm({
                 }
               }}
             />
-          </View>
-        </View>
+          </YStack>
+        </Form>
 
         <ActionButtons
           containerStyle={[

@@ -2,7 +2,8 @@ import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { Expense, ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image } from "react-native";
+import { ScrollView, Text, XStack, YStack } from "tamagui";
 import { Card } from "../primitives/themed-card";
 import { expenseDetailViewStyles as styles } from "./styles";
 interface ExpenseDetailViewProps {
@@ -64,11 +65,11 @@ export function ExpenseDetailView({
         </Text>
       </Card>
 
-      <View style={styles.section}>
-        <View
+      <YStack style={styles.section}>
+        <XStack
           style={[styles.detailRow, { borderBottomColor: colors.text + "20" }]}
         >
-          <View style={styles.detailLabelContainer}>
+          <XStack style={styles.detailLabelContainer}>
             <Ionicons
               name="pricetag-outline"
               size={20}
@@ -77,15 +78,15 @@ export function ExpenseDetailView({
             <Text style={[styles.detailLabel, { color: colors.text + "99" }]}>
               Category
             </Text>
-          </View>
+          </XStack>
           <Text style={[styles.detailValue, { color: colors.text }]}>
             {expense.category}
           </Text>
-        </View>
-        <View
+        </XStack>
+        <XStack
           style={[styles.detailRow, { borderBottomColor: colors.text + "20" }]}
         >
-          <View style={styles.detailLabelContainer}>
+          <XStack style={styles.detailLabelContainer}>
             <Ionicons
               name="calendar-outline"
               size={20}
@@ -94,14 +95,14 @@ export function ExpenseDetailView({
             <Text style={[styles.detailLabel, { color: colors.text + "99" }]}>
               Date
             </Text>
-          </View>
+          </XStack>
           <Text style={[styles.detailValue, { color: colors.text }]}>
             {formattedDate}
           </Text>
-        </View>
+        </XStack>
         {expense.notes && (
-          <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
-            <View style={styles.detailLabelContainer}>
+          <XStack style={[styles.detailRow, { borderBottomWidth: 0 }]}>
+            <XStack style={styles.detailLabelContainer}>
               <Ionicons
                 name="document-text-outline"
                 size={20}
@@ -110,7 +111,7 @@ export function ExpenseDetailView({
               <Text style={[styles.detailLabel, { color: colors.text + "99" }]}>
                 Notes
               </Text>
-            </View>
+            </XStack>
             <Text
               style={[
                 styles.detailValue,
@@ -120,12 +121,12 @@ export function ExpenseDetailView({
             >
               {expense.notes}
             </Text>
-          </View>
+          </XStack>
         )}
-      </View>
+      </YStack>
 
       {expense.receipt_url && (
-        <View style={styles.section}>
+        <YStack style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Receipt
           </Text>
@@ -134,7 +135,7 @@ export function ExpenseDetailView({
             style={[styles.receiptImage, { borderColor: colors.text + "20" }]}
             resizeMode="cover"
           />
-        </View>
+        </YStack>
       )}
     </ScrollView>
   );

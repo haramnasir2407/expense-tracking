@@ -1,28 +1,30 @@
 import { StyleSheet } from "react-native";
 
+import { Colors, fontSize, lineHeight, radius, size, spacing } from "@/constants/theme";
+
 export const themedTextStyles = StyleSheet.create({
   default: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: fontSize.lg,
+    lineHeight: lineHeight.md,
   },
   defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: fontSize.lg,
+    lineHeight: lineHeight.md,
     fontWeight: "600",
   },
   title: {
-    fontSize: 32,
+    fontSize: fontSize.xl,
     fontWeight: "bold",
-    lineHeight: 32,
+    lineHeight: lineHeight.lg,
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: fontSize.lg,
     fontWeight: "bold",
   },
   link: {
-    lineHeight: 30,
-    fontSize: 16,
-    color: "#0a7ea4",
+    lineHeight: lineHeight.lg,
+    fontSize: fontSize.lg,
+    color: Colors.light.tint,
   },
 });
 
@@ -32,19 +34,26 @@ export const themedViewStyles = StyleSheet.create({
   },
 });
 
+const cardPadding = spacing.lg + spacing.sm; // 16
+const cardRadius = radius.sm * 4;
+
+const cardShadow = {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.08,
+  shadowRadius: 6,
+  elevation: 3,
+};
+
 export const cardStyles = StyleSheet.create({
   card: {
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    padding: cardPadding,
+    borderRadius: cardRadius,
+    ...cardShadow,
   },
   cardNoShadow: {
-    padding: 16,
-    borderRadius: 12,
+    padding: cardPadding,
+    borderRadius: cardRadius,
   },
 });
 
@@ -53,9 +62,9 @@ export const appPressableStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 12,
+    paddingHorizontal: cardPadding,
+    paddingVertical: spacing.md,
+    borderRadius: cardRadius,
     minHeight: 52,
   },
   content: {
@@ -75,11 +84,11 @@ export const iconCircleStyles = StyleSheet.create({
 export const addButtonStyles = StyleSheet.create({
   fab: {
     position: "absolute",
-    right: 20,
-    bottom: 20,
+    right: spacing.lg + size.sm,
+    bottom: spacing.lg + size.sm,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: radius.sm * 4,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",

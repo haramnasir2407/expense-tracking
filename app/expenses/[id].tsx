@@ -1,6 +1,6 @@
 import { ExpenseDetailView } from "@/components/expenses/ExpenseDetailView";
 import ThemedView from "@/components/primitives/themed-view";
-import { Colors } from "@/constants/theme";
+import { Colors, spacing } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenses } from "@/hooks/useExpenses";
 import { Expense, ExpenseFormData } from "@/types/expense";
@@ -18,13 +18,9 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
+import { Spinner } from "tamagui";
 
 export default function ExpenseDetailScreen() {
   const colorScheme = useColorScheme();
@@ -45,16 +41,9 @@ export default function ExpenseDetailScreen() {
     (async () => {
       const { error } = await deleteExpense(id);
       if (error) {
-        Toast.show({
-          type: "error",
-          text1: "Error deleting expense",
-          text2: error,
-        });
+        Toast.show({ type: "error", text1: "Error deleting expense", text2: error });
       } else {
-        Toast.show({
-          type: "success",
-          text1: "Expense deleted",
-        });
+        Toast.show({ type: "success", text1: "Expense deleted" });
         router.back();
       }
     })();
@@ -98,16 +87,9 @@ export default function ExpenseDetailScreen() {
   const handleUpdate = async (data: ExpenseFormData) => {
     const { error } = await updateExpense(id, data);
     if (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error updating expense",
-        text2: error,
-      });
+      Toast.show({ type: "error", text1: "Error updating expense", text2: error });
     } else {
-      Toast.show({
-        type: "success",
-        text1: "Expense updated",
-      });
+      Toast.show({ type: "success", text1: "Expense updated" });
       setIsEditing(false);
     }
   };
@@ -116,7 +98,7 @@ export default function ExpenseDetailScreen() {
     return (
       <ThemedView>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.tint} />
+          <Spinner size="large" color={colors.tint as any} />
         </View>
       </ThemedView>
     );
@@ -141,8 +123,8 @@ export default function ExpenseDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  backButton: { padding: 8, marginLeft: 8 },
-  headerButtons: { flexDirection: "row", alignItems: "center", gap: 8 },
-  editButton: { padding: 8 },
-  deleteButton: { padding: 8, marginRight: 8 },
+  backButton: { padding: spacing.md, marginLeft: spacing.md },
+  headerButtons: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  editButton: { padding: spacing.md },
+  deleteButton: { padding: spacing.md, marginRight: spacing.md },
 });

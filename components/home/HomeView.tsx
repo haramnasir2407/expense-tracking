@@ -1,7 +1,8 @@
 import { ExpenseListSection } from "@/components/expenses/ExpenseListSection";
 import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
 import { Ionicons } from "@expo/vector-icons";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
+import { Text, YStack } from "tamagui";
 
 import { AddButton } from "../primitives/add-button";
 import { homeViewStyles as styles } from "./styles";
@@ -44,7 +45,7 @@ export function HomeView({
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <YStack style={styles.emptyContainer}>
         <Ionicons name="wallet-outline" size={64} color={colors.text + "40"} />
         <Text style={[styles.emptyText, { color: colors.text + "99" }]}>
           No expenses yet
@@ -52,12 +53,12 @@ export function HomeView({
         <Text style={[styles.emptySubtext, { color: colors.text + "66" }]}>
           Tap the + button to add your first expense
         </Text>
-      </View>
+      </YStack>
     );
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <YStack style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={groupedExpenses}
         renderItem={({ item }) => (
@@ -84,6 +85,6 @@ export function HomeView({
         }
       />
       <AddButton onAddPress={onAddPress} colors={colors} />
-    </View>
+    </YStack>
   );
 }

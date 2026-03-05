@@ -15,7 +15,22 @@ import React, {
 const BIOMETRIC_ENABLED_KEY = "biometric_enabled";
 const BIOMETRIC_EMAIL_KEY = "biometric_email";
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const defaultAuthValue: AuthContextType = {
+  user: null,
+  session: null,
+  loading: false,
+  initialized: false,
+  signIn: async () => ({ error: { message: "Auth not available" } }),
+  signUp: async () => ({ error: { message: "Auth not available" } }),
+  signOut: async () => {},
+  resetPassword: async () => ({ error: { message: "Auth not available" } }),
+  updatePassword: async () => ({ error: { message: "Auth not available" } }),
+  biometricEnabled: false,
+  setBiometricEnabled: async () => {},
+  authenticateWithBiometric: async () => false,
+};
+
+const AuthContext = createContext<AuthContextType>(defaultAuthValue);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -250,9 +265,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return useContext(AuthContext);
 }

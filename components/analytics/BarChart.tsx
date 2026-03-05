@@ -1,6 +1,6 @@
-import { MonthlySpending, DateRange } from "@/types/analytics";
+import { DateRange, MonthlySpending } from "@/types/analytics";
 import React from "react";
-import { Text, View } from "react-native";
+import { View, Text } from "tamagui";
 import { Bar, CartesianChart } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
 import { monthlyBarChartStyles as styles } from "./styles";

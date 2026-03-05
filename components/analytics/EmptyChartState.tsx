@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View } from "tamagui";
 import { emptyChartStateStyles as styles } from "./styles";
 
 interface EmptyChartStateProps {

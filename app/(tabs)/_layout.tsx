@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, router } from "expo-router";
 import React from "react";
-import { Alert, TouchableOpacity } from "react-native";
-
+import { Alert } from "react-native";
 import { HapticTab } from "@/components/primitives/haptic-tab";
-import { Colors } from "@/constants/theme";
+import { Colors, spacing } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { Button } from "tamagui";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -41,9 +41,13 @@ export default function TabLayout() {
         },
         headerTintColor: colors.text,
         headerRight: () => (
-          <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
+          <Button
+            unstyled
+            onPress={handleLogout}
+            style={{ marginRight: spacing.xl }}
+          >
             <Ionicons name="log-out-outline" size={24} color={colors.text} />
-          </TouchableOpacity>
+          </Button>
         ),
       }}
     >

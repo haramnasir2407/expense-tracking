@@ -1,9 +1,10 @@
 import { ExpenseForm } from "@/components/expenses/ExpenseForm";
+import { spacing } from "@/constants/theme";
 import { ExpenseFormData } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Button } from "tamagui";
 import ThemedView from "../primitives/themed-view";
 
 interface AddExpenseViewProps {
@@ -26,12 +27,13 @@ export function AddExpenseView({
           headerTintColor: colors.text,
           headerShadowVisible: false,
           headerLeft: () => (
-            <TouchableOpacity
+            <Button
+              unstyled
               onPress={onCancel}
-              style={{ padding: 8, marginLeft: 8 }}
+              style={{ padding: spacing.md, marginLeft: spacing.md }}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text} />
-            </TouchableOpacity>
+            </Button>
           ),
         }}
       />

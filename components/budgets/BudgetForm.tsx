@@ -2,7 +2,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { BudgetFormData } from "@/types/budget";
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View } from "tamagui";
 import { CategoryPicker } from "../expenses/CategoryPicker";
 import { ActionButtons } from "../primitives/action-buttons";
 import { AppPressable } from "../primitives/app-pressable";

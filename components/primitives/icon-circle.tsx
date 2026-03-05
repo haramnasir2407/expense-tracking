@@ -1,6 +1,6 @@
 import React from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
-import { iconCircleStyles as styles } from "./styles";
+import type { StyleProp, ViewStyle } from "react-native";
+import { Circle } from "tamagui";
 
 interface IconCircleProps {
   children: React.ReactNode;
@@ -15,21 +15,13 @@ export function IconCircle({
   backgroundColor,
   style,
 }: IconCircleProps) {
-  const radius = size / 2;
   return (
-    <View
-      style={[
-        styles.circle,
-        {
-          width: size,
-          height: size,
-          borderRadius: radius,
-          backgroundColor,
-        },
-        style,
-      ]}
+    <Circle
+      size={size}
+      {...({ backgroundColor } as any)}
+      style={style}
     >
       {children}
-    </View>
+    </Circle>
   );
 }

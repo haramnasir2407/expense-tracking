@@ -1,21 +1,18 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Expense } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
-import { AppPressable } from "../primitives/app-pressable";
+import { Button, Text, XStack, YStack } from "tamagui";
 import { IconCircle } from "../primitives/icon-circle";
 import { expenseCardStyles as styles } from "./styles";
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 
 interface ExpenseCardProps {
   expense: Expense;
 }
 
 export function ExpenseCard({ expense }: ExpenseCardProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
 
   const handlePress = () => {
     router.push(`/expenses/${expense.id}`);
@@ -37,37 +34,32 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
   };
 
   return (
-    <AppPressable
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-          borderColor: colors.text + "20",
-        },
-      ]}
+    <Button
+      unstyled
+      style={[styles.container, { backgroundColor: colors.background }]}
       onPress={handlePress}
     >
-      <View style={styles.iconContainer}>
+      <YStack style={styles.iconContainer}>
         <IconCircle
           size={48}
-          backgroundColor={colors.tint + "20"}
+          backgroundColor={colors.primary + "20"}
           style={{ marginRight: 0 }}
         >
-          <Ionicons name="receipt-outline" size={24} color={colors.tint} />
+          <Ionicons name="receipt-outline" size={24} color={colors.primary} />
         </IconCircle>
-      </View>
+      </YStack>
 
-      <View style={styles.contentContainer}>
-        <View style={styles.topRow}>
+      <YStack style={styles.contentContainer}>
+        <XStack style={styles.topRow}>
           <Text style={[styles.category, { color: colors.text }]}>
             {expense.category}
           </Text>
           <Text style={[styles.amount, { color: colors.text }]}>
             {formatAmount(expense.amount)}
           </Text>
-        </View>
+        </XStack>
 
-        <View style={styles.bottomRow}>
+        <XStack style={styles.bottomRow}>
           {expense.notes && (
             <Text
               style={[styles.notes, { color: colors.text + "99" }]}
@@ -79,8 +71,8 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
           <Text style={[styles.time, { color: colors.text + "66" }]}>
             {formatTime(expense.date)}
           </Text>
-        </View>
-      </View>
-    </AppPressable>
+        </XStack>
+      </YStack>
+    </Button>
   );
 }

@@ -1,16 +1,19 @@
+import "../tamagui.generated.css";
+
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack, useRouter, useSegments } from "expo-router";
 import * as Notifications from "expo-notifications";
+import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
 import "react-native-get-random-values"; // Must be first for UUID support
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
+import { TamaguiProvider } from "tamagui";
 
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { BudgetProvider } from "@/contexts/BudgetContext";
@@ -19,6 +22,7 @@ import { SyncProvider } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 import { registerBackgroundSyncTaskAsync } from "@/service/background-sync-task";
+import { tamaguiConfig } from "@/tamagui.config";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -56,7 +60,8 @@ function RootLayoutNav() {
   // Deep link: when app is opened from a daily reminder notification tap, go to expenses tab
   useEffect(() => {
     if (!user || !lastNotificationResponse) return;
-    const data = lastNotificationResponse.notification?.request?.content?.data as { type?: string } | undefined;
+    const data = lastNotificationResponse.notification?.request?.content
+      ?.data as { type?: string } | undefined;
     if (data?.type !== "daily_reminder") return;
     if (lastResponseHandled.current) return;
     lastResponseHandled.current = true;
@@ -65,12 +70,16 @@ function RootLayoutNav() {
 
   // Listen for notification taps when app is in foreground or background
   useEffect(() => {
-    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification?.request?.content?.data as { type?: string } | undefined;
-      if (data?.type === "daily_reminder" && user) {
-        router.replace("/(tabs)");
-      }
-    });
+    const sub = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const data = response.notification?.request?.content?.data as
+          | { type?: string }
+          | undefined;
+        if (data?.type === "daily_reminder" && user) {
+          router.replace("/(tabs)");
+        }
+      },
+    );
     return () => sub.remove();
   }, [user, router]);
 
@@ -84,15 +93,20 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
-        <Stack.Screen name="expenses" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
-      <Toast />
-    </ThemeProvider>
+    <TamaguiProvider
+      config={tamaguiConfig}
+      defaultTheme={colorScheme === "dark" ? "dark" : "light"}
+    >
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+          <Stack.Screen name="expenses" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+        <Toast />
+      </ThemeProvider>
+    </TamaguiProvider>
   );
 }
 

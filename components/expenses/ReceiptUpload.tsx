@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSync } from "@/contexts/SyncContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import {
   deleteReceipt,
@@ -10,16 +11,9 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
 import ExpoMlkitOcr from "expo-mlkit-ocr";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Image } from "react-native";
 import Toast from "react-native-toast-message";
-import { useSync } from "@/contexts/SyncContext";
+import { Button, Spinner, Text, YStack } from "tamagui";
 import { receiptUploadStyles as styles } from "./styles";
 
 type ReceiptOcrPrefill = {
@@ -236,11 +230,7 @@ export function ReceiptUpload({
 
       if (hasAmount || hasDate || hasNotes) {
         onOcrPrefill(parsed);
-        Toast.show({
-          type: "success",
-          text1: "Receipt scanned",
-          text2: "We pre-filled details from your receipt.",
-        });
+        Toast.show({ type: "success", text1: "Receipt scanned", text2: "We pre-filled details from your receipt." });
       }
     } catch {
       // Ignore OCR errors so upload flow still works
@@ -292,11 +282,7 @@ export function ReceiptUpload({
         const localPath = `${dir}/${Date.now()}.${fileExt}`;
         await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
 
-        Toast.show({
-          type: "info",
-          text1: "Saved receipt offline",
-          text2: "It will sync when you're back online.",
-        });
+        Toast.show({ type: "info", text1: "Saved receipt offline", text2: "It will sync when you're back online." });
 
         onUpload(localPath);
         return;
@@ -311,18 +297,11 @@ export function ReceiptUpload({
         );
 
         if (error || !url) {
-          Toast.show({
-            type: "error",
-            text1: "Upload failed",
-            text2: error?.message ?? "Unable to upload receipt.",
-          });
+          Toast.show({ type: "error", text1: "Upload failed", text2: error?.message ?? "Unable to upload receipt." });
           return;
         }
 
-        Toast.show({
-          type: "success",
-          text1: "Receipt uploaded",
-        });
+        Toast.show({ type: "success", text1: "Receipt uploaded" });
         onUpload(url);
       } finally {
         setUploading(false);
@@ -366,11 +345,7 @@ export function ReceiptUpload({
         const localPath = `${dir}/${Date.now()}.${fileExt}`;
         await FileSystem.copyAsync({ from: selectedAsset.uri, to: localPath });
 
-        Toast.show({
-          type: "info",
-          text1: "Saved receipt offline",
-          text2: "It will sync when you're back online.",
-        });
+        Toast.show({ type: "info", text1: "Saved receipt offline", text2: "It will sync when you're back online." });
 
         onUpload(localPath);
         return;
@@ -384,18 +359,11 @@ export function ReceiptUpload({
         );
 
         if (error || !url) {
-          Toast.show({
-            type: "error",
-            text1: "Upload failed",
-            text2: error?.message ?? "Unable to upload receipt.",
-          });
+          Toast.show({ type: "error", text1: "Upload failed", text2: error?.message ?? "Unable to upload receipt." });
           return;
         }
 
-        Toast.show({
-          type: "success",
-          text1: "Receipt uploaded",
-        });
+        Toast.show({ type: "success", text1: "Receipt uploaded" });
         onUpload(url);
       } finally {
         setUploading(false);
@@ -414,29 +382,19 @@ export function ReceiptUpload({
         // ignore delete errors for local files
       }
       onRemove();
-      Toast.show({
-        type: "success",
-        text1: "Receipt removed",
-      });
+      Toast.show({ type: "success", text1: "Receipt removed" });
       return;
     }
 
     // Otherwise, delete from remote storage.
     const { error } = await deleteReceipt(receiptUrl);
     if (error) {
-      Toast.show({
-        type: "error",
-        text1: "Remove failed",
-        text2: error.message,
-      });
+      Toast.show({ type: "error", text1: "Remove failed", text2: error.message });
       return;
     }
 
     onRemove();
-    Toast.show({
-      type: "success",
-      text1: "Receipt removed",
-    });
+    Toast.show({ type: "success", text1: "Receipt removed" });
   };
 
   const showOptions = () => {
@@ -449,31 +407,33 @@ export function ReceiptUpload({
 
   if (uploading) {
     return (
-      <View style={[styles.container, { borderColor: colors.text + "20" }]}>
-        <ActivityIndicator size="large" color={colors.tint} />
+      <YStack style={[styles.container, { borderColor: colors.text + "20" }]}>
+        <Spinner size="large" color={colors.tint as any} />
         <Text style={[styles.uploadingText, { color: colors.text + "99" }]}>
           Uploading...
         </Text>
-      </View>
+      </YStack>
     );
   }
 
   if (receiptUrl) {
     return (
-      <View style={[styles.container, { borderColor: colors.text + "20" }]}>
+      <YStack style={[styles.container, { borderColor: colors.text + "20" }]}>
         <Image source={{ uri: receiptUrl }} style={styles.image} />
-        <TouchableOpacity
+        <Button
+          unstyled
           style={[styles.removeButton, { backgroundColor: colors.background }]}
           onPress={handleRemove}
         >
           <Ionicons name="close-circle" size={28} color="#FF4444" />
-        </TouchableOpacity>
-      </View>
+        </Button>
+      </YStack>
     );
   }
 
   return (
-    <TouchableOpacity
+    <Button
+      unstyled
       style={[
         styles.container,
         styles.emptyContainer,
@@ -486,6 +446,6 @@ export function ReceiptUpload({
     >
       <Ionicons name="camera-outline" size={40} color={colors.tint} />
       <Text style={[styles.addText, { color: colors.tint }]}>Add Receipt</Text>
-    </TouchableOpacity>
+    </Button>
   );
 }

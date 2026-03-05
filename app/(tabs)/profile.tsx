@@ -1,8 +1,7 @@
 import { ProfileView } from "@/components/profile/ProfileView";
-import { Colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 import {
   getLastBackgroundSyncRun,
   LastBackgroundSyncRun,
@@ -10,10 +9,10 @@ import {
   triggerBackgroundSyncTaskForTesting,
 } from "@/service/background-sync-task";
 import { syncExpenses } from "@/service/sync-service";
-import { useFocusEffect, router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import Toast from "react-native-toast-message";
 import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function ProfileScreen() {
   const { user, biometricEnabled, setBiometricEnabled } = useAuth();
@@ -32,8 +31,7 @@ export default function ProfileScreen() {
     updateSettings,
     loading: notifLoading,
   } = useNotifications();
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
 
   const toggleBiometric = async () => {
     try {
@@ -50,11 +48,7 @@ export default function ProfileScreen() {
         error instanceof Error
           ? error.message
           : "Failed to update biometric settings";
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: message,
-      });
+      Toast.show({ type: "error", text1: "Error", text2: message });
     }
   };
 
@@ -70,12 +64,7 @@ export default function ProfileScreen() {
       }
     }
     const { error } = await updateSettings({ budget_alerts_enabled: value });
-    if (error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error,
-      });
+    if (error) Toast.show({ type: "error", text1: "Error", text2: error });
   };
 
   const toggleDailyReminder = async (value: boolean) => {
@@ -90,12 +79,7 @@ export default function ProfileScreen() {
       }
     }
     const { error } = await updateSettings({ daily_reminder_enabled: value });
-    if (error)
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error,
-      });
+    if (error) Toast.show({ type: "error", text1: "Error", text2: error });
   };
 
   const changeBudgetThreshold = () => {
@@ -145,10 +129,9 @@ export default function ProfileScreen() {
       };
       await setLastBackgroundSyncRun(run);
       setLastBackgroundSync(run);
-      const detail =
-        result.success
-          ? `Pushed ${result.pushed}, pulled ${result.pulled}`
-          : result.errors?.join(", ") ?? "Sync failed";
+      const detail = result.success
+        ? `Pushed ${result.pushed}, pulled ${result.pulled}`
+        : (result.errors?.join(", ") ?? "Sync failed");
       Toast.show({
         type: result.success ? "success" : "error",
         text1: "Background sync test",
@@ -173,8 +156,11 @@ export default function ProfileScreen() {
       settings={settings ?? null}
       hasPermission={hasPermission}
       notifLoading={notifLoading}
-      colors={colors}
-      isDark={colorScheme === "dark"}
+      colors={{
+        background: colors.background,
+        text: colors.text,
+        tint: colors.primary,
+      }}
       onToggleBiometric={toggleBiometric}
       onToggleBudgetAlerts={toggleBudgetAlerts}
       onToggleDailyReminder={toggleDailyReminder}

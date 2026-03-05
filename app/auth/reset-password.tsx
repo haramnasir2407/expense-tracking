@@ -38,30 +38,18 @@ export default function ResetPasswordScreen() {
             refresh_token: refreshToken,
           });
           if (error) {
-            Toast.show({
-              type: "error",
-              text1: "Error",
-              text2: "Failed to validate reset link. Please request a new one.",
-            });
+            Toast.show({ type: "error", text1: "Error", text2: "Failed to validate reset link. Please request a new one." });
             router.replace("/auth/forgot-password");
           } else {
             setSessionReady(true);
           }
         } else {
-          Toast.show({
-            type: "error",
-            text1: "Invalid link",
-            text2: "Use the link from your email to reset your password.",
-          });
+          Toast.show({ type: "error", text1: "Invalid link", text2: "Use the link from your email to reset your password." });
           router.replace("/auth/forgot-password");
         }
       } catch (error) {
         console.error("Error setting up session:", error);
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Something went wrong. Please try again.",
-        });
+        Toast.show({ type: "error", text1: "Error", text2: "Something went wrong. Please try again." });
         router.replace("/auth/forgot-password");
       }
     }
@@ -93,11 +81,7 @@ export default function ResetPasswordScreen() {
 
   async function handleResetPassword() {
     if (!sessionReady) {
-      Toast.show({
-        type: "info",
-        text1: "Please wait",
-        text2: "Setting up your session...",
-      });
+      Toast.show({ type: "info", text1: "Please wait", text2: "Setting up your session..." });
       return;
     }
     if (!validateForm()) return;
@@ -105,25 +89,13 @@ export default function ResetPasswordScreen() {
     try {
       const { error } = await updatePassword(password);
       if (error)
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.message,
-        });
+        Toast.show({ type: "error", text1: "Error", text2: error.message });
       else {
-        Toast.show({
-          type: "success",
-          text1: "Password reset",
-          text2: "Your password has been reset successfully.",
-        });
+        Toast.show({ type: "success", text1: "Password reset", text2: "Your password has been reset successfully." });
         router.replace("/auth/login");
       }
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "An unexpected error occurred. Please try again.",
-      });
+      Toast.show({ type: "error", text1: "Error", text2: "An unexpected error occurred. Please try again." });
     } finally {
       setLoading(false);
     }

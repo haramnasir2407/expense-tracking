@@ -66,24 +66,14 @@ export default function RegisterScreen() {
       const normalizedEmail = email.trim().toLowerCase();
       const { error } = await signUp(normalizedEmail, password);
       if (error)
-        Toast.show({
-          type: "error",
-          text1: "Registration failed",
-          text2: error.message,
-        });
+        Toast.show({ type: "error", text1: "Registration failed", text2: error.message });
       else
         router.replace({
           pathname: "/auth/verify-email",
           params: { email: normalizedEmail },
         });
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          formatAuthError(error as Error)?.message ||
-          "An unexpected error occurred. Please try again.",
-      });
+      Toast.show({ type: "error", text1: "Error", text2: formatAuthError(error as Error)?.message || "An unexpected error occurred. Please try again." });
     } finally {
       setLoading(false);
     }

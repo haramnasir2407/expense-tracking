@@ -1,19 +1,13 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useExpenseCategories } from "@/hooks/useExpenseCategories";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Modal, ScrollView, TouchableOpacity } from "react-native";
+
+import { Text, View } from "tamagui";
 import { AppPressable } from "../primitives/app-pressable";
 import { IconCircle } from "../primitives/icon-circle";
 
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 import { categoryPickerStyles as styles } from "./styles";
 
 interface CategoryPickerProps {
@@ -32,8 +26,7 @@ export function CategoryPicker({
   onClose,
   showAllOption,
 }: CategoryPickerProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
   const { categories, isLoading } = useExpenseCategories({ enabled: visible });
 
   const handleSelect = (categoryName: string): void => {
@@ -58,35 +51,40 @@ export function CategoryPicker({
             <Text style={[styles.title, { color: colors.text }]}>
               Select Category
             </Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={colors.text} />
+            <TouchableOpacity
+              onPress={onClose}
+              style={[styles.closeButton, { backgroundColor: colors.text + "12" }]}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="close" size={18} color={colors.text} />
             </TouchableOpacity>
           </View>
 
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={colors.tint} />
+              <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : (
             <ScrollView style={styles.scrollView}>
               {showAllOption && (
                 <AppPressable
-                  style={[
-                    styles.categoryItem,
-                    {
-                      backgroundColor:
-                        selectedCategory === "all" || !selectedCategory
-                          ? colors.tint + "20"
-                          : "transparent",
-                      borderColor: colors.text + "20",
-                    },
-                  ]}
+                  style={styles.categoryItem}
+                  backgroundColor={
+                    selectedCategory === "all" || !selectedCategory
+                      ? colors.primary + "25"
+                      : "transparent"
+                  }
+                  borderColor={
+                    selectedCategory === "all" || !selectedCategory
+                      ? colors.primary + "80"
+                      : colors.text + "10"
+                  }
                   onPress={() => handleSelect("all")}
                 >
                   <IconCircle
                     size={40}
-                    backgroundColor={colors.tint + "40"}
-                    style={{ marginRight: 12 }}
+                    backgroundColor={colors.primary + "40"}
+                    style={{ marginRight: 16 }}
                   >
                     <Ionicons name="apps" size={24} color="#FFFFFF" />
                   </IconCircle>
@@ -97,7 +95,7 @@ export function CategoryPicker({
                     <Ionicons
                       name="checkmark-circle"
                       size={24}
-                      color={colors.tint}
+                      color={colors.primary}
                     />
                   )}
                 </AppPressable>
@@ -105,24 +103,23 @@ export function CategoryPicker({
               {categories.map((category) => (
                 <AppPressable
                   key={category.id}
-                  style={[
-                    styles.categoryItem,
-                    {
-                      backgroundColor:
-                        selectedCategory === category.name
-                          ? colors.tint + "20"
-                          : "transparent",
-                      borderColor: colors.text + "20",
-                    },
-                  ]}
+                  style={styles.categoryItem}
+                  backgroundColor={
+                    selectedCategory === category.name
+                      ? colors.primary + "25"
+                      : "transparent"
+                  }
+                  borderColor={
+                    selectedCategory === category.name
+                      ? colors.primary + "80"
+                      : colors.text + "20"
+                  }
                   onPress={() => handleSelect(category.name)}
                 >
                   <IconCircle
                     size={40}
-                    backgroundColor={
-                      category.color || (colors.tint + "20")
-                    }
-                    style={{ marginRight: 12 }}
+                    backgroundColor={category.color || colors.primary + "20"}
+                    style={{ marginRight: 16 }}
                   >
                     <Ionicons
                       name={(category.icon as any) || "pricetag"}
@@ -137,7 +134,7 @@ export function CategoryPicker({
                     <Ionicons
                       name="checkmark-circle"
                       size={24}
-                      color={colors.tint}
+                      color={colors.primary}
                     />
                   )}
                 </AppPressable>

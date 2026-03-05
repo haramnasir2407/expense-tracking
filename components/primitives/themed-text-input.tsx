@@ -21,9 +21,9 @@ export function ThemedTextInput({
 
   return (
     <TextInput
-      style={[style, { color: colors.text }]}
-      placeholderTextColor={placeholderTextColor ?? colors.text + "60"}
       {...rest}
+      style={[{ color: colors.text }, style]}
+      placeholderTextColor={placeholderTextColor ?? colors.text + "60"}
     />
   );
 }

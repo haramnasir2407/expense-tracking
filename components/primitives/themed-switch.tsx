@@ -22,6 +22,7 @@ export function ThemedSwitch({
       disabled={disabled}
       trackColor={trackColor}
       thumbColor={thumbColor}
+      ios_backgroundColor={trackColor.false}
     />
   );
 }

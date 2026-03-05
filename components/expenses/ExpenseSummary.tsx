@@ -1,23 +1,14 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 import { useExpenses } from "@/hooks/useExpenses";
+import { formatAmount } from "@/utils/expense";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, YStack } from "tamagui";
 import { Card } from "../primitives/themed-card";
 import { expenseSummaryStyles as styles } from "./styles";
 
 export function ExpenseSummary() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
   const { getTotalAmount } = useExpenses();
-
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
   const todayTotal = getTotalAmount("today");
   const weekTotal = getTotalAmount("week");
   const monthTotal = getTotalAmount("month");
@@ -25,40 +16,42 @@ export function ExpenseSummary() {
   return (
     <Card
       noShadow
-      style={[styles.container, { backgroundColor: colors.tint + "10" }]}
+      style={styles.container}
+      backgroundColor={colors.primary + "10"}
+      borderColor={colors.primary + "10"}
     >
-      <View style={styles.mainTotal}>
+      <YStack style={styles.mainTotal}>
         <Text style={[styles.label, { color: colors.text + "99" }]}>
           This Month
         </Text>
         <Text style={[styles.amount, { color: colors.text }]}>
           {formatAmount(monthTotal)}
         </Text>
-      </View>
+      </YStack>
 
-      <View style={styles.statsRow}>
-        <View style={styles.statItem}>
+      <YStack style={styles.statsRow}>
+        <YStack style={styles.statItem}>
           <Text style={[styles.statLabel, { color: colors.text + "99" }]}>
             Today
           </Text>
           <Text style={[styles.statAmount, { color: colors.text }]}>
             {formatAmount(todayTotal)}
           </Text>
-        </View>
+        </YStack>
 
-        <View
+        <YStack
           style={[styles.divider, { backgroundColor: colors.text + "20" }]}
         />
 
-        <View style={styles.statItem}>
+        <YStack style={styles.statItem}>
           <Text style={[styles.statLabel, { color: colors.text + "99" }]}>
             This Week
           </Text>
           <Text style={[styles.statAmount, { color: colors.text }]}>
             {formatAmount(weekTotal)}
           </Text>
-        </View>
-      </View>
+        </YStack>
+      </YStack>
     </Card>
   );
 }
