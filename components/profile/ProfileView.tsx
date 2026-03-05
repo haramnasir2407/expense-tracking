@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/primitives/themed-text";
+import { LastBackgroundSyncRun } from "@/service/background-sync-task";
 import { NotificationSettings } from "@/types/notification";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@supabase/supabase-js";
@@ -8,6 +9,19 @@ import { Card } from "../primitives/themed-card";
 
 import { ThemedSwitch } from "../primitives/themed-switch";
 import { profileViewStyles as styles } from "./styles";
+
+function formatLastSync(run: LastBackgroundSyncRun): string {
+  const now = Date.now();
+  const diffMs = now - run.at;
+  const diffMin = Math.floor(diffMs / 60_000);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+  if (diffMin < 1) return "Just now";
+  if (diffMin < 60) return `${diffMin} min ago`;
+  if (diffHour < 24) return `${diffHour}h ago`;
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return new Date(run.at).toLocaleDateString();
+}
 
 interface ProfileViewProps {
   user: User | null;
@@ -25,6 +39,7 @@ interface ProfileViewProps {
   onRequestPermission: () => void;
   onVerifyEmailPress: () => void;
   onTriggerBackgroundSync: () => void;
+  lastBackgroundSync: LastBackgroundSyncRun | null;
 }
 
 export function ProfileView({
@@ -43,6 +58,7 @@ export function ProfileView({
   onRequestPermission,
   onVerifyEmailPress,
   onTriggerBackgroundSync,
+  lastBackgroundSync,
 }: ProfileViewProps) {
   const thresholdRowBg = isDark ? "#2C2C2E" : "#f0f0f0";
 
@@ -257,6 +273,24 @@ export function ProfileView({
               detailed insights.
             </ThemedText>
           </Card>
+          <ThemedText
+            style={[styles.infoText, { marginTop: 12, opacity: 0.8 }]}
+          >
+            Last background sync:{" "}
+            {lastBackgroundSync
+              ? `${formatLastSync(lastBackgroundSync)}${
+                  lastBackgroundSync.success != null &&
+                  lastBackgroundSync.pushed != null &&
+                  lastBackgroundSync.pulled != null
+                    ? ` (pushed ${lastBackgroundSync.pushed}, pulled ${lastBackgroundSync.pulled})`
+                    : ""
+                }${
+                  lastBackgroundSync.reason && lastBackgroundSync.reason !== "ok"
+                    ? ` [${lastBackgroundSync.reason}]`
+                    : ""
+                }`
+              : "Never"}
+          </ThemedText>
           <AppPressable
             style={[
               styles.actionCard,

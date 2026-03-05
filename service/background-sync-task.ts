@@ -9,6 +9,16 @@ export const BACKGROUND_SYNC_TASK_IDENTIFIER = "background-expense-sync";
 
 // Key used to persist the current user id for background sync
 const BACKGROUND_SYNC_USER_KEY = "background_sync_user_id";
+// Key for last run info (so the app can show "last ran at ...")
+export const BACKGROUND_SYNC_LAST_RUN_KEY = "background_sync_last_run";
+
+export type LastBackgroundSyncRun = {
+  at: number;
+  pushed?: number;
+  pulled?: number;
+  success?: boolean;
+  reason?: "no_user" | "offline" | "sync_failed" | "ok";
+};
 
 /**
  * Define the background task.
@@ -16,18 +26,27 @@ const BACKGROUND_SYNC_USER_KEY = "background_sync_user_id";
  * NOTE: This MUST be called in module/global scope (not inside a component),
  * so importing this file is enough to register the task definition.
  */
+function saveLastRun(payload: LastBackgroundSyncRun) {
+  return SecureStore.setItemAsync(
+    BACKGROUND_SYNC_LAST_RUN_KEY,
+    JSON.stringify(payload),
+  ).catch(() => {});
+}
+
 TaskManager.defineTask(BACKGROUND_SYNC_TASK_IDENTIFIER, async () => {
   try {
     const userId = await SecureStore.getItemAsync(BACKGROUND_SYNC_USER_KEY);
 
     if (!userId) {
       console.log("[BackgroundSync] No user id stored, skipping");
+      await saveLastRun({ at: Date.now(), reason: "no_user" });
       return BackgroundTask.BackgroundTaskResult.Failed;
     }
 
     const online = await isOnline();
     if (!online) {
       console.log("[BackgroundSync] Device offline, skipping");
+      await saveLastRun({ at: Date.now(), reason: "offline" });
       return BackgroundTask.BackgroundTaskResult.Failed;
     }
 
@@ -39,6 +58,13 @@ TaskManager.defineTask(BACKGROUND_SYNC_TASK_IDENTIFIER, async () => {
         "[BackgroundSync] Sync failed in background task:",
         result.errors,
       );
+      await saveLastRun({
+        at: Date.now(),
+        pushed: result.pushed,
+        pulled: result.pulled,
+        success: false,
+        reason: "sync_failed",
+      });
       return BackgroundTask.BackgroundTaskResult.Failed;
     }
 
@@ -50,11 +76,23 @@ TaskManager.defineTask(BACKGROUND_SYNC_TASK_IDENTIFIER, async () => {
       result.pulled,
     );
 
+    await saveLastRun({
+      at: Date.now(),
+      pushed: result.pushed,
+      pulled: result.pulled,
+      success: true,
+      reason: "ok",
+    });
+
     return hasChanges
       ? BackgroundTask.BackgroundTaskResult.Success
       : BackgroundTask.BackgroundTaskResult.Failed;
   } catch (error) {
     console.error("[BackgroundSync] Error in background task:", error);
+    await saveLastRun({
+      at: Date.now(),
+      reason: "sync_failed",
+    });
     return BackgroundTask.BackgroundTaskResult.Failed;
   }
 });
@@ -82,7 +120,9 @@ export async function registerBackgroundSyncTaskAsync() {
     "[BackgroundSync]: Status",
     BackgroundTask.BackgroundTaskStatus[status],
   );
-  return BackgroundTask.registerTaskAsync(BACKGROUND_SYNC_TASK_IDENTIFIER);
+  return BackgroundTask.registerTaskAsync(BACKGROUND_SYNC_TASK_IDENTIFIER, {
+    minimumInterval: 5, // minutes; Android may enforce platform minimum of 15
+  });
 }
 
 /**
@@ -104,6 +144,32 @@ export async function getBackgroundSyncStatus() {
   console.log("status", status);
   console.log("isRegistered", isRegistered);
   return { status, isRegistered };
+}
+
+/**
+ * When the background task runs, it writes last run info to SecureStore.
+ * Call this to show "last ran at ..." in the UI.
+ */
+export async function getLastBackgroundSyncRun(): Promise<LastBackgroundSyncRun | null> {
+  try {
+    const raw = await SecureStore.getItemAsync(BACKGROUND_SYNC_LAST_RUN_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as LastBackgroundSyncRun;
+    return typeof parsed?.at === "number" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Record a last-run entry from the app (e.g. after the test trigger runs sync in foreground).
+ * Lets the UI show "last ran just now" without waiting for the real background task.
+ */
+export async function setLastBackgroundSyncRun(run: LastBackgroundSyncRun) {
+  await SecureStore.setItemAsync(
+    BACKGROUND_SYNC_LAST_RUN_KEY,
+    JSON.stringify(run),
+  );
 }
 
 /**

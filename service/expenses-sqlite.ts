@@ -1,6 +1,6 @@
 import { Expense, ExpenseFormData } from "@/types/expense";
+import { generateUUID } from "../utils/uuid";
 import { db } from "./db";
-import { generateUUID } from "./uuid";
 
 // Extended Expense type with sync fields
 export interface LocalExpense extends Expense {
@@ -62,7 +62,7 @@ export async function getExpenseById(id: string) {
  */
 export async function addExpense(expense: ExpenseFormData, userId: string) {
   try {
-    console.log('📱 [SQLite] Adding expense to LOCAL database first...');
+    console.log("📱 [SQLite] Adding expense to LOCAL database first...");
     const id = generateUUID(); // Generate proper UUID
     const now = new Date().toISOString();
 
@@ -97,12 +97,14 @@ export async function addExpense(expense: ExpenseFormData, userId: string) {
       ],
     );
 
-    console.log('✅ [SQLite] Expense saved locally! ID:', id);
-    console.log('⏳ [SQLite] Marked as unsynced (synced=0) - will sync to Supabase when online');
+    console.log("✅ [SQLite] Expense saved locally! ID:", id);
+    console.log(
+      "⏳ [SQLite] Marked as unsynced (synced=0) - will sync to Supabase when online",
+    );
 
     // Add to sync queue
     addToSyncQueue(id, "create", newExpense);
-    console.log('📋 [SQLite] Added to sync queue');
+    console.log("📋 [SQLite] Added to sync queue");
 
     return { data: newExpense, error: null };
   } catch (error) {
@@ -433,10 +435,9 @@ export function clearSyncQueue() {
  */
 export function clearFailedSyncItems(maxRetries: number = 3) {
   try {
-    const result = db.runSync(
-      "DELETE FROM sync_queue WHERE retry_count >= ?",
-      [maxRetries]
-    );
+    const result = db.runSync("DELETE FROM sync_queue WHERE retry_count >= ?", [
+      maxRetries,
+    ]);
     console.log(`🗑️ [SQLite] Removed ${result.changes || 0} failed sync items`);
     return result.changes || 0;
   } catch (error) {
