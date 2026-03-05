@@ -72,20 +72,30 @@ export default function AnalyticsScreen() {
   }, [expenses, selectedCategory, selectedRange]);
 
   const dailyBudgetSeries = useMemo((): DailySpending[] | null => {
-    if (selectedCategory === "all" || analytics.dailyTotals.length === 0) {
-      return null;
-    }
+    if (analytics.dailyTotals.length === 0) return null;
     return analytics.dailyTotals.map(({ date }) => {
       const d = new Date(date);
       const y = d.getFullYear();
       const m = d.getMonth();
       const monthKey = `${y}-${String(m + 1).padStart(2, "0")}`;
       const daysInMonth = new Date(y, m + 1, 0).getDate();
-      const monthlyBudget = getCategoryBudgetForMonth(
-        selectedCategory,
-        monthKey,
-        budgets,
-      );
+
+      let monthlyBudget: number;
+      if (selectedCategory === "all") {
+        // Sum budgets across all categories for the "all" view
+        const allCategories = Object.keys(DUMMY_MONTHLY_BUDGETS);
+        monthlyBudget = allCategories.reduce(
+          (sum, cat) => sum + getCategoryBudgetForMonth(cat, monthKey, budgets),
+          0,
+        );
+      } else {
+        monthlyBudget = getCategoryBudgetForMonth(
+          selectedCategory,
+          monthKey,
+          budgets,
+        );
+      }
+
       const dailyBudget = daysInMonth > 0 ? monthlyBudget / daysInMonth : 0;
       return { date, amount: dailyBudget };
     });

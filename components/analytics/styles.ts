@@ -169,7 +169,7 @@ export const spendingLineChartStyles = StyleSheet.create({
   },
   legendDot: {
     width: size.sm,
-    height: size.md,
+    height: size.sm,
     borderRadius: radius.sm * 2,
   },
   legendText: {
