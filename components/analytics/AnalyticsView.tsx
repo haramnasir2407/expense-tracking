@@ -3,6 +3,7 @@ import { SpendingLineChart } from "@/components/analytics/LineChart";
 import { CategoryPieChart } from "@/components/analytics/PieChart";
 import { CategoryPicker } from "@/components/expenses/CategoryPicker";
 import { DATE_RANGES } from "@/constants/dateRanges";
+import { spacing } from "@/constants/theme";
 import { AnalyticsData, DailySpending, DateRange } from "@/types/analytics";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
@@ -97,10 +98,7 @@ export function AnalyticsView({
       />
 
       <YStack style={styles.summaryGrid}>
-        <Card
-          noShadow
-          style={[styles.summaryCard, { backgroundColor: cardBg }]}
-        >
+        <Card style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Total Spent
           </Text>
@@ -108,10 +106,7 @@ export function AnalyticsView({
             ${analytics.totalSpent.toFixed(2)}
           </Text>
         </Card>
-        <Card
-          noShadow
-          style={[styles.summaryCard, { backgroundColor: cardBg }]}
-        >
+        <Card style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Avg/Day
           </Text>
@@ -119,10 +114,7 @@ export function AnalyticsView({
             ${analytics.averagePerDay.toFixed(2)}
           </Text>
         </Card>
-        <Card
-          noShadow
-          style={[styles.summaryCard, { backgroundColor: cardBg }]}
-        >
+        <Card style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Transactions
           </Text>
@@ -130,10 +122,7 @@ export function AnalyticsView({
             {analytics.transactionCount}
           </Text>
         </Card>
-        <Card
-          noShadow
-          style={[styles.summaryCard, { backgroundColor: cardBg }]}
-        >
+        <Card style={[styles.summaryCard, { backgroundColor: cardBg }]}>
           <Text style={[styles.summaryLabel, { color: labelColor }]}>
             Avg/Transaction
           </Text>
@@ -143,32 +132,34 @@ export function AnalyticsView({
         </Card>
       </YStack>
 
-      <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>
-          Spending Over Time
-        </Text>
-        <SpendingLineChart
-          data={analytics.dailyTotals}
-          budgetData={dailyBudgetSeries ?? undefined}
-          isDark={isDark}
-        />
-      </Card>
-      <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>
-          Category Breakdown
-        </Text>
-        <CategoryPieChart data={analytics.byCategory} isDark={isDark} />
-      </Card>
-      <Card noShadow style={[styles.chartSection, { backgroundColor: cardBg }]}>
-        <Text style={[styles.chartTitle, { color: colors.text }]}>
-          Monthly Comparison
-        </Text>
-        <MonthlyBarChart
-          data={analytics.monthlyTotals}
-          isDark={isDark}
-          dateRange={selectedRange}
-        />
-      </Card>
+      <YStack gap={spacing.xl} style={styles.chartSectionStack}>
+        <Card style={[styles.chartSection, { backgroundColor: cardBg }]}>
+          <Text style={[styles.chartTitle, { color: colors.text }]}>
+            Spending Over Time
+          </Text>
+          <SpendingLineChart
+            data={analytics.dailyTotals}
+            budgetData={dailyBudgetSeries ?? undefined}
+            isDark={isDark}
+          />
+        </Card>
+        <Card style={[styles.chartSection, { backgroundColor: cardBg }]}>
+          <Text style={[styles.chartTitle, { color: colors.text }]}>
+            Category Breakdown
+          </Text>
+          <CategoryPieChart data={analytics.byCategory} isDark={isDark} />
+        </Card>
+        <Card style={[styles.chartSection, { backgroundColor: cardBg }]}>
+          <Text style={[styles.chartTitle, { color: colors.text }]}>
+            Monthly Comparison
+          </Text>
+          <MonthlyBarChart
+            data={analytics.monthlyTotals}
+            isDark={isDark}
+            dateRange={selectedRange}
+          />
+        </Card>
+      </YStack>
 
       {analytics.monthOverMonthTrend.previous > 0 && (
         <Card

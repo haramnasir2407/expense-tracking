@@ -1,48 +1,71 @@
 import { StyleSheet } from "react-native";
 
+import { Colors, fontSize, radius, spacing } from "@/constants/theme";
+
+const cardRadius = radius.sm * 4;
+
+const cardShadow = {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.08,
+  shadowRadius: 6,
+  elevation: 3,
+};
+
 export const budgetsViewStyles = StyleSheet.create({
   container: { flex: 1 },
   scrollView: { flex: 1 },
   summaryCard: {
-    margin: 16,
-    padding: 20,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    margin: spacing.xl,
+    padding: spacing.lg,
+    borderRadius: cardRadius,
   },
-  summaryTitle: { fontSize: 20, fontWeight: "700", marginBottom: 16 },
+  summaryTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: "700",
+    marginBottom: spacing.xl,
+  },
   summaryRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: spacing.md,
   },
-  summaryLabel: { fontSize: 16 },
-  summaryValue: { fontSize: 16, fontWeight: "600" },
+  summaryLabel: { fontSize: fontSize.lg },
+  summaryValue: { fontSize: fontSize.lg, fontWeight: "600" },
   overBudget: { color: "#FF6B6B" },
   progressBar: {
     height: 12,
-    borderRadius: 6,
-    marginTop: 16,
-    marginBottom: 8,
+    borderRadius: radius.sm * 2,
+    marginTop: spacing.xl,
+    marginBottom: spacing.md,
     overflow: "hidden",
   },
-  progressFill: { height: "100%", borderRadius: 6 },
-  percentageText: { fontSize: 14, textAlign: "center" },
-  section: { padding: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: "700", marginBottom: 16 },
-  emptyState: { alignItems: "center", padding: 40 },
-  emptyText: { fontSize: 18, fontWeight: "600", marginTop: 16 },
-  emptySubtext: { fontSize: 14, marginTop: 8, textAlign: "center" },
+  progressFill: { height: "100%", borderRadius: radius.sm * 2 },
+  percentageText: { fontSize: fontSize.md, textAlign: "center" },
+  section: { padding: spacing.xl },
+  sectionTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: "700",
+    marginBottom: spacing.xl,
+  },
+  emptyState: { alignItems: "center", padding: spacing.xl },
+  emptyText: {
+    fontSize: fontSize.xl,
+    fontWeight: "600",
+    marginTop: spacing.xl,
+  },
+  emptySubtext: {
+    fontSize: fontSize.md,
+    marginTop: spacing.md,
+    textAlign: "center",
+  },
   fab: {
     position: "absolute",
     right: 20,
     bottom: 20,
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: cardRadius,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -56,59 +79,55 @@ export const budgetsViewStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: spacing.xl,
     borderBottomWidth: 1,
   },
-  modalTitle: { fontSize: 20, fontWeight: "700" },
+  modalTitle: { fontSize: fontSize.xl, fontWeight: "700" },
 });
 
 export const budgetCardStyles = StyleSheet.create({
   container: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderRadius: cardRadius,
+    padding: spacing.xl,
+    marginBottom: spacing.lg,
+    ...cardShadow,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: spacing.lg,
   },
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: spacing.sm,
   },
   actions: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 8,
+    marginLeft: spacing.md,
   },
   actionBtn: {
-    padding: 4,
+    padding: spacing.sm,
   },
   category: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: "600",
   },
   percentage: {
-    fontSize: 18,
+    fontSize: fontSize.xl,
     fontWeight: "700",
   },
   progressBar: {
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.sm * 2,
     overflow: "hidden",
-    marginBottom: 8,
+    marginBottom: spacing.md,
   },
   progressFill: {
     height: "100%",
-    borderRadius: 4,
+    borderRadius: radius.sm * 2,
   },
   footer: {
     flexDirection: "row",
@@ -116,63 +135,62 @@ export const budgetCardStyles = StyleSheet.create({
     alignItems: "center",
   },
   amount: {
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
   remaining: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: "600",
   },
 });
 
 export const budgetFormStyles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: spacing.lg,
   },
   label: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: "600",
-    marginBottom: 8,
-    marginTop: 16,
+    marginBottom: spacing.md,
+    marginTop: spacing.xl,
   },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    borderRadius: radius.sm * 2,
+    padding: spacing.lg,
+    fontSize: fontSize.lg,
   },
   placeholder: {
     color: "#999",
   },
   buttons: {
     flexDirection: "row",
-    gap: 12,
-    marginTop: 24,
+    gap: spacing.lg,
+    marginTop: spacing.xl,
   },
   inputText: {
     color: "#333",
   },
   button: {
     flex: 1,
-    padding: 16,
-    borderRadius: 8,
+    padding: spacing.xl,
+    borderRadius: radius.sm * 2,
     alignItems: "center",
   },
   cancelButton: {
     backgroundColor: "#f0f0f0",
   },
   submitButton: {
-    backgroundColor: "#0a7ea4",
+    backgroundColor: Colors.light.tint,
   },
   cancelText: {
     color: "#666",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: "600",
   },
   submitText: {
     color: "white",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: "600",
   },
 });
-

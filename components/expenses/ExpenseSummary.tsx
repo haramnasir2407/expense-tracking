@@ -1,23 +1,14 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 import { useExpenses } from "@/hooks/useExpenses";
+import { formatAmount } from "@/utils/expense";
 import React from "react";
 import { Text, YStack } from "tamagui";
 import { Card } from "../primitives/themed-card";
 import { expenseSummaryStyles as styles } from "./styles";
 
 export function ExpenseSummary() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
   const { getTotalAmount } = useExpenses();
-
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
   const todayTotal = getTotalAmount("today");
   const weekTotal = getTotalAmount("week");
   const monthTotal = getTotalAmount("month");
@@ -26,8 +17,8 @@ export function ExpenseSummary() {
     <Card
       noShadow
       style={styles.container}
-      backgroundColor={colors.tint + "10"}
-      borderColor={colors.tint + "10"}
+      backgroundColor={colors.primary + "10"}
+      borderColor={colors.primary + "10"}
     >
       <YStack style={styles.mainTotal}>
         <Text style={[styles.label, { color: colors.text + "99" }]}>

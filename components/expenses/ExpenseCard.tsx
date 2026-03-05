@@ -1,21 +1,18 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Expense } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Text, XStack, YStack } from "tamagui";
-import { AppPressable } from "../primitives/app-pressable";
+import { Button, Text, XStack, YStack } from "tamagui";
 import { IconCircle } from "../primitives/icon-circle";
 import { expenseCardStyles as styles } from "./styles";
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 
 interface ExpenseCardProps {
   expense: Expense;
 }
 
 export function ExpenseCard({ expense }: ExpenseCardProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
 
   const handlePress = () => {
     router.push(`/expenses/${expense.id}`);
@@ -37,24 +34,18 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
   };
 
   return (
-    <AppPressable
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-          borderColor: colors.text + "20",
-          borderWidth: 1,
-        },
-      ]}
+    <Button
+      unstyled
+      style={[styles.container, { backgroundColor: colors.background }]}
       onPress={handlePress}
     >
       <YStack style={styles.iconContainer}>
         <IconCircle
           size={48}
-          backgroundColor={colors.tint + "20"}
+          backgroundColor={colors.primary + "20"}
           style={{ marginRight: 0 }}
         >
-          <Ionicons name="receipt-outline" size={24} color={colors.tint} />
+          <Ionicons name="receipt-outline" size={24} color={colors.primary} />
         </IconCircle>
       </YStack>
 
@@ -82,6 +73,6 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
           </Text>
         </XStack>
       </YStack>
-    </AppPressable>
+    </Button>
   );
 }

@@ -3,8 +3,7 @@ import { LastBackgroundSyncRun } from "@/service/background-sync-task";
 import { NotificationSettings } from "@/types/notification";
 import { Ionicons } from "@expo/vector-icons";
 import { User } from "@supabase/supabase-js";
-import { ScrollView } from "react-native";
-import { View, XStack, YStack } from "tamagui";
+import { Circle, ScrollView, View, XStack, YStack } from "tamagui";
 import { AppPressable } from "../primitives/app-pressable";
 import { Card } from "../primitives/themed-card";
 
@@ -32,7 +31,6 @@ interface ProfileViewProps {
   hasPermission: boolean;
   notifLoading: boolean;
   colors: { background: string; text: string; tint: string };
-  isDark: boolean;
   onToggleBiometric: () => void;
   onToggleBudgetAlerts: (value: boolean) => void;
   onToggleDailyReminder: (value: boolean) => void;
@@ -51,7 +49,6 @@ export function ProfileView({
   hasPermission,
   notifLoading,
   colors,
-  isDark,
   onToggleBiometric,
   onToggleBudgetAlerts,
   onToggleDailyReminder,
@@ -61,22 +58,19 @@ export function ProfileView({
   onTriggerBackgroundSync,
   lastBackgroundSync,
 }: ProfileViewProps) {
-  const thresholdRowBg = isDark ? "#2C2C2E" : "#f0f0f0";
-
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
       <View style={styles.content}>
         <View style={styles.header}>
-          <View
-            style={[
-              styles.avatarContainer,
-              { backgroundColor: colors.tint + "20" },
-            ]}
+          <Circle
+            size={80}
+            {...({ backgroundColor: colors.tint + "20" } as any)}
+            style={styles.avatarContainer}
           >
             <Ionicons name="person" size={40} color={colors.tint} />
-          </View>
+          </Circle>
           <ThemedText type="title" style={styles.welcomeText}>
             Welcome Back!
           </ThemedText>
@@ -89,7 +83,8 @@ export function ProfileView({
           </ThemedText>
           <Card
             noShadow
-            style={[styles.card, { backgroundColor: colors.background }]}
+            style={[styles.statusCard, { backgroundColor: colors.background }]}
+            borderColor={colors.text + "15"}
           >
             <View style={styles.statusRow}>
               <View style={styles.statusItem}>
@@ -122,36 +117,36 @@ export function ProfileView({
           <ThemedText type="subtitle" style={styles.sectionTitle}>
             Settings
           </ThemedText>
-          <AppPressable
-            style={[styles.actionCard, { backgroundColor: colors.background }]}
-            onPress={onToggleBiometric}
-            rightIcon="chevron-forward"
-          >
-            <XStack style={styles.actionLeft}>
-              <Ionicons name="finger-print" size={24} color={colors.tint} />
-              <ThemedText style={styles.actionTitle}>
-                {biometricEnabled ? "Disable" : "Enable"} Biometric Login
-              </ThemedText>
-            </XStack>
-          </AppPressable>
-
-          {!emailConfirmed && (
+          <Card noShadow style={styles.card} borderColor={colors.text + "15"}>
             <AppPressable
-              style={[
-                styles.actionCard,
-                { backgroundColor: colors.background },
-              ]}
-              onPress={onVerifyEmailPress}
+              style={styles.cardAction}
+              onPress={onToggleBiometric}
               rightIcon="chevron-forward"
             >
-              <View style={styles.actionLeft}>
-                <Ionicons name="mail" size={24} color={colors.tint} />
+              <XStack style={styles.actionLeft}>
+                <Ionicons name="finger-print" size={20} color={colors.tint} />
                 <ThemedText style={styles.actionTitle}>
-                  Verify Email Address
+                  {biometricEnabled ? "Disable" : "Enable"} Biometric Login
                 </ThemedText>
-              </View>
+              </XStack>
             </AppPressable>
-          )}
+
+            {!emailConfirmed && (
+              <AppPressable
+                style={[styles.cardAction, styles.cardActionBorder]}
+                borderColor={colors.text + "10"}
+                onPress={onVerifyEmailPress}
+                rightIcon="chevron-forward"
+              >
+                <View style={styles.actionLeft}>
+                  <Ionicons name="mail" size={24} color={colors.tint} />
+                  <ThemedText style={styles.actionTitle}>
+                    Verify Email Address
+                  </ThemedText>
+                </View>
+              </AppPressable>
+            )}
+          </Card>
         </YStack>
 
         <YStack style={styles.section}>
@@ -161,6 +156,7 @@ export function ProfileView({
           <Card
             noShadow
             style={[styles.card, { backgroundColor: colors.background }]}
+            borderColor={colors.text + "15"}
           >
             {!hasPermission && (
               <AppPressable
@@ -201,10 +197,7 @@ export function ProfileView({
 
             {settings?.budget_alerts_enabled && (
               <AppPressable
-                style={[
-                  styles.thresholdRow,
-                  { backgroundColor: thresholdRowBg },
-                ]}
+                style={[styles.thresholdRow]}
                 onPress={onChangeBudgetThreshold}
                 rightIcon="create-outline"
               >
@@ -246,67 +239,82 @@ export function ProfileView({
             About
           </ThemedText>
           <Card
-            style={[styles.infoCard, { backgroundColor: colors.tint + "10" }]}
+            noShadow
+            style={[styles.card, { backgroundColor: colors.background }]}
+            borderColor={colors.text + "15"}
           >
-            <Ionicons
-              name="shield-checkmark-outline"
-              size={24}
-              color={colors.tint}
-            />
-            <ThemedText style={styles.infoText}>
-              Your data is securely stored and only accessible to you with
-              end-to-end encryption.
-            </ThemedText>
-          </Card>
-          <Card
-            style={[
-              styles.infoCard,
-              { backgroundColor: colors.tint + "10", marginTop: 12 },
-            ]}
-          >
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color={colors.tint}
-            />
-            <ThemedText style={styles.infoText}>
-              Track your expenses efficiently with categories, receipts, and
-              detailed insights.
-            </ThemedText>
-          </Card>
-          <ThemedText
-            style={[styles.infoText, { marginTop: 12, opacity: 0.8 }]}
-          >
-            Last background sync:{" "}
-            {lastBackgroundSync
-              ? `${formatLastSync(lastBackgroundSync)}${
-                  lastBackgroundSync.success != null &&
-                  lastBackgroundSync.pushed != null &&
-                  lastBackgroundSync.pulled != null
-                    ? ` (pushed ${lastBackgroundSync.pushed}, pulled ${lastBackgroundSync.pulled})`
-                    : ""
-                }${
-                  lastBackgroundSync.reason && lastBackgroundSync.reason !== "ok"
-                    ? ` [${lastBackgroundSync.reason}]`
-                    : ""
-                }`
-              : "Never"}
-          </ThemedText>
-          <AppPressable
-            style={[
-              styles.actionCard,
-              { backgroundColor: colors.background, marginTop: 16 },
-            ]}
-            onPress={onTriggerBackgroundSync}
-            rightIcon="chevron-forward"
-          >
-            <View style={styles.actionLeft}>
-              <Ionicons name="sync" size={24} color={colors.tint} />
-              <ThemedText style={styles.actionTitle}>
-                Trigger background sync (test)
+            <View style={styles.infoRow}>
+              <View
+                style={[
+                  styles.infoIconCircle,
+                  { backgroundColor: colors.tint + "15" },
+                ]}
+              >
+                <Ionicons
+                  name="shield-checkmark-outline"
+                  size={20}
+                  color={colors.tint}
+                />
+              </View>
+              <ThemedText style={styles.infoRowText}>
+                Your data is securely stored and only accessible to you with
+                end-to-end encryption.
               </ThemedText>
             </View>
-          </AppPressable>
+
+            <View style={styles.infoRow}>
+              <View
+                style={[
+                  styles.infoIconCircle,
+                  { backgroundColor: colors.tint + "15" },
+                ]}
+              >
+                <Ionicons
+                  name="information-circle-outline"
+                  size={20}
+                  color={colors.tint}
+                />
+              </View>
+              <ThemedText style={styles.infoRowText}>
+                Track your expenses efficiently with categories, receipts, and
+                detailed insights.
+              </ThemedText>
+            </View>
+          </Card>
+        </View>
+
+        <View style={styles.section}>
+          <Card
+            noShadow
+            style={[styles.card, { backgroundColor: colors.background }]}
+            borderColor={colors.text + "15"}
+          >
+            <AppPressable
+              style={styles.cardAction}
+              onPress={onTriggerBackgroundSync}
+              rightIcon="chevron-forward"
+            >
+              <View style={styles.actionLeft}>
+                <Ionicons name="sync" size={20} color={colors.tint} />
+                <View>
+                  <ThemedText style={styles.actionTitle}>
+                    Background Sync
+                  </ThemedText>
+                  <ThemedText style={styles.syncSubtitle}>
+                    {"Last sync: "}
+                    {lastBackgroundSync
+                      ? `${formatLastSync(lastBackgroundSync)}${
+                          lastBackgroundSync.pushed != null &&
+                          lastBackgroundSync.pulled != null
+                            ? ` · ↑${lastBackgroundSync.pushed} ↓${lastBackgroundSync.pulled}`
+                            : ""
+                        }`
+                      : "Never"}
+                  </ThemedText>
+                </View>
+              </View>
+            </AppPressable>
+          </Card>
         </View>
       </View>
     </ScrollView>

@@ -35,12 +35,7 @@ export default function VerifyEmailScreen() {
 
   async function handleResendEmail() {
     if (!signupEmail) {
-      Toast.show({
-        type: "error",
-        text1: "Missing email",
-        text2:
-          "We couldn't determine your email address. Please go back and register again.",
-      });
+      Toast.show({ type: "error", text1: "Missing email", text2: "We couldn't determine your email address. Please go back and register again." });
       return;
     }
     setResendLoading(true);
@@ -50,27 +45,13 @@ export default function VerifyEmailScreen() {
         email: signupEmail,
       });
       if (error)
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.message,
-        });
+        Toast.show({ type: "error", text1: "Error", text2: error.message });
       else {
-        Toast.show({
-          type: "success",
-          text1: "Email sent",
-          text2: "Verification email resent. Please check your inbox.",
-        });
+        Toast.show({ type: "success", text1: "Email sent", text2: "Verification email resent. Please check your inbox." });
         setResendCooldown(60);
       }
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          formatAuthError(error as Error)?.message ||
-          "Failed to resend verification email. Please try again.",
-      });
+      Toast.show({ type: "error", text1: "Error", text2: formatAuthError(error as Error)?.message || "Failed to resend verification email. Please try again." });
     } finally {
       setResendLoading(false);
     }
@@ -83,26 +64,13 @@ export default function VerifyEmailScreen() {
         data: { session },
       } = await supabase.auth.refreshSession();
       if (session?.user?.email_confirmed_at) {
-        Toast.show({
-          type: "success",
-          text1: "Email verified",
-        });
+        Toast.show({ type: "success", text1: "Email verified" });
         router.replace("/(tabs)");
       } else {
-        Toast.show({
-          type: "info",
-          text1: "Not verified yet",
-          text2: "Click the verification link in your email and try again.",
-        });
+        Toast.show({ type: "info", text1: "Not verified yet", text2: "Click the verification link in your email and try again." });
       }
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          formatAuthError(error as Error)?.message ||
-          "Failed to check verification status. Please try again.",
-      });
+      Toast.show({ type: "error", text1: "Error", text2: formatAuthError(error as Error)?.message || "Failed to check verification status. Please try again." });
     } finally {
       setChecking(false);
     }

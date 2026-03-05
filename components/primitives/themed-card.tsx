@@ -1,5 +1,4 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAppTheme } from "@/hooks/use-tamagui-theme";
 import React from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import { YStack } from "tamagui";
@@ -23,14 +22,11 @@ export function Card({
   borderColor,
   backgroundColor,
 }: CardProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const { colors } = useAppTheme();
   const bg = backgroundColor ?? colors.background;
 
   return (
     <YStack
-      // Tamagui's Stack types don't expose `backgroundColor` directly in our setup,
-      // but it is supported at runtime; cast to satisfy TypeScript.
       {...({ backgroundColor: bg } as any)}
       style={[
         noShadow ? styles.cardNoShadow : styles.card,

@@ -1,77 +1,103 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Design tokens for use in StyleSheet-based screens and legacy components.
+ * Values are sourced from Tamagui config so styles stay consistent with theme-aware UI.
+ *
+ * Use this for:
+ * - Highly custom layouts, legacy screens, one-off styles
+ *
+ * Prefer Tamagui components (XStack, YStack, Text, Button, etc.) and theme tokens
+ * for reusable UI, cards, lists, and typography.
  */
 
-import { Platform } from "react-native";
-import { createTokens } from "tamagui";
+import { tokens } from "@/tamagui.config";
 
-const tintColorLight = "#0a7ea4";
-const tintColorDark = "#0a7ea4";
+/** Get raw value from a Tamagui token (handles both { val } and primitive). */
+function tokenVal(t: unknown): string | number {
+  if (t != null && typeof t === "object" && "val" in t) {
+    return (t as { val: string | number }).val;
+  }
+  return t as string | number;
+}
 
 export const Colors = {
   light: {
-    text: "#11181C",
-    background: "#fff",
-    tint: tintColorLight,
-    icon: "#687076",
-    tabIconDefault: "#687076",
-    tabIconSelected: tintColorLight,
+    text: tokenVal(tokens.color.lightColor) as string,
+    background: tokenVal(tokens.color.lightBackground) as string,
+    tint: tokenVal(tokens.color.tintColor) as string,
+    icon: tokenVal(tokens.color.lightIcon) as string,
+    tabIconDefault: tokenVal(tokens.color.lightTabIconDefault) as string,
+    tabIconSelected: tokenVal(tokens.color.tabIconSelected) as string,
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#151718",
-    tint: tintColorDark,
-    icon: "#9BA1A6",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
+    text: tokenVal(tokens.color.darkColor) as string,
+    background: tokenVal(tokens.color.darkBackground) as string,
+    tint: tokenVal(tokens.color.tintColor) as string,
+    icon: tokenVal(tokens.color.darkIcon) as string,
+    tabIconDefault: tokenVal(tokens.color.darkTabIconDefault) as string,
+    tabIconSelected: tokenVal(tokens.color.tabIconSelected) as string,
   },
 };
 
-export const tokens = createTokens({
-  color: {
-    primary: "#000000",
-    secondary: "#000000",
-    tertiary: "#000000",
-  },
-  size: {
-    small: 12,
-    medium: 16,
-    large: 20,
-    xlarge: 24,
-    xxlarge: 28,
-    xxxlarge: 32,
-  },
-  font: {
-    sans: "system-ui",
-    serif: "ui-serif",
-    rounded: "ui-rounded",
-    mono: "ui-monospace",
-  },
-});
+/** Spacing tokens for margins/padding in StyleSheets. */
+export const spacing = {
+  xs: tokenVal(tokens.space.sm) as number,
+  sm: tokenVal(tokens.space.sm) as number,
+  md: tokenVal(tokens.space.md) as number,
+  lg: tokenVal(tokens.space.lg) as number,
+  xl: tokenVal(tokens.space.xl) as number,
+  /** Alias for default spacing (same as md in current config). */
+  true: tokenVal(tokens.space.true) as number,
+};
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: "system-ui",
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: "ui-serif",
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: "ui-rounded",
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: "ui-monospace",
-  },
-  default: {
-    sans: "normal",
-    serif: "serif",
-    rounded: "normal",
-    mono: "monospace",
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+/** Size tokens for dimensions in StyleSheets. */
+export const size = {
+  sm: tokenVal(tokens.size.sm) as number,
+  md: tokenVal(tokens.size.md) as number,
+  lg: tokenVal(tokens.size.lg) as number,
+  true: tokenVal(tokens.size.true) as number,
+};
+
+/** Radius tokens for border radius in StyleSheets. */
+export const radius = {
+  none: tokenVal(tokens.radius.none) as number,
+  sm: tokenVal(tokens.radius.sm) as number,
+  true: tokenVal(tokens.radius.true) as number,
+};
+
+/** zIndex tokens for stacking. */
+export const zIndex = {
+  sm: tokenVal(tokens.zIndex.sm) as number,
+  md: tokenVal(tokens.zIndex.md) as number,
+  lg: tokenVal(tokens.zIndex.lg) as number,
+};
+
+export const fontSize = {
+  sm: tokenVal(tokens.fontSize.sm) as number,
+  md: tokenVal(tokens.fontSize.md) as number,
+  lg: tokenVal(tokens.fontSize.lg) as number,
+  xl: tokenVal(tokens.fontSize.xl) as number,
+  xxl: tokenVal(tokens.fontSize.xxl) as number,
+  xxxl: tokenVal(tokens.fontSize.xxxl) as number,
+  true: tokenVal(tokens.fontSize.true) as number,
+};
+
+export const lineHeight = {
+  sm: tokenVal(tokens.lineHeight.sm) as number,
+  md: tokenVal(tokens.lineHeight.md) as number,
+  lg: tokenVal(tokens.lineHeight.lg) as number,
+  true: tokenVal(tokens.lineHeight.true) as number,
+};
+
+export const fontWeight = {
+  sm: tokenVal(tokens.fontWeight.sm) as number,
+  md: tokenVal(tokens.fontWeight.md) as number,
+  lg: tokenVal(tokens.fontWeight.lg) as number,
+  true: tokenVal(tokens.fontWeight.true) as number,
+};
+
+export const letterSpacing = {
+  sm: tokenVal(tokens.letterSpacing.sm) as number,
+  md: tokenVal(tokens.letterSpacing.md) as number,
+  lg: tokenVal(tokens.letterSpacing.lg) as number,
+  true: tokenVal(tokens.letterSpacing.true) as number,
+};

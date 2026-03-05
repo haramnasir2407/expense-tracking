@@ -36,26 +36,13 @@ export default function ForgotPasswordScreen() {
     try {
       const { error } = await resetPassword(email);
       if (error)
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: error.message,
-        });
+        Toast.show({ type: "error", text1: "Error", text2: error.message });
       else {
         setEmailSent(true);
-        Toast.show({
-          type: "success",
-          text1: "Reset email sent",
-        });
+        Toast.show({ type: "success", text1: "Reset email sent" });
       }
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          formatAuthError(error as Error)?.message ||
-          "An unexpected error occurred. Please try again.",
-      });
+      Toast.show({ type: "error", text1: "Error", text2: formatAuthError(error as Error)?.message || "An unexpected error occurred. Please try again." });
     } finally {
       setLoading(false);
     }

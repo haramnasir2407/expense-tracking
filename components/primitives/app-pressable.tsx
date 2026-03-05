@@ -14,12 +14,18 @@ interface AppPressableProps {
   onPress?: () => void;
   disabled?: boolean;
   activeOpacity?: number;
+  /** Border color applied directly as a Tamagui prop (not via style). */
+  borderColor?: string;
+  /** Background color applied directly as a Tamagui prop (not via style). */
+  backgroundColor?: string;
 }
 
 export function AppPressable({
   children,
   style,
   rightIcon,
+  borderColor,
+  backgroundColor,
   activeOpacity = 0.7,
   ...rest
 }: AppPressableProps) {
@@ -31,6 +37,8 @@ export function AppPressable({
       unstyled
       style={[styles.row, style]}
       pressStyle={{ opacity: activeOpacity }}
+      {...({ backgroundColor: backgroundColor ?? "transparent" } as any)}
+      {...(borderColor != null ? ({ borderColor, borderWidth: 1 } as any) : {})}
       {...rest}
     >
       <XStack style={styles.content}>{children}</XStack>

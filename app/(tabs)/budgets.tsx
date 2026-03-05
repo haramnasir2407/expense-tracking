@@ -4,8 +4,8 @@ import { useBudgets } from "@/contexts/BudgetContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Budget, BudgetFormData } from "@/types/budget";
 import React, { useMemo, useState } from "react";
-import Toast from "react-native-toast-message";
 import { Alert } from "react-native";
+import Toast from "react-native-toast-message";
 function getCurrentMonthKey(): string {
   const d = new Date();
   const y = d.getFullYear();
@@ -56,44 +56,27 @@ export default function BudgetsScreen() {
     }
     const { error } = await createBudget(data);
     if (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error creating budget",
-        text2: error,
-      });
+      Toast.show({ type: "error", text1: "Error creating budget", text2: error });
       return;
     }
     setShowCreateForm(false);
-    Toast.show({
-      type: "success",
-      text1: "Budget created",
-    });
+    Toast.show({ type: "success", text1: "Budget created" });
   };
 
   const handleUpdateBudget = async (data: BudgetFormData) => {
     if (!editingBudget) return;
     const { error } = await updateBudget(editingBudget.id, data.amount);
     if (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error updating budget",
-        text2: error,
-      });
+      Toast.show({ type: "error", text1: "Error updating budget", text2: error });
       return;
     }
     setEditingBudget(null);
-    Toast.show({
-      type: "success",
-      text1: "Budget updated",
-    });
+    Toast.show({ type: "success", text1: "Budget updated" });
   };
 
   const handleDeleteBudget = (budget: Budget) => {
     deleteBudget(budget.id);
-    Toast.show({
-      type: "success",
-      text1: "Budget deleted",
-    });
+    Toast.show({ type: "success", text1: "Budget deleted" });
   };
 
   return (

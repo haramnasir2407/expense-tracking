@@ -1,10 +1,11 @@
 import { Expense, GroupedExpenses } from "@/types/expense";
 
-export const formatAmount = (amount: number) =>
-  new Intl.NumberFormat("en-US", {
+export const formatAmount = (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   }).format(amount);
+};
 
 export const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("en-US", {
@@ -67,4 +68,30 @@ export const formatDateString = (date: Date) => {
     month: "short",
     day: "numeric",
   });
+};
+
+export const formatTotal = (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+};
+
+export const getDateLabel = (dateString: string, expenses: Expense[]) => {
+  const date = new Date(expenses[0].date);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    });
+  }
 };

@@ -28,11 +28,7 @@ export default function LoginScreen() {
       const success = await authenticateWithBiometric();
       if (success) router.replace("/(tabs)");
       else
-        Toast.show({
-          type: "error",
-          text1: "Authentication failed",
-          text2: "Please try again or use your password.",
-        });
+        Toast.show({ type: "error", text1: "Authentication failed", text2: "Please try again or use your password." });
     } catch {
       // ignore
     }
@@ -62,20 +58,10 @@ export default function LoginScreen() {
     try {
       const { error } = await signIn(email, password);
       if (error)
-        Toast.show({
-          type: "error",
-          text1: "Login failed",
-          text2: error.message,
-        });
+        Toast.show({ type: "error", text1: "Login failed", text2: error.message });
       else if (biometricEnabled) router.replace("/(tabs)");
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          formatAuthError(error as Error)?.message ||
-          "An unexpected error occurred. Please try again.",
-      });
+      Toast.show({ type: "error", text1: "Error", text2: formatAuthError(error as Error)?.message || "An unexpected error occurred. Please try again." });
     } finally {
       setLoading(false);
     }

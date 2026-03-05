@@ -1,11 +1,5 @@
-import {
-  StyleProp,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import type { StyleProp, TextStyle, ViewStyle } from "react-native";
+import { Button, Text, XStack } from "tamagui";
 
 interface ActionButtonsProps {
   onCancel: () => void;
@@ -39,22 +33,24 @@ export function ActionButtons({
   const isSubmitDisabled = !!loading || !!submitButtonDisabled;
 
   return (
-    <View style={containerStyle}>
-      <TouchableOpacity
-        style={[buttonStyle, cancelButtonStyle]}
+    <XStack style={containerStyle as any}>
+      <Button
+        unstyled
+        style={[buttonStyle, cancelButtonStyle] as any}
         onPress={onCancel}
         disabled={cancelButtonDisabled}
       >
-        <Text style={cancelButtonTextStyle}>Cancel</Text>
-      </TouchableOpacity>
+        <Text style={cancelButtonTextStyle as any}>Cancel</Text>
+      </Button>
 
-      <TouchableOpacity
-        style={[buttonStyle, submitButtonStyle]}
+      <Button
+        unstyled
+        style={[buttonStyle, submitButtonStyle] as any}
         onPress={onSubmit}
         disabled={isSubmitDisabled}
       >
-        <Text style={submitButtonTextStyle}>{submitLabel}</Text>
-      </TouchableOpacity>
-    </View>
+        <Text style={submitButtonTextStyle as any}>{submitLabel}</Text>
+      </Button>
+    </XStack>
   );
 }

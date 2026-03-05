@@ -28,7 +28,17 @@ interface SyncContextType {
   forcePull: () => Promise<void>;
 }
 
-const SyncContext = createContext<SyncContextType | undefined>(undefined);
+const defaultSyncValue: SyncContextType = {
+  syncStatus: "idle",
+  lastSyncTime: null,
+  lastSyncResult: null,
+  unsyncedCount: 0,
+  isOnline: false,
+  sync: async () => {},
+  forcePull: async () => {},
+};
+
+const SyncContext = createContext<SyncContextType>(defaultSyncValue);
 
 export function SyncProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -163,9 +173,5 @@ export function SyncProvider({ children }: { children: ReactNode }) {
 }
 
 export function useSync() {
-  const context = useContext(SyncContext);
-  if (context === undefined) {
-    throw new Error("useSync must be used within a SyncProvider");
-  }
-  return context;
+  return useContext(SyncContext);
 }

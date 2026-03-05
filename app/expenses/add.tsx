@@ -15,16 +15,9 @@ export default function AddExpenseScreen() {
   const handleSubmit = async (data: ExpenseFormData) => {
     const { error } = await addExpense(data);
     if (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error adding expense",
-        text2: error,
-      });
+      Toast.show({ type: "error", text1: "Error adding expense", text2: error });
     } else {
-      Toast.show({
-        type: "success",
-        text1: "Expense added",
-      });
+      Toast.show({ type: "success", text1: "Expense added" });
       router.back();
     }
   };

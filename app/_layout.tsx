@@ -5,8 +5,8 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack, useRouter, useSegments } from "expo-router";
 import * as Notifications from "expo-notifications";
+import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
@@ -60,7 +60,8 @@ function RootLayoutNav() {
   // Deep link: when app is opened from a daily reminder notification tap, go to expenses tab
   useEffect(() => {
     if (!user || !lastNotificationResponse) return;
-    const data = lastNotificationResponse.notification?.request?.content?.data as { type?: string } | undefined;
+    const data = lastNotificationResponse.notification?.request?.content
+      ?.data as { type?: string } | undefined;
     if (data?.type !== "daily_reminder") return;
     if (lastResponseHandled.current) return;
     lastResponseHandled.current = true;
@@ -69,12 +70,16 @@ function RootLayoutNav() {
 
   // Listen for notification taps when app is in foreground or background
   useEffect(() => {
-    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification?.request?.content?.data as { type?: string } | undefined;
-      if (data?.type === "daily_reminder" && user) {
-        router.replace("/(tabs)");
-      }
-    });
+    const sub = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const data = response.notification?.request?.content?.data as
+          | { type?: string }
+          | undefined;
+        if (data?.type === "daily_reminder" && user) {
+          router.replace("/(tabs)");
+        }
+      },
+    );
     return () => sub.remove();
   }, [user, router]);
 

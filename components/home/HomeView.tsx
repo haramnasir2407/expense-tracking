@@ -2,7 +2,7 @@ import { ExpenseListSection } from "@/components/expenses/ExpenseListSection";
 import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
 import { Ionicons } from "@expo/vector-icons";
 import { FlatList, RefreshControl } from "react-native";
-import { YStack, Text } from "tamagui";
+import { Text, YStack } from "tamagui";
 
 import { AddButton } from "../primitives/add-button";
 import { homeViewStyles as styles } from "./styles";
