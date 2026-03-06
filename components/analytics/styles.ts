@@ -122,7 +122,14 @@ export const monthlyBarChartStyles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: "#999",
   },
-  yAxisLabelContainer: {
+  yAxisLabelContainerIos: {
+    position: "absolute",
+    left: "-13%",
+    top: "50%",
+    transform: [{ translateY: -40 }, { rotate: "-90deg" }],
+    paddingHorizontal: spacing.sm,
+  },
+  yAxisLabelContainerAndroid: {
     position: "absolute",
     left: "-12%",
     top: "50%",

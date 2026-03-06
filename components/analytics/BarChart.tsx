@@ -1,10 +1,10 @@
 import { DateRange, MonthlySpending } from "@/types/analytics";
 import React from "react";
-import { View, Text } from "tamagui";
+import { Platform } from "react-native";
+import { Text, View } from "tamagui";
 import { Bar, CartesianChart } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
 import { monthlyBarChartStyles as styles } from "./styles";
-
 interface BarChartProps {
   data: MonthlySpending[];
   height?: number;
@@ -51,9 +51,19 @@ export function MonthlyBarChart({
 
   return (
     <View style={[styles.container, { height: height + 30 }]}>
-      <View style={styles.yAxisLabelContainer}>
-        <Text style={styles.yAxisLabelText}>{yLabel}</Text>
-      </View>
+      {Platform.OS === "ios" ? (
+        <View style={styles.yAxisLabelContainerIos}>
+          <Text style={[styles.yAxisLabelText, { color: labelColor }]}>
+            {yLabel}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.yAxisLabelContainerAndroid}>
+          <Text style={[styles.yAxisLabelText, { color: labelColor }]}>
+            {yLabel}
+          </Text>
+        </View>
+      )}
 
       <View style={{ height }}>
         <CartesianChart
