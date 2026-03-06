@@ -59,7 +59,6 @@ export const profileViewStyles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
     borderRadius: cardRadius,
-    ...profileCardShadow,
   },
   cardActionBorder: {
     borderTopWidth: 1,
