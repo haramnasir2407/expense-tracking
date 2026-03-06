@@ -34,7 +34,6 @@ export const budgetsViewStyles = StyleSheet.create({
   summaryValue: { fontSize: fontSize.lg, fontWeight: "600" },
   overBudget: { color: "#FF6B6B" },
   progressBar: {
-    height: 12,
     borderRadius: radius.sm * 2,
     marginTop: spacing.xl,
     marginBottom: spacing.md,
@@ -120,7 +119,6 @@ export const budgetCardStyles = StyleSheet.create({
     fontWeight: "700",
   },
   progressBar: {
-    height: 8,
     borderRadius: radius.sm * 2,
     overflow: "hidden",
     marginBottom: spacing.md,

@@ -1,5 +1,6 @@
 import { BudgetCard } from "@/components/budgets/BudgetCard";
 import { BudgetForm } from "@/components/budgets/BudgetForm";
+import { Colors } from "@/constants/theme";
 import {
   Budget,
   BudgetFormData,
@@ -9,7 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Modal, ScrollView } from "react-native";
-import { Button, Text, View, YStack } from "tamagui";
+import { Button, Progress, Text, View, YStack } from "tamagui";
 import { AddButton } from "../primitives/add-button";
 import { Card } from "../primitives/themed-card";
 import { budgetsViewStyles as styles } from "./styles";
@@ -45,11 +46,12 @@ export function BudgetsView({
   onOpenEdit,
   onCloseEdit,
 }: BudgetsViewProps) {
-  const cardBg = isDark ? "#1C1C1E" : "white";
-  const borderColor = isDark ? "#2C2C2E" : "#f0f0f0";
-  const emptyIconColor = isDark ? "#3A3A3C" : "#ccc";
-  const emptyTextColor = isDark ? "#8E8E93" : "#666";
-  const emptySubColor = isDark ? "#636366" : "#999";
+  const themeColors = Colors[isDark ? "dark" : "light"];
+  const cardBg = themeColors.cardBackground;
+  const borderColor = themeColors.cardBorder;
+  const emptyIconColor = themeColors.iconMuted;
+  const emptyTextColor = themeColors.textSecondary;
+  const emptySubColor = themeColors.textTertiary;
 
   return (
     <YStack style={[styles.container, { backgroundColor: colors.background }]}>
@@ -96,7 +98,7 @@ export function BudgetsView({
                 ${currentMonthSummary.totalSpent.toFixed(2)}
               </Text>
             </View>
-            <View
+            {/* <View
               style={[
                 styles.progressBar,
                 { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
@@ -116,7 +118,32 @@ export function BudgetsView({
                   },
                 ]}
               />
+            </View> */}
+
+            <View
+              style={[
+                styles.progressBar,
+                { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
+              ]}
+            >
+              <Progress
+                key={currentMonthSummary.month}
+                value={currentMonthSummary.percentageUsed}
+              >
+                <Progress.Indicator
+                  style={styles.progressFill}
+                  backgroundColor={
+                    currentMonthSummary.percentageUsed >= 100
+                      ? "#FF6B6B"
+                      : currentMonthSummary.percentageUsed >= 80
+                        ? "#F39C12"
+                        : "#4ECDC4"
+                  }
+                  transition={{ type: "quick" }}
+                />
+              </Progress>
             </View>
+
             <Text
               style={[
                 styles.percentageText,

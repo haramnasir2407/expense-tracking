@@ -1,7 +1,7 @@
 import { BudgetStatus } from "@/types/budget";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Button, Text, View } from "tamagui";
+import { Button, Progress, Text, View } from "tamagui";
 import { budgetCardStyles as styles } from "./styles";
 
 interface BudgetCardProps {
@@ -69,15 +69,13 @@ export function BudgetCard({
           { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
         ]}
       >
-        <View
-          style={[
-            styles.progressFill,
-            {
-              width: `${Math.min(budget.percentageUsed, 100)}%`,
-              backgroundColor: getStatusColor(),
-            },
-          ]}
-        />
+        <Progress key={budget.category} value={budget.percentageUsed}>
+          <Progress.Indicator
+            style={styles.progressFill}
+            backgroundColor={getStatusColor()}
+            transition={{ type: "quick" }}
+          />
+        </Progress>
       </View>
 
       <View style={styles.footer}>
