@@ -27,6 +27,8 @@ export const Colors = {
     icon: tokenVal(tokens.color.lightIcon) as string,
     tabIconDefault: tokenVal(tokens.color.lightTabIconDefault) as string,
     tabIconSelected: tokenVal(tokens.color.tabIconSelected) as string,
+    cancelButtonColor: tokenVal(tokens.color.cancelButtonColorLight) as string,
+    cancelButtonBg: tokenVal(tokens.color.cancelButtonBgLight) as string,
   },
   dark: {
     text: tokenVal(tokens.color.darkColor) as string,
@@ -35,6 +37,18 @@ export const Colors = {
     icon: tokenVal(tokens.color.darkIcon) as string,
     tabIconDefault: tokenVal(tokens.color.darkTabIconDefault) as string,
     tabIconSelected: tokenVal(tokens.color.tabIconSelected) as string,
+    cancelButtonColor: tokenVal(tokens.color.cancelButtonColorDark) as string,
+    cancelButtonBg: tokenVal(tokens.color.cancelButtonBgDark) as string,
+  },
+  switch: {
+    trackColorDisabled: tokenVal(
+      tokens.color.switchTrackColorDisabled,
+    ) as string,
+    trackColorEnabled: tokenVal(tokens.color.switchTrackColorEnabled) as string,
+    thumbColorDisabled: tokenVal(
+      tokens.color.switchThumbColorDisabled,
+    ) as string,
+    thumbColorEnabled: tokenVal(tokens.color.switchThumbColorEnabled) as string,
   },
 };
 
@@ -61,6 +75,8 @@ export const size = {
 export const radius = {
   none: tokenVal(tokens.radius.none) as number,
   sm: tokenVal(tokens.radius.sm) as number,
+  md: tokenVal(tokens.radius.md) as number,
+  lg: tokenVal(tokens.radius.lg) as number,
   true: tokenVal(tokens.radius.true) as number,
 };
 

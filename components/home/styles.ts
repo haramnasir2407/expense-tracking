@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 export const homeViewStyles = StyleSheet.create({
   container: { flex: 1 },
-  listContent: { paddingHorizontal: spacing.xl, paddingBottom: 100 },
+  listContent: { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
   emptyListContainer: { flexGrow: 1 },
   emptyContainer: {
     flex: 1,

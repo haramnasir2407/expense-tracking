@@ -2,7 +2,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { BudgetFormData } from "@/types/budget";
 import React, { useState } from "react";
-import { Text, View } from "tamagui";
+import { Form, Text, View } from "tamagui";
 import { CategoryPicker } from "../expenses/CategoryPicker";
 import { ActionButtons } from "../primitives/action-buttons";
 import { AppPressable } from "../primitives/app-pressable";
@@ -27,14 +27,25 @@ export function BudgetForm({
   const [month] = useState(initialData?.month || new Date());
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ amount?: string; category?: string }>(
+    {},
+  );
   const colorScheme = useColorScheme();
   const readOnlyBg = colorScheme === "dark" ? "#2C2C2E" : "#f5f5f5";
 
   const colors = Colors[colorScheme ?? "light"];
 
   const handleSubmit = async () => {
-    if (!amount || !category) return;
+    const newErrors: { amount?: string; category?: string } = {};
+    if (!category) newErrors.category = "Please select a category.";
+    if (!amount) newErrors.amount = "Please enter a budget amount.";
 
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
     try {
       await onSubmit({ amount, category, month });
@@ -44,7 +55,7 @@ export function BudgetForm({
   };
 
   return (
-    <View style={styles.container}>
+    <Form style={styles.container} onSubmit={handleSubmit}>
       <Text style={[styles.label, { color: colors.text }]}>Category</Text>
       {editMode ? (
         <View style={[styles.input, { backgroundColor: readOnlyBg }]}>
@@ -53,35 +64,41 @@ export function BudgetForm({
       ) : (
         <AppPressable
           style={styles.input}
-          onPress={() => setShowCategoryPicker(true)}
+          borderColor={errors.category ? "#FF6B6B" : "#ddd"}
+          onPress={() => {
+            setErrors((e) => ({ ...e, category: undefined }));
+            setShowCategoryPicker(true);
+          }}
         >
           <Text style={category ? { color: colors.text } : styles.placeholder}>
             {category || "Select Category"}
           </Text>
         </AppPressable>
       )}
+      {errors.category && (
+        <Text style={styles.errorText}>{errors.category}</Text>
+      )}
 
       <Text style={[styles.label, { color: colors.text }]}>Monthly Budget</Text>
       <ThemedTextInput
-        style={styles.input}
+        style={[styles.input, errors.amount ? styles.inputError : undefined]}
         value={amount}
-        onChangeText={setAmount}
+        onChangeText={(v) => {
+          setAmount(v);
+          if (v) setErrors((e) => ({ ...e, amount: undefined }));
+        }}
         placeholder="0.00"
         keyboardType="decimal-pad"
       />
+      {errors.amount && <Text style={styles.errorText}>{errors.amount}</Text>}
 
       <ActionButtons
         containerStyle={styles.buttons}
-        buttonStyle={styles.button}
-        cancelButtonStyle={styles.cancelButton}
-        submitButtonStyle={styles.submitButton}
-        cancelButtonTextStyle={styles.cancelText}
-        submitButtonTextStyle={styles.submitText}
         submitLabel="Save"
         onCancel={onCancel}
         onSubmit={handleSubmit}
         loading={loading}
-        submitButtonDisabled={loading || !amount || !category}
+        submitButtonDisabled={loading}
       />
 
       <CategoryPicker
@@ -93,6 +110,6 @@ export function BudgetForm({
         }}
         onClose={() => setShowCategoryPicker(false)}
       />
-    </View>
+    </Form>
   );
 }

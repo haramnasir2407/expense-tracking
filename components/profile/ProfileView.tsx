@@ -9,6 +9,7 @@ import { Card } from "../primitives/themed-card";
 
 import { ThemedSwitch } from "../primitives/themed-switch";
 import { profileViewStyles as styles } from "./styles";
+import { Colors } from "@/constants/theme";
 
 function formatLastSync(run: LastBackgroundSyncRun): string {
   const now = Date.now();
@@ -225,9 +226,9 @@ export function ProfileView({
                 value={settings?.daily_reminder_enabled ?? false}
                 onValueChange={onToggleDailyReminder}
                 disabled={notifLoading}
-                trackColor={{ false: "#767577", true: colors.tint + "60" }}
+                trackColor={{ false: Colors.switch.trackColorDisabled, true: colors.tint + "60" }}
                 thumbColor={
-                  settings?.daily_reminder_enabled ? colors.tint : "#f4f3f4"
+                  settings?.daily_reminder_enabled ? colors.tint : Colors.switch.thumbColorDisabled
                 }
               />
             </View>

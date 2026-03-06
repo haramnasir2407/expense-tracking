@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import React from "react";
 import { Button } from "tamagui";
-import ThemedView from "../primitives/themed-view";
+import { ThemedView } from "../primitives/themed-view";
 
 interface AddExpenseViewProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;

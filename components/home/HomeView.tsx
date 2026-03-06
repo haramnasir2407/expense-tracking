@@ -84,7 +84,7 @@ export function HomeView({
             : styles.listContent
         }
       />
-      <AddButton onAddPress={onAddPress} colors={colors} />
+      <AddButton onAddPress={onAddPress} />
     </YStack>
   );
 }

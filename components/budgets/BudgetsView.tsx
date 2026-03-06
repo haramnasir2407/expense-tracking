@@ -171,7 +171,7 @@ export function BudgetsView({
         </View>
       </ScrollView>
 
-      <AddButton onAddPress={onOpenCreate} colors={colors} />
+      <AddButton onAddPress={onOpenCreate} />
 
       <Modal
         visible={showCreateForm}

@@ -32,14 +32,6 @@
     - The app foregrounds while online, or
     - You trigger a manual sync.
 
-## Victory Native
-
-- _TODO: document why `victory-native` was chosen (charting, theming, animations)._
-
-## Context Provider vs. Zustand
-
-- _TODO: add more concrete guidelines and examples for when to introduce a new Context vs. using the existing Zustand stores._
-
 ## Background Tasks (Expo)
 
 **Key considerations for Expo Go**

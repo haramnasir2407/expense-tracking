@@ -18,6 +18,8 @@ Phase 2 builds on the expense tracking foundation to provide:
 
 **Justification:**
 
+- offers high customizability through a component-based system.
+
 - ✅ **React Native Native**: Built specifically for React Native (no web bridge)
 - ✅ **Performance**: Uses Skia for hardware-accelerated rendering
 - ✅ **Gestures**: Built-in pan, zoom, and press interactions with Reanimated

@@ -10,8 +10,8 @@ export const categoryPickerStyles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   container: {
-    borderTopLeftRadius: radius.sm * 4,
-    borderTopRightRadius: radius.sm * 4,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
     maxHeight: "80%",
   },
   header: {
@@ -288,43 +288,8 @@ export const expenseFormStyles = StyleSheet.create({
     borderTopWidth: 1,
     gap: spacing.lg,
   },
-  cancelButtonText: {
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-  },
-  submitButtonContainer: {
-    flex: 1,
-  },
-
-  buttons: {
-    flexDirection: "row",
-    gap: spacing.lg,
-    marginTop: spacing.lg,
-  },
   inputText: {
     color: "#333",
-  },
-  button: {
-    flex: 1,
-    padding: spacing.xl,
-    borderRadius: cardRadius,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#f0f0f0",
-  },
-  submitButton: {
-    backgroundColor: Colors.light.tint,
-  },
-  cancelText: {
-    color: "#666",
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-  },
-  submitText: {
-    color: "white",
-    fontSize: fontSize.lg,
-    fontWeight: "600",
   },
 });
 
@@ -376,7 +341,7 @@ export const expenseDetailViewStyles = StyleSheet.create({
 
 export const expenseListSectionStyles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: spacing.lg,
   },
   header: {
     flexDirection: "row",

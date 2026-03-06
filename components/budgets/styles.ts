@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { Colors, fontSize, radius, spacing } from "@/constants/theme";
+import { fontSize, radius, spacing } from "@/constants/theme";
 
 const cardRadius = radius.sm * 4;
 
@@ -160,6 +160,14 @@ export const budgetFormStyles = StyleSheet.create({
     padding: spacing.lg,
     fontSize: fontSize.lg,
   },
+  inputError: {
+    borderColor: "#FF6B6B",
+  },
+  errorText: {
+    color: "#FF6B6B",
+    fontSize: fontSize.sm,
+    marginTop: spacing.sm,
+  },
   placeholder: {
     color: "#999",
   },
@@ -170,27 +178,5 @@ export const budgetFormStyles = StyleSheet.create({
   },
   inputText: {
     color: "#333",
-  },
-  button: {
-    flex: 1,
-    padding: spacing.xl,
-    borderRadius: radius.sm * 2,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#f0f0f0",
-  },
-  submitButton: {
-    backgroundColor: Colors.light.tint,
-  },
-  cancelText: {
-    color: "#666",
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-  },
-  submitText: {
-    color: "white",
-    fontSize: fontSize.lg,
-    fontWeight: "600",
   },
 });

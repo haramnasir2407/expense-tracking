@@ -230,11 +230,6 @@ export function ExpenseForm({
             styles.footer,
             { borderTopColor: colors.text + "20" },
           ]}
-          buttonStyle={styles.button}
-          cancelButtonStyle={styles.cancelButton}
-          submitButtonStyle={styles.submitButton}
-          cancelButtonTextStyle={styles.cancelText}
-          submitButtonTextStyle={styles.submitText}
           onCancel={onCancel}
           onSubmit={handleSubmit}
           loading={loading}

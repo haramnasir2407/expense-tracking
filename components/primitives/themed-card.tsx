@@ -1,7 +1,8 @@
+import { radius } from "@/constants/theme";
 import { useAppTheme } from "@/hooks/use-tamagui-theme";
 import React from "react";
 import type { StyleProp, ViewStyle } from "react-native";
-import { YStack } from "tamagui";
+import { Card as TamaguiCard } from "tamagui";
 import { cardStyles as styles } from "./styles";
 
 interface CardProps {
@@ -26,15 +27,16 @@ export function Card({
   const bg = backgroundColor ?? colors.background;
 
   return (
-    <YStack
+    <TamaguiCard
       {...({ backgroundColor: bg } as any)}
       style={[
         noShadow ? styles.cardNoShadow : styles.card,
         borderColor != null && { borderWidth: 1, borderColor },
         style,
       ]}
+      borderRadius={radius.lg}
     >
       {children}
-    </YStack>
+    </TamaguiCard>
   );
 }
