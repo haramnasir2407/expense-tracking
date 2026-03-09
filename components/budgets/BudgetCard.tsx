@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { BudgetStatus } from "@/types/budget";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -17,10 +18,12 @@ export function BudgetCard({
   onDelete,
   isDark = false,
 }: BudgetCardProps) {
+  const themeColors = Colors[isDark ? "dark" : "light"];
+
   const getStatusColor = () => {
-    if (budget.isOverBudget) return "#FF6B6B";
-    if (budget.percentageUsed >= 80) return "#F39C12";
-    return "#4ECDC4";
+    if (budget.isOverBudget) return Colors.error;
+    if (budget.percentageUsed >= 80) return Colors.warning;
+    return Colors.success;
   };
 
   const showActions = onDelete != null;
@@ -30,13 +33,13 @@ export function BudgetCard({
       unstyled
       style={[
         styles.container,
-        { backgroundColor: isDark ? "#1C1C1E" : "white" },
+        { backgroundColor: themeColors.cardBackground },
       ]}
       onPress={onPress}
       disabled={!onPress && !showActions}
     >
       <View style={styles.header}>
-        <Text style={[styles.category, { color: isDark ? "#ECEDEE" : "#333" }]}>
+        <Text style={[styles.category, { color: themeColors.text }]}>
           {budget.category}
         </Text>
         <View style={styles.headerRight}>
@@ -55,7 +58,11 @@ export function BudgetCard({
                   style={styles.actionBtn}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
-                  <Ionicons name="trash-outline" size={20} color="#FF6B6B" />
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color={Colors.error}
+                  />
                 </Button>
               )}
             </View>
@@ -66,20 +73,20 @@ export function BudgetCard({
       <View
         style={[
           styles.progressBar,
-          { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
+          { backgroundColor: themeColors.cardBorder },
         ]}
       >
         <Progress key={budget.category} value={budget.percentageUsed}>
           <Progress.Indicator
             style={styles.progressFill}
-            backgroundColor={getStatusColor()}
+            {...({ backgroundColor: getStatusColor() } as any)}
             transition={{ type: "quick" }}
           />
         </Progress>
       </View>
 
       <View style={styles.footer}>
-        <Text style={[styles.amount, { color: isDark ? "#8E8E93" : "#666" }]}>
+        <Text style={[styles.amount, { color: themeColors.textSecondary }]}>
           ${budget.actualAmount.toFixed(2)} of ${budget.budgetAmount.toFixed(2)}
         </Text>
         <Text style={[styles.remaining, { color: getStatusColor() }]}>

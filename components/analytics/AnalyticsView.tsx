@@ -3,7 +3,7 @@ import { SpendingLineChart } from "@/components/analytics/LineChart";
 import { CategoryPieChart } from "@/components/analytics/PieChart";
 import { CategoryPicker } from "@/components/expenses/CategoryPicker";
 import { DATE_RANGES } from "@/constants/dateRanges";
-import { spacing } from "@/constants/theme";
+import { Colors, spacing } from "@/constants/theme";
 import { AnalyticsData, DailySpending, DateRange } from "@/types/analytics";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
@@ -34,10 +34,11 @@ export function AnalyticsView({
   colors,
 }: AnalyticsViewProps) {
   const [categoryPickerVisible, setCategoryPickerVisible] = useState(false);
-  const cardBg = isDark ? "#1C1C1E" : "white";
-  const buttonBg = isDark ? "#2C2C2E" : "#f0f0f0";
-  const labelColor = isDark ? "#8E8E93" : "#999";
-  const textColor = isDark ? "#FFFFFF" : "#666";
+  const themeColors = Colors[isDark ? "dark" : "light"];
+  const cardBg = themeColors.cardBackground;
+  const buttonBg = themeColors.cardBorder;
+  const labelColor = themeColors.textSecondary;
+  const textColor = isDark ? "#FFFFFF" : themeColors.textSecondary;
   const categoryLabel =
     selectedCategory === "all" ? "Filter by category" : selectedCategory;
 
@@ -174,8 +175,8 @@ export function AnalyticsView({
               styles.insightValue,
               {
                 color:
-                  analytics.monthOverMonthTrend.trend === "up"
-                    ? "#FF6B6B"
+                    analytics.monthOverMonthTrend.trend === "up"
+                    ? Colors.error
                     : colors.tint,
               },
             ]}

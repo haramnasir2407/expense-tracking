@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { DailySpending } from "@/types/analytics";
 import { Circle } from "@shopify/react-native-skia";
 import React from "react";
@@ -6,8 +7,8 @@ import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { EmptyChartState } from "./EmptyChartState";
 import { spendingLineChartStyles as styles } from "./styles";
 
-const SPENDING_COLOR = "#4ECDC4";
-const BUDGET_LINE_COLOR = "#F7A072";
+const SPENDING_COLOR = Colors.spending;
+const BUDGET_LINE_COLOR = Colors.budget;
 
 interface LineChartProps {
   data: DailySpending[];

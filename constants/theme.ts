@@ -29,6 +29,11 @@ export const Colors = {
     tabIconSelected: tokenVal(tokens.color.tabIconSelected) as string,
     cancelButtonColor: tokenVal(tokens.color.cancelButtonColorLight) as string,
     cancelButtonBg: tokenVal(tokens.color.cancelButtonBgLight) as string,
+    cardBackground: tokenVal(tokens.color.cardBackgroundLight) as string,
+    cardBorder: tokenVal(tokens.color.cardBorderLight) as string,
+    iconMuted: tokenVal(tokens.color.iconMutedLight) as string,
+    textSecondary: tokenVal(tokens.color.textSecondaryLight) as string,
+    textTertiary: tokenVal(tokens.color.textTertiaryLight) as string,
   },
   dark: {
     text: tokenVal(tokens.color.darkColor) as string,
@@ -39,7 +44,19 @@ export const Colors = {
     tabIconSelected: tokenVal(tokens.color.tabIconSelected) as string,
     cancelButtonColor: tokenVal(tokens.color.cancelButtonColorDark) as string,
     cancelButtonBg: tokenVal(tokens.color.cancelButtonBgDark) as string,
+    cardBackground: tokenVal(tokens.color.cardBackgroundDark) as string,
+    cardBorder: tokenVal(tokens.color.cardBorderDark) as string,
+    iconMuted: tokenVal(tokens.color.iconMutedDark) as string,
+    textSecondary: tokenVal(tokens.color.textSecondaryDark) as string,
+    textTertiary: tokenVal(tokens.color.textTertiaryDark) as string,
   },
+  /** Static semantic colors — same in both light and dark. */
+  error: tokenVal(tokens.color.errorColor) as string,
+  warning: tokenVal(tokens.color.warningColor) as string,
+  tint: tokenVal(tokens.color.tintColor) as string,
+  success: tokenVal(tokens.color.successColor) as string,
+  spending: tokenVal(tokens.color.spendingColor) as string,
+  budget: tokenVal(tokens.color.budgetColor) as string,
   switch: {
     trackColorDisabled: tokenVal(
       tokens.color.switchTrackColorDisabled,

@@ -70,7 +70,7 @@ export function BudgetsView({
               <Text
                 style={[
                   styles.summaryLabel,
-                  { color: isDark ? "#8E8E93" : "#666" },
+                  { color: themeColors.textSecondary },
                 ]}
               >
                 Budget
@@ -83,7 +83,7 @@ export function BudgetsView({
               <Text
                 style={[
                   styles.summaryLabel,
-                  { color: isDark ? "#8E8E93" : "#666" },
+                  { color: themeColors.textSecondary },
                 ]}
               >
                 Spent
@@ -98,33 +98,9 @@ export function BudgetsView({
                 ${currentMonthSummary.totalSpent.toFixed(2)}
               </Text>
             </View>
-            {/* <View
-              style={[
-                styles.progressBar,
-                { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
-              ]}
-            >
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${Math.min(currentMonthSummary.percentageUsed, 100)}%`,
-                    backgroundColor:
-                      currentMonthSummary.percentageUsed >= 100
-                        ? "#FF6B6B"
-                        : currentMonthSummary.percentageUsed >= 80
-                          ? "#F39C12"
-                          : colors.tint,
-                  },
-                ]}
-              />
-            </View> */}
 
             <View
-              style={[
-                styles.progressBar,
-                { backgroundColor: isDark ? "#2C2C2E" : "#f0f0f0" },
-              ]}
+              style={[styles.progressBar, { backgroundColor: borderColor }]}
             >
               <Progress
                 key={currentMonthSummary.month}
@@ -132,13 +108,14 @@ export function BudgetsView({
               >
                 <Progress.Indicator
                   style={styles.progressFill}
-                  backgroundColor={
-                    currentMonthSummary.percentageUsed >= 100
-                      ? "#FF6B6B"
-                      : currentMonthSummary.percentageUsed >= 80
-                        ? "#F39C12"
-                        : "#4ECDC4"
-                  }
+                  {...({
+                    backgroundColor:
+                      currentMonthSummary.percentageUsed >= 100
+                        ? Colors.error
+                        : currentMonthSummary.percentageUsed >= 80
+                          ? Colors.warning
+                          : Colors.success,
+                  } as any)}
                   transition={{ type: "quick" }}
                 />
               </Progress>
@@ -147,7 +124,7 @@ export function BudgetsView({
             <Text
               style={[
                 styles.percentageText,
-                { color: isDark ? "#8E8E93" : "#666" },
+                { color: themeColors.textSecondary },
               ]}
             >
               {currentMonthSummary.percentageUsed}% used

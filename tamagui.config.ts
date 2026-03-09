@@ -10,6 +10,11 @@ const animations = createAnimations({
 export const tokens = createTokens({
   color: {
     tintColor: "#0a7ea4",
+    errorColor: "#FF6B6B",
+    warningColor: "#F39C12",
+    successColor: "#4ECDC4",
+    spendingColor: "#4ECDC4",
+    budgetColor: "#F7A072",
     tabIconSelected: "#0a7ea4",
     lightColor: "#11181C",
     lightBackground: "#fff",
@@ -27,6 +32,18 @@ export const tokens = createTokens({
     cancelButtonColorDark: "#ffff",
     cancelButtonBgLight: "#f0f0f0",
     cancelButtonBgDark: "#2C2C2E",
+    // Surface colors
+    cardBackgroundLight: "#ffffff",
+    cardBackgroundDark: "#1C1C1E",
+    cardBorderLight: "#f0f0f0",
+    cardBorderDark: "#2C2C2E",
+    // Muted/secondary text and icon colors
+    iconMutedLight: "#cccccc",
+    iconMutedDark: "#3A3A3C",
+    textSecondaryLight: "#666666",
+    textSecondaryDark: "#8E8E93",
+    textTertiaryLight: "#999999",
+    textTertiaryDark: "#636366",
   },
   size: { sm: 8, md: 12, lg: 20, true: 12 },
   space: { sm: 4, md: 8, lg: 12, xl: 16, xxl: 20, true: 8 },

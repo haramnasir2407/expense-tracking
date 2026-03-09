@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { DateRange, MonthlySpending } from "@/types/analytics";
 import React from "react";
 import { Platform } from "react-native";
@@ -22,7 +23,7 @@ export function MonthlyBarChart({
   yLabel = "Amount ($)",
   dateRange,
 }: BarChartProps) {
-  const labelColor = isDark ? "#8E8E93" : "#666";
+  const { textSecondary: labelColor } = Colors[isDark ? "dark" : "light"];
 
   // Require at least 2 distinct months for comparison
   if (data.length <= 1) {
