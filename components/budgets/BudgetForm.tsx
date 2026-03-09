@@ -64,7 +64,7 @@ export function BudgetForm({
       ) : (
         <AppPressable
           style={styles.input}
-          borderColor={errors.category ? "#FF6B6B" : "#ddd"}
+          borderColor={errors.category ? Colors.error : colors.text + "20"}
           onPress={() => {
             setErrors((e) => ({ ...e, category: undefined }));
             setShowCategoryPicker(true);
